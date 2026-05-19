@@ -1,0 +1,2064 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goal · Mobile Game UI v1.0 — il vero direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  /* CANVAS · slightly blue-black, game feel */
+  --bg: #0F1419;
+  --bg-1: #161C24;
+  --bg-2: #1E2530;
+  --bg-3: #2A3340;
+
+  /* INK */
+  --ink: #FFFFFF;
+  --ink-2: #C5CCD8;
+  --ink-3: #8B96A8;
+  --ink-4: #5A6478;
+
+  /* GAME ACCENTS — vibrant ma disciplinati */
+  --lime: #C5FF00;
+  --lime-soft: #C5FF00;
+  --coral: #FF6B6B;            /* hearts / lives */
+  --gold: #FFD93D;             /* trophies / legendary */
+  --purple: #9B72F2;           /* epic rarity */
+  --blue: #4ECDC4;             /* rare / info */
+  --gray: #94A3B8;             /* common rarity */
+
+  /* RARITY tiers */
+  --r-common: #94A3B8;
+  --r-rare: #4ECDC4;
+  --r-epic: #9B72F2;
+  --r-legendary: #FFD93D;
+  --r-mythic: #C5FF00;
+
+  /* RADIUS · chunky game */
+  --r-pill: 999px;
+  --r-card: 20px;
+  --r-card-sm: 14px;
+  --r-btn: 14px;
+  --r-tile: 24px;
+
+  /* SHADOWS · game-grade depth */
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08);
+  --shadow-btn: 0 4px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
+  --shadow-btn-pressed: 0 1px 0 rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+  --shadow-glow-lime: 0 0 32px rgba(197,255,0,0.4), 0 0 0 1px rgba(197,255,0,0.6);
+  --shadow-glow-gold: 0 0 32px rgba(255,217,61,0.4), 0 0 0 1px rgba(255,217,61,0.6);
+  --shadow-glow-purple: 0 0 24px rgba(155,114,242,0.4);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 500 16px/1.5 'Onest', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+svg { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ============ TOP BAR ============ */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  padding: 20px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(15, 20, 25, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.topbar__brand {
+  display: flex; align-items: center; gap: 10px;
+  font-weight: 800; font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.topbar__brand .logo {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--lime) 0%, #9FCC00 100%);
+  border-radius: 10px;
+  display: grid; place-items: center;
+  color: var(--bg);
+  font-weight: 900; font-size: 20px;
+  box-shadow: 0 4px 12px rgba(197,255,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.topbar__pill {
+  padding: 6px 14px;
+  background: rgba(197,255,0,0.12);
+  border: 1px solid rgba(197,255,0,0.3);
+  border-radius: var(--r-pill);
+  font-weight: 700; font-size: 12px;
+  color: var(--lime);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* ============ HERO INTRO ============ */
+.intro {
+  padding: 80px 32px 60px;
+  text-align: center;
+  max-width: 880px;
+  margin: 0 auto;
+}
+.intro__eyebrow {
+  display: inline-flex; gap: 8px; align-items: center;
+  padding: 8px 16px;
+  background: rgba(255,217,61,0.08);
+  border: 1px solid rgba(255,217,61,0.25);
+  border-radius: var(--r-pill);
+  font-weight: 700; font-size: 13px;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+  margin-bottom: 24px;
+}
+.intro__title {
+  font-weight: 900;
+  font-size: clamp(48px, 7vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  margin-bottom: 20px;
+}
+.intro__title .grad {
+  background: linear-gradient(135deg, var(--lime) 0%, #9FCC00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.intro__lead {
+  font-size: 19px;
+  color: var(--ink-2);
+  max-width: 660px;
+  margin: 0 auto;
+  line-height: 1.55;
+}
+
+/* ============ SECTIONS ============ */
+section {
+  padding: 80px 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.sec__header {
+  margin-bottom: 56px;
+  max-width: 760px;
+}
+.sec__num {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(197,255,0,0.1);
+  border: 1px solid rgba(197,255,0,0.25);
+  border-radius: var(--r-pill);
+  font-weight: 700; font-size: 12px;
+  color: var(--lime);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.sec__title {
+  font-weight: 900;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+}
+.sec__sub {
+  font-size: 17px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+
+/* ============ 01 · COLORS GAME-STYLE ============ */
+.colors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.color-tile {
+  border-radius: var(--r-card);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column; justify-content: space-between;
+  aspect-ratio: 1;
+}
+.color-tile__name {
+  font-weight: 800; font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.color-tile__hex {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; font-weight: 600;
+  opacity: 0.7;
+}
+.color-tile__use {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+.color-tile--dark { color: var(--ink); }
+.color-tile--light { color: var(--bg); }
+
+/* ============ 02 · IL MISTER CHARACTER ============ */
+.mister-stage {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg) 100%);
+  padding: 48px;
+  border-radius: var(--r-tile);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+@media (max-width: 880px) {
+  .mister-stage { grid-template-columns: 1fr; }
+}
+.mister-card {
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border-radius: var(--r-card);
+  padding: 32px 24px 24px;
+  display: flex; flex-direction: column; align-items: center;
+  border: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.mister-card__bg {
+  position: absolute; top: -40%; left: 50%;
+  transform: translateX(-50%);
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at center, rgba(197,255,0,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.mister-card svg.mister-illustration {
+  position: relative;
+  width: 100%; max-width: 200px; height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.3));
+}
+.mister-card__label {
+  position: relative;
+  font-weight: 700; font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lime);
+  margin-top: 20px;
+}
+.mister-card__name {
+  position: relative;
+  font-weight: 800; font-size: 20px;
+  margin-top: 6px;
+  letter-spacing: -0.01em;
+}
+.mister-card__desc {
+  position: relative;
+  font-size: 13px; color: var(--ink-3);
+  text-align: center;
+  margin-top: 6px;
+}
+
+/* ============ 03 · PLAYER CARDS · rarity system ============ */
+.cards-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+@media (max-width: 880px) { .cards-row { grid-template-columns: repeat(2, 1fr); } }
+.player-card {
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border-radius: var(--r-card);
+  padding: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 280ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 280ms;
+  cursor: pointer;
+  border: 2px solid var(--r-common);
+}
+.player-card:hover {
+  transform: translateY(-4px) rotate(-1deg);
+}
+.player-card--common { border-color: var(--r-common); }
+.player-card--rare { border-color: var(--r-rare); box-shadow: 0 0 20px rgba(78,205,196,0.3); }
+.player-card--epic { border-color: var(--r-epic); box-shadow: 0 0 20px rgba(155,114,242,0.4); }
+.player-card--legendary { border-color: var(--r-legendary); box-shadow: 0 0 24px rgba(255,217,61,0.5); }
+.player-card--mythic {
+  border-color: var(--r-mythic);
+  box-shadow: 0 0 28px rgba(197,255,0,0.6), inset 0 0 24px rgba(197,255,0,0.05);
+  animation: mythicGlow 3s ease-in-out infinite;
+}
+@keyframes mythicGlow {
+  0%, 100% { box-shadow: 0 0 28px rgba(197,255,0,0.6), inset 0 0 24px rgba(197,255,0,0.05); }
+  50% { box-shadow: 0 0 40px rgba(197,255,0,0.8), inset 0 0 32px rgba(197,255,0,0.1); }
+}
+.player-card__rarity {
+  position: absolute; top: 10px; right: 10px;
+  padding: 3px 8px;
+  border-radius: var(--r-pill);
+  font-weight: 800; font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  z-index: 2;
+}
+.player-card--common .player-card__rarity { background: var(--r-common); color: var(--bg); }
+.player-card--rare .player-card__rarity { background: var(--r-rare); color: var(--bg); }
+.player-card--epic .player-card__rarity { background: var(--r-epic); color: var(--ink); }
+.player-card--legendary .player-card__rarity { background: var(--r-legendary); color: var(--bg); }
+.player-card--mythic .player-card__rarity { background: var(--r-mythic); color: var(--bg); }
+.player-card__art {
+  width: 100%; aspect-ratio: 1;
+  border-radius: var(--r-card-sm);
+  margin-bottom: 12px;
+  position: relative; overflow: hidden;
+  display: grid; place-items: center;
+}
+.player-card--common .player-card__art { background: linear-gradient(135deg, #475569 0%, #334155 100%); }
+.player-card--rare .player-card__art { background: linear-gradient(135deg, #14B8A6 0%, #0F766E 100%); }
+.player-card--epic .player-card__art { background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%); }
+.player-card--legendary .player-card__art { background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%); }
+.player-card--mythic .player-card__art { background: linear-gradient(135deg, #C5FF00 0%, #84CC16 100%); }
+.player-card__art svg { width: 70%; height: auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); }
+.player-card__art::after {
+  content: '';
+  position: absolute; top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 600ms;
+}
+.player-card:hover .player-card__art::after { left: 150%; }
+.player-card__name {
+  font-weight: 800; font-size: 15px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  margin-bottom: 2px;
+}
+.player-card__role {
+  font-size: 12px; font-weight: 600;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.player-card__stars {
+  position: absolute; bottom: 12px; right: 12px;
+  display: flex; gap: 1px;
+}
+.player-card__star {
+  width: 10px; height: 10px;
+  color: var(--gold);
+}
+
+/* ============ 04 · BUTTONS · chunky game ============ */
+.btn-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+.btn-tile {
+  background: var(--bg-1);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--r-card);
+  padding: 24px;
+}
+.btn-tile__label {
+  font-weight: 700; font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lime);
+  margin-bottom: 16px;
+}
+.btn-tile__stack {
+  display: flex; flex-direction: column; gap: 12px; align-items: flex-start;
+}
+
+.gbtn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px;
+  font-family: inherit;
+  font-weight: 700; font-size: 15px;
+  border: none;
+  border-radius: var(--r-btn);
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: all 120ms ease-out;
+  position: relative;
+}
+.gbtn--primary {
+  background: linear-gradient(180deg, #D7FF3D 0%, var(--lime) 50%, #9FCC00 100%);
+  color: var(--bg);
+  box-shadow: var(--shadow-btn), 0 0 0 1px rgba(159,204,0,0.4);
+}
+.gbtn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 rgba(0,0,0,0.5), 0 8px 16px rgba(197,255,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.gbtn--primary:active {
+  transform: translateY(3px);
+  box-shadow: var(--shadow-btn-pressed);
+}
+.gbtn--gold {
+  background: linear-gradient(180deg, #FFE76D 0%, var(--gold) 50%, #E8B821 100%);
+  color: var(--bg);
+  box-shadow: var(--shadow-btn), 0 0 0 1px rgba(232,184,33,0.4);
+}
+.gbtn--gold:hover { transform: translateY(-1px); }
+.gbtn--gold:active { transform: translateY(3px); box-shadow: var(--shadow-btn-pressed); }
+.gbtn--coral {
+  background: linear-gradient(180deg, #FF8585 0%, var(--coral) 50%, #E04848 100%);
+  color: var(--ink);
+  box-shadow: var(--shadow-btn);
+}
+.gbtn--ghost {
+  background: rgba(255,255,255,0.06);
+  color: var(--ink);
+  border: 1px solid rgba(255,255,255,0.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.gbtn--ghost:hover { background: rgba(255,255,255,0.1); }
+.gbtn--lg { padding: 18px 36px; font-size: 17px; }
+.gbtn--icon-r { padding-right: 20px; }
+.gbtn--full { width: 100%; justify-content: center; }
+
+/* ============ 05 · STATUS / GAMIFICATION elements ============ */
+.gam-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 880px) { .gam-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* Streak fire */
+.streak-tile {
+  background: linear-gradient(180deg, #2A1810 0%, #1A0F08 100%);
+  border-radius: var(--r-card);
+  padding: 24px 20px;
+  text-align: center;
+  position: relative; overflow: hidden;
+  border: 1px solid rgba(255,107,53,0.2);
+}
+.streak-tile__halo {
+  position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+  width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(255,107,53,0.3) 0%, transparent 40%);
+  pointer-events: none;
+  animation: flicker 2.5s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%, 100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+}
+.streak-tile svg {
+  position: relative;
+  width: 64px; height: 80px;
+  margin: 0 auto 12px;
+  filter: drop-shadow(0 0 16px rgba(255,107,53,0.6));
+}
+.streak-tile__num {
+  position: relative;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+}
+.streak-tile__label {
+  position: relative;
+  font-weight: 700; font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #FF8C42;
+  margin-top: 4px;
+}
+
+/* XP bar */
+.xp-tile {
+  background: linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
+  border-radius: var(--r-card);
+  padding: 24px 20px;
+  border: 1px solid rgba(197,255,0,0.15);
+  position: relative; overflow: hidden;
+}
+.xp-tile__head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 16px;
+}
+.xp-tile__level {
+  font-weight: 900; font-size: 32px;
+  color: var(--lime);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.xp-tile__name {
+  font-weight: 700; font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+.xp-bar {
+  height: 12px;
+  background: rgba(0,0,0,0.4);
+  border-radius: var(--r-pill);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+  margin-bottom: 8px;
+}
+.xp-bar__fill {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, #9FCC00 0%, var(--lime) 50%, #D7FF3D 100%);
+  border-radius: var(--r-pill);
+  width: 64%;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.xp-bar__fill::after {
+  content: '';
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  animation: shimmer 2s linear infinite;
+}
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.xp-tile__stats {
+  display: flex; justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; font-weight: 600;
+  color: var(--ink-3);
+}
+.xp-tile__stats b { color: var(--lime); }
+
+/* Trophy showcase */
+.trophy-tile {
+  background: linear-gradient(180deg, #2A2410 0%, #1A1408 100%);
+  border-radius: var(--r-card);
+  padding: 24px 20px;
+  text-align: center;
+  border: 1px solid rgba(255,217,61,0.2);
+  position: relative; overflow: hidden;
+}
+.trophy-tile__halo {
+  position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
+  width: 150%; height: 150%;
+  background: radial-gradient(circle, rgba(255,217,61,0.25) 0%, transparent 50%);
+  pointer-events: none;
+}
+.trophy-tile svg {
+  position: relative;
+  width: 56px; height: 64px;
+  margin: 0 auto 12px;
+  filter: drop-shadow(0 0 12px rgba(255,217,61,0.5));
+}
+.trophy-tile__count {
+  position: relative;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800; font-size: 32px;
+  color: var(--gold);
+  line-height: 1;
+}
+.trophy-tile__label {
+  position: relative;
+  font-weight: 700; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: rgba(255,217,61,0.8);
+  margin-top: 4px;
+}
+
+/* Hearts / Cambi */
+.hearts-tile {
+  background: linear-gradient(180deg, #2A1010 0%, #1A0808 100%);
+  border-radius: var(--r-card);
+  padding: 24px 20px;
+  text-align: center;
+  border: 1px solid rgba(255,107,107,0.2);
+}
+.hearts-tile__row {
+  display: flex; justify-content: center; gap: 6px; margin-bottom: 12px;
+}
+.hearts-tile__row svg {
+  width: 28px; height: 28px;
+  filter: drop-shadow(0 0 8px rgba(255,107,107,0.4));
+}
+.hearts-tile__count {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800; font-size: 24px;
+  color: var(--coral);
+}
+.hearts-tile__count span { color: var(--ink-4); font-size: 18px; }
+.hearts-tile__label {
+  font-weight: 700; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: rgba(255,107,107,0.8);
+  margin-top: 4px;
+}
+
+/* ============ 06 · MOBILE SCREENS · le pagine reali ============ */
+.phones-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 32px;
+}
+@media (max-width: 1100px) { .phones-row { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) { .phones-row { grid-template-columns: 1fr; max-width: 380px; margin: 32px auto 0; } }
+.phone-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 20px;
+}
+.phone-label {
+  font-weight: 700; font-size: 13px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--ink-3);
+  display: flex; align-items: center; gap: 8px;
+}
+.phone-label .num {
+  width: 22px; height: 22px;
+  background: var(--lime);
+  color: var(--bg);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 900; font-size: 12px;
+}
+.phone {
+  width: 100%; max-width: 360px;
+  aspect-ratio: 9/19.5;
+  background: #000;
+  border-radius: 44px;
+  border: 10px solid #1A1F26;
+  padding: 10px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.08);
+  position: relative; overflow: hidden;
+}
+.phone::before {
+  content: '';
+  position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+  width: 110px; height: 30px;
+  background: #000;
+  border-radius: 99px;
+  z-index: 5;
+}
+.screen {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  border-radius: 34px;
+  overflow: hidden;
+  position: relative;
+  font-size: 14px;
+}
+.status-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between;
+  padding: 16px 30px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 13px;
+  color: var(--ink);
+  z-index: 4;
+}
+.status-bar__dots::after { content: '••• '; }
+.app {
+  padding: 60px 18px 24px;
+  height: 100%;
+  display: flex; flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+/* SCREEN 1 · HUB HOME */
+.hub-header {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.hub-avatar {
+  display: flex; align-items: center; gap: 10px;
+}
+.hub-avatar__pic {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--lime) 0%, #9FCC00 100%);
+  display: grid; place-items: center;
+  color: var(--bg);
+  font-weight: 900; font-size: 18px;
+  box-shadow: 0 4px 12px rgba(197,255,0,0.3);
+  position: relative;
+}
+.hub-avatar__pic::after {
+  content: '12'; position: absolute;
+  bottom: -2px; right: -2px;
+  width: 18px; height: 18px;
+  background: var(--gold);
+  color: var(--bg);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font: 800 10px 'JetBrains Mono';
+  border: 2px solid var(--bg);
+}
+.hub-avatar__name {
+  font-weight: 800; font-size: 15px;
+  letter-spacing: -0.01em;
+}
+.hub-avatar__name small {
+  display: block;
+  font-weight: 600; font-size: 11px;
+  color: var(--ink-3);
+  margin-top: 1px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.hub-header__currency {
+  display: flex; gap: 8px;
+}
+.curr-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px 4px 4px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 99px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 11px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.curr-pill__icon {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+}
+.curr-pill--gold .curr-pill__icon { background: var(--gold); }
+.curr-pill--lime .curr-pill__icon { background: var(--lime); }
+.curr-pill__icon svg { width: 12px; height: 12px; }
+
+.hub-streak {
+  background: linear-gradient(135deg, #2A1810 0%, #1A0F08 100%);
+  border: 1px solid rgba(255,107,53,0.3);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 14px;
+  position: relative; overflow: hidden;
+}
+.hub-streak__flame {
+  position: relative;
+  width: 44px; height: 52px;
+  flex-shrink: 0;
+}
+.hub-streak__flame svg {
+  width: 100%; height: 100%;
+  filter: drop-shadow(0 0 12px rgba(255,107,53,0.5));
+}
+.hub-streak__text {
+  flex: 1;
+}
+.hub-streak__text strong {
+  display: block;
+  font-weight: 800; font-size: 22px;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.hub-streak__text small {
+  display: block;
+  font-size: 12px;
+  color: #FF8C42;
+  margin-top: 4px;
+  font-weight: 600;
+}
+.hub-streak__cta {
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #FF8C42 0%, #FF6B35 100%);
+  color: var(--ink);
+  border-radius: 10px;
+  font-weight: 800; font-size: 12px;
+  border: none;
+  box-shadow: 0 3px 0 #C04A1F;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex: 1;
+}
+.hub-card {
+  border-radius: var(--r-card);
+  padding: 14px;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 110px;
+  cursor: pointer;
+}
+.hub-card--daily {
+  background: linear-gradient(135deg, var(--lime) 0%, #9FCC00 100%);
+  color: var(--bg);
+  box-shadow: 0 8px 20px rgba(197,255,0,0.3);
+  grid-column: span 2;
+  min-height: 130px;
+}
+.hub-card--daily .hub-card__title { font-size: 20px; }
+.hub-card--grid {
+  background: linear-gradient(135deg, #4ECDC4 0%, #14B8A6 100%);
+  color: var(--bg);
+}
+.hub-card--duel {
+  background: linear-gradient(135deg, #9B72F2 0%, #7C3AED 100%);
+  color: var(--ink);
+}
+.hub-card--live {
+  background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
+  color: var(--ink);
+  position: relative;
+}
+.hub-card--live::before {
+  content: '';
+  position: absolute; top: 12px; right: 12px;
+  width: 8px; height: 8px;
+  background: var(--ink);
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.4); }
+}
+.hub-card--career {
+  background: linear-gradient(135deg, var(--gold) 0%, #F59E0B 100%);
+  color: var(--bg);
+}
+.hub-card--explore {
+  background: linear-gradient(135deg, #2A3340 0%, #1E2530 100%);
+  color: var(--ink);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.hub-card__icon {
+  width: 28px; height: 28px;
+  margin-bottom: 4px;
+}
+.hub-card__icon svg { width: 100%; height: 100%; }
+.hub-card__title {
+  font-weight: 800; font-size: 14px;
+  letter-spacing: -0.01em;
+}
+.hub-card__sub {
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+.hub-card__badge {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-weight: 800; font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.hub-bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 8px;
+  background: var(--bg-1);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-radius: 24px 24px 0 0;
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+}
+.hub-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  flex: 1;
+  color: var(--ink-3);
+}
+.hub-nav-item svg { width: 22px; height: 22px; }
+.hub-nav-item span {
+  font-weight: 700; font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 1px;
+}
+.hub-nav-item--active { color: var(--lime); }
+.hub-nav-item--play svg {
+  width: 36px; height: 36px;
+  padding: 8px;
+  background: linear-gradient(180deg, var(--lime) 0%, #9FCC00 100%);
+  border-radius: 50%;
+  color: var(--bg);
+  box-shadow: 0 4px 16px rgba(197,255,0,0.4);
+  margin-top: -18px;
+}
+
+/* SCREEN 2 · WIN CELEBRATION */
+.win-screen {
+  background: radial-gradient(ellipse at top, rgba(197,255,0,0.15) 0%, transparent 60%), var(--bg);
+  display: flex; flex-direction: column;
+  height: 100%;
+  padding: 60px 24px 24px;
+}
+.win-confetti {
+  position: absolute; top: 60px; left: 0; right: 0; bottom: 50%;
+  pointer-events: none;
+}
+.win-confetti span {
+  position: absolute;
+  width: 8px; height: 12px;
+  border-radius: 2px;
+}
+.win-badge {
+  width: 120px; height: 120px;
+  margin: 32px auto 24px;
+  position: relative;
+  display: grid; place-items: center;
+}
+.win-badge__ring {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--lime) 0%, #9FCC00 100%);
+  box-shadow: 0 0 40px rgba(197,255,0,0.5);
+  animation: winPulse 1.6s ease-in-out infinite;
+}
+@keyframes winPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+.win-badge__check {
+  position: relative;
+  width: 56px; height: 56px;
+  color: var(--bg);
+  z-index: 2;
+}
+.win-title {
+  text-align: center;
+  font-weight: 900; font-size: 36px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.win-sub {
+  text-align: center;
+  color: var(--ink-2);
+  font-size: 15px;
+  margin-bottom: 28px;
+}
+.win-player {
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  border-radius: var(--r-card);
+  padding: 20px;
+  text-align: center;
+  border: 1px solid rgba(255,217,61,0.3);
+  position: relative; overflow: hidden;
+  margin-bottom: 20px;
+}
+.win-player__rarity {
+  position: absolute; top: 10px; right: 10px;
+  background: var(--gold);
+  color: var(--bg);
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-weight: 800; font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.win-player__art {
+  width: 100px; height: 100px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #F59E0B 100%);
+  display: grid; place-items: center;
+  box-shadow: 0 8px 24px rgba(255,217,61,0.4);
+}
+.win-player__art svg { width: 60%; height: 60%; color: var(--bg); }
+.win-player__name {
+  font-weight: 900; font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.win-player__bio {
+  font-size: 12px; color: var(--ink-3);
+  margin-top: 2px;
+}
+.win-rewards {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  margin-bottom: 16px;
+}
+.reward-tile {
+  background: var(--bg-1);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-card-sm);
+  padding: 10px 8px;
+  text-align: center;
+}
+.reward-tile__icon {
+  width: 32px; height: 32px;
+  margin: 0 auto 6px;
+}
+.reward-tile__num {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800; font-size: 16px;
+  color: var(--ink);
+}
+.reward-tile__num.lime { color: var(--lime); }
+.reward-tile__num.gold { color: var(--gold); }
+.reward-tile__label {
+  font-weight: 700; font-size: 9px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--ink-3);
+  margin-top: 2px;
+}
+
+/* SCREEN 3 · DUELLO */
+.duel-vs {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+  background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+  border-radius: var(--r-card);
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.duel-player {
+  text-align: center;
+}
+.duel-player__avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  margin: 0 auto 6px;
+  display: grid; place-items: center;
+  font-weight: 900; font-size: 18px;
+  color: var(--ink);
+}
+.duel-player--me .duel-player__avatar {
+  background: linear-gradient(135deg, var(--lime) 0%, #9FCC00 100%);
+  color: var(--bg);
+  box-shadow: 0 4px 12px rgba(197,255,0,0.3);
+}
+.duel-player--opp .duel-player__avatar {
+  background: linear-gradient(135deg, #FF6B6B 0%, #DC2626 100%);
+}
+.duel-player__name {
+  font-weight: 800; font-size: 12px;
+  letter-spacing: -0.01em;
+}
+.duel-player__score {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900; font-size: 28px;
+  margin-top: 2px;
+  line-height: 1;
+}
+.duel-player--me .duel-player__score { color: var(--lime); }
+.duel-vs__sep {
+  font-weight: 900; font-size: 18px;
+  color: var(--ink-3);
+}
+.duel-round {
+  text-align: center;
+  font-weight: 700; font-size: 12px;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.duel-round b { color: var(--lime); }
+.duel-timer {
+  display: flex; justify-content: center; align-items: center;
+  margin: 16px 0;
+}
+.duel-timer__ring {
+  width: 100px; height: 100px;
+  position: relative;
+}
+.duel-timer__ring svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.duel-timer__num {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900; font-size: 36px;
+  color: var(--lime);
+}
+.duel-question {
+  background: var(--bg-1);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-card);
+  padding: 16px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.duel-answers {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.duel-answer {
+  background: var(--bg-2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r-card-sm);
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+  font-weight: 700; font-size: 14px;
+  transition: all 200ms;
+}
+.duel-answer:hover { background: var(--bg-3); }
+.duel-answer--correct {
+  background: linear-gradient(180deg, #C5FF00 0%, #9FCC00 100%);
+  color: var(--bg);
+  border-color: var(--lime);
+  box-shadow: 0 0 16px rgba(197,255,0,0.4);
+}
+
+/* ============ 07 · BADGES & PILLS ============ */
+.badges-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.badge-tile {
+  background: var(--bg-1);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--r-card);
+  padding: 24px;
+}
+.badge-tile__label {
+  font-weight: 700; font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--lime);
+  margin-bottom: 16px;
+}
+.badge-tile__row {
+  display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+}
+
+.g-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-weight: 700; font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.g-badge--lime { background: var(--lime); color: var(--bg); }
+.g-badge--coral { background: var(--coral); color: var(--ink); }
+.g-badge--gold { background: var(--gold); color: var(--bg); }
+.g-badge--purple { background: var(--purple); color: var(--ink); }
+.g-badge--blue { background: var(--blue); color: var(--bg); }
+.g-badge--outline {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.16);
+  color: var(--ink-2);
+}
+.g-badge--live {
+  background: var(--coral);
+  color: var(--ink);
+  padding-left: 8px;
+}
+.g-badge--live::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--ink);
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* ============ FOOTER ============ */
+footer {
+  padding: 64px 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+  background: var(--bg-1);
+  margin-top: 80px;
+}
+.footer-tag {
+  font-weight: 700; font-size: 13px;
+  color: var(--ink-3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.footer-tag .lime { color: var(--lime); }
+.footer-cta {
+  margin-top: 16px;
+  font-weight: 900; font-size: 24px;
+  letter-spacing: -0.02em;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<nav class="topbar">
+  <div class="topbar__brand">
+    <div class="logo">G</div>
+    Goal · Mobile Game UI
+  </div>
+  <div class="topbar__pill">v1.0 · NEW DIRECTION</div>
+</nav>
+
+<!-- INTRO -->
+<section class="intro">
+  <div class="intro__eyebrow">
+    ⚡ Reset totale · maggio 2026
+  </div>
+  <h1 class="intro__title">
+    Non un altro<br><span class="grad">SaaS lookbook.</span>
+  </h1>
+  <p class="intro__lead">
+    Goal è un'app di calcio gamificata. Livelli, carte giocatori, rarità, streak fire, trofei, duelli.
+    Modernità di un Duolingo, profondità visiva di un Clash Royale, anima da curva italiana.
+    Questo file è il vero punto di riferimento.
+  </p>
+</section>
+
+<!-- 01 · COLORI -->
+<section>
+  <div class="sec__header">
+    <span class="sec__num">01 · Palette</span>
+    <h2 class="sec__title">Colori da gioco,<br>non da dashboard.</h2>
+    <p class="sec__sub">Niente "premium dark scuro con lime accent". Una palette vibrante ma disciplinata, ogni colore ha un significato di gameplay.</p>
+  </div>
+  <div class="colors-grid">
+    <div class="color-tile color-tile--dark" style="background:linear-gradient(135deg,#161C24 0%,#0F1419 100%)">
+      <div>
+        <div class="color-tile__name">Stadium Night</div>
+        <div class="color-tile__hex">#0F1419</div>
+      </div>
+      <div class="color-tile__use">Canvas dominante. Notturno blu-ink, no piatto nero.</div>
+    </div>
+    <div class="color-tile color-tile--light" style="background:linear-gradient(135deg,#D7FF3D 0%,#9FCC00 100%);box-shadow:0 0 32px rgba(197,255,0,0.3)">
+      <div>
+        <div class="color-tile__name">Pitch Lime</div>
+        <div class="color-tile__hex">#C5FF00</div>
+      </div>
+      <div class="color-tile__use">CTA primario, Caratura, momenti di vittoria.</div>
+    </div>
+    <div class="color-tile color-tile--light" style="background:linear-gradient(135deg,#FFE76D 0%,#FFD93D 100%);box-shadow:0 0 32px rgba(255,217,61,0.3)">
+      <div>
+        <div class="color-tile__name">Trophy Gold</div>
+        <div class="color-tile__hex">#FFD93D</div>
+      </div>
+      <div class="color-tile__use">Trofei, rarità legendary, Champions Night.</div>
+    </div>
+    <div class="color-tile color-tile--dark" style="background:linear-gradient(135deg,#FF8585 0%,#FF6B6B 100%);box-shadow:0 0 32px rgba(255,107,107,0.3);color:#fff">
+      <div>
+        <div class="color-tile__name">Cambi Coral</div>
+        <div class="color-tile__hex">#FF6B6B</div>
+      </div>
+      <div class="color-tile__use">Cambi/vite, live indicators, derby moments.</div>
+    </div>
+    <div class="color-tile color-tile--dark" style="background:linear-gradient(135deg,#B498F7 0%,#9B72F2 100%);box-shadow:0 0 32px rgba(155,114,242,0.3);color:#fff">
+      <div>
+        <div class="color-tile__name">Epic Purple</div>
+        <div class="color-tile__hex">#9B72F2</div>
+      </div>
+      <div class="color-tile__use">Rarità epic, Duello tier alto.</div>
+    </div>
+    <div class="color-tile color-tile--dark" style="background:linear-gradient(135deg,#7FE0D8 0%,#4ECDC4 100%);box-shadow:0 0 32px rgba(78,205,196,0.3);color:#0F1419">
+      <div>
+        <div class="color-tile__name">Rare Aqua</div>
+        <div class="color-tile__hex">#4ECDC4</div>
+      </div>
+      <div class="color-tile__use">Rarità rare, info banner, Grid tile.</div>
+    </div>
+    <div class="color-tile color-tile--dark" style="background:linear-gradient(135deg,#FF8C42 0%,#FF6B35 100%);color:#fff">
+      <div>
+        <div class="color-tile__name">Streak Fire</div>
+        <div class="color-tile__hex">#FF6B35</div>
+      </div>
+      <div class="color-tile__use">Filotto, fiamma streak, urgenza positiva.</div>
+    </div>
+    <div class="color-tile color-tile--light" style="background:linear-gradient(135deg,#F4F4F5 0%,#E4E4E7 100%)">
+      <div>
+        <div class="color-tile__name">Pure Ink</div>
+        <div class="color-tile__hex">#FFFFFF</div>
+      </div>
+      <div class="color-tile__use">Testo primario, massima leggibilità.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 · IL MISTER -->
+<section>
+  <div class="sec__header">
+    <span class="sec__num">02 · Il Mister</span>
+    <h2 class="sec__title">Personaggio,<br>non icona.</h2>
+    <p class="sec__sub">Il Mister è il volto di Goal. Stilizzato character-design game, non geometric-flat. Tre stati visivi base che reagiscono al gameplay.</p>
+  </div>
+
+  <div class="mister-stage">
+
+    <!-- POSE 1: APPROVAL -->
+    <div class="mister-card">
+      <div class="mister-card__bg"></div>
+      <svg class="mister-illustration" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body shadow base -->
+        <ellipse cx="100" cy="275" rx="55" ry="6" fill="rgba(0,0,0,0.3)"/>
+
+        <!-- Head with gradient skin -->
+        <defs>
+          <linearGradient id="skin1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#F5D4A8"/>
+            <stop offset="1" stop-color="#D9B68A"/>
+          </linearGradient>
+          <linearGradient id="sweater1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2A3340"/>
+            <stop offset="1" stop-color="#161C24"/>
+          </linearGradient>
+          <linearGradient id="hair1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9B8E7D"/>
+            <stop offset="1" stop-color="#6B5F50"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Hair sides -->
+        <path d="M 65 70 Q 60 50 72 45 Q 78 55 78 85 Z" fill="url(#hair1)"/>
+        <path d="M 135 70 Q 140 50 128 45 Q 122 55 122 85 Z" fill="url(#hair1)"/>
+
+        <!-- Head -->
+        <ellipse cx="100" cy="80" rx="38" ry="44" fill="url(#skin1)"/>
+
+        <!-- Highlight on head -->
+        <ellipse cx="88" cy="65" rx="14" ry="10" fill="rgba(255,255,255,0.15)"/>
+
+        <!-- Eyebrows raised (approving) -->
+        <path d="M 78 64 Q 86 60 94 62" stroke="#3D3026" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 106 62 Q 114 60 122 64" stroke="#3D3026" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <!-- Eyes (smiling) -->
+        <path d="M 82 78 Q 87 76 92 78" stroke="#0F1419" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M 108 78 Q 113 76 118 78" stroke="#0F1419" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Nose -->
+        <path d="M 100 88 L 98 100 Q 100 104 103 102" stroke="#B8956F" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <!-- Mouth (subtle smile) -->
+        <path d="M 88 112 Q 100 118 112 112" stroke="#3D3026" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Neck -->
+        <rect x="88" y="120" width="24" height="14" fill="url(#skin1)"/>
+
+        <!-- Sweater body -->
+        <path d="M 55 138 Q 50 145 50 160 L 60 270 L 140 270 L 150 160 Q 150 145 145 138 Q 130 132 100 132 Q 70 132 55 138 Z" fill="url(#sweater1)"/>
+
+        <!-- Collar shadow -->
+        <ellipse cx="100" cy="138" rx="22" ry="8" fill="rgba(0,0,0,0.3)"/>
+
+        <!-- Whistle lanyard -->
+        <path d="M 84 142 Q 100 166 116 142" stroke="#C5FF00" stroke-width="2.5" fill="none"/>
+        <!-- Whistle body -->
+        <rect x="92" y="162" width="16" height="20" rx="3" fill="#C5FF00"/>
+        <ellipse cx="100" cy="172" rx="3" ry="3" fill="#0F1419"/>
+        <!-- Highlight on whistle -->
+        <rect x="95" y="164" width="4" height="6" rx="1" fill="rgba(255,255,255,0.5)"/>
+
+        <!-- Approval thumbs up (right hand visible) -->
+        <circle cx="155" cy="180" r="18" fill="url(#skin1)"/>
+        <rect x="148" y="160" width="12" height="20" rx="6" fill="url(#skin1)"/>
+        <!-- Thumb up detail -->
+        <path d="M 150 158 Q 150 152 156 152 Q 162 152 162 158 L 162 175" stroke="#B8956F" stroke-width="1.5" fill="none"/>
+
+        <!-- Approval glow halo behind hand -->
+        <circle cx="155" cy="180" r="28" fill="rgba(197,255,0,0.2)" opacity="0.6"/>
+      </svg>
+      <div class="mister-card__label">Approva</div>
+      <div class="mister-card__name">Il Mister</div>
+      <div class="mister-card__desc">Vittoria · pollice in su · Filotto +1</div>
+    </div>
+
+    <!-- POSE 2: THINKING -->
+    <div class="mister-card">
+      <div class="mister-card__bg"></div>
+      <svg class="mister-illustration" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="275" rx="55" ry="6" fill="rgba(0,0,0,0.3)"/>
+
+        <defs>
+          <linearGradient id="skin2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#F5D4A8"/>
+            <stop offset="1" stop-color="#D9B68A"/>
+          </linearGradient>
+          <linearGradient id="sweater2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2A3340"/>
+            <stop offset="1" stop-color="#161C24"/>
+          </linearGradient>
+          <linearGradient id="hair2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9B8E7D"/>
+            <stop offset="1" stop-color="#6B5F50"/>
+          </linearGradient>
+        </defs>
+
+        <path d="M 65 70 Q 60 50 72 45 Q 78 55 78 85 Z" fill="url(#hair2)"/>
+        <path d="M 135 70 Q 140 50 128 45 Q 122 55 122 85 Z" fill="url(#hair2)"/>
+
+        <ellipse cx="100" cy="80" rx="38" ry="44" fill="url(#skin2)"/>
+        <ellipse cx="88" cy="65" rx="14" ry="10" fill="rgba(255,255,255,0.15)"/>
+
+        <!-- Eyebrows (one raised, thinking) -->
+        <path d="M 78 64 Q 86 64 94 64" stroke="#3D3026" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 106 60 Q 114 56 122 60" stroke="#3D3026" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <!-- Eyes (sidewise glance) -->
+        <ellipse cx="85" cy="78" rx="2.5" ry="3" fill="#0F1419"/>
+        <ellipse cx="112" cy="78" rx="2.5" ry="3" fill="#0F1419"/>
+
+        <path d="M 100 88 L 98 100 Q 100 104 103 102" stroke="#B8956F" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <!-- Mouth (pursed, thinking) -->
+        <path d="M 92 112 Q 100 110 108 112" stroke="#3D3026" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <rect x="88" y="120" width="24" height="14" fill="url(#skin2)"/>
+        <path d="M 55 138 Q 50 145 50 160 L 60 270 L 140 270 L 150 160 Q 150 145 145 138 Q 130 132 100 132 Q 70 132 55 138 Z" fill="url(#sweater2)"/>
+        <ellipse cx="100" cy="138" rx="22" ry="8" fill="rgba(0,0,0,0.3)"/>
+
+        <path d="M 84 142 Q 100 166 116 142" stroke="#C5FF00" stroke-width="2.5" fill="none"/>
+        <rect x="92" y="162" width="16" height="20" rx="3" fill="#C5FF00"/>
+        <ellipse cx="100" cy="172" rx="3" ry="3" fill="#0F1419"/>
+        <rect x="95" y="164" width="4" height="6" rx="1" fill="rgba(255,255,255,0.5)"/>
+
+        <!-- Hand on chin -->
+        <circle cx="135" cy="115" r="14" fill="url(#skin2)"/>
+        <rect x="125" y="115" width="20" height="40" rx="10" fill="url(#sweater2)"/>
+
+        <!-- Thought bubble dots -->
+        <circle cx="155" cy="55" r="4" fill="rgba(197,255,0,0.6)"/>
+        <circle cx="168" cy="42" r="6" fill="rgba(197,255,0,0.8)"/>
+        <circle cx="183" cy="28" r="9" fill="var(--lime,#C5FF00)"/>
+      </svg>
+      <div class="mister-card__label">Pensa</div>
+      <div class="mister-card__name">Il Mister</div>
+      <div class="mister-card__desc">Mid-game · suggerimento · clue</div>
+    </div>
+
+    <!-- POSE 3: DISAPPROVAL -->
+    <div class="mister-card">
+      <div class="mister-card__bg" style="background:radial-gradient(ellipse at center,rgba(255,107,107,0.08) 0%,transparent 60%)"></div>
+      <svg class="mister-illustration" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="275" rx="55" ry="6" fill="rgba(0,0,0,0.3)"/>
+
+        <defs>
+          <linearGradient id="skin3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#F5D4A8"/>
+            <stop offset="1" stop-color="#D9B68A"/>
+          </linearGradient>
+          <linearGradient id="sweater3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2A3340"/>
+            <stop offset="1" stop-color="#161C24"/>
+          </linearGradient>
+          <linearGradient id="hair3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#9B8E7D"/>
+            <stop offset="1" stop-color="#6B5F50"/>
+          </linearGradient>
+        </defs>
+
+        <path d="M 65 70 Q 60 50 72 45 Q 78 55 78 85 Z" fill="url(#hair3)"/>
+        <path d="M 135 70 Q 140 50 128 45 Q 122 55 122 85 Z" fill="url(#hair3)"/>
+
+        <ellipse cx="100" cy="80" rx="38" ry="44" fill="url(#skin3)"/>
+        <ellipse cx="88" cy="65" rx="14" ry="10" fill="rgba(255,255,255,0.15)"/>
+
+        <!-- Eyebrows angled down (frown) -->
+        <path d="M 78 60 L 94 66" stroke="#3D3026" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M 122 60 L 106 66" stroke="#3D3026" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+
+        <!-- Eyes squinted -->
+        <path d="M 82 80 Q 87 82 92 80" stroke="#0F1419" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M 108 80 Q 113 82 118 80" stroke="#0F1419" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <path d="M 100 88 L 98 100 Q 100 104 103 102" stroke="#B8956F" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+        <!-- Mouth (frown) -->
+        <path d="M 88 116 Q 100 110 112 116" stroke="#3D3026" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+        <rect x="88" y="120" width="24" height="14" fill="url(#skin3)"/>
+
+        <!-- Sweater with arms crossed -->
+        <path d="M 55 138 Q 50 145 50 160 L 60 270 L 140 270 L 150 160 Q 150 145 145 138 Q 130 132 100 132 Q 70 132 55 138 Z" fill="url(#sweater3)"/>
+        <ellipse cx="100" cy="138" rx="22" ry="8" fill="rgba(0,0,0,0.3)"/>
+
+        <!-- Arms crossed -->
+        <path d="M 55 165 Q 55 170 100 175 Q 145 170 145 165 Q 145 200 100 195 Q 55 200 55 165 Z" fill="url(#sweater3)" stroke="#0F1419" stroke-width="1"/>
+
+        <!-- Hand left -->
+        <circle cx="60" cy="182" r="10" fill="url(#skin3)"/>
+        <!-- Hand right -->
+        <circle cx="140" cy="178" r="10" fill="url(#skin3)"/>
+
+        <path d="M 84 142 Q 100 166 116 142" stroke="#C5FF00" stroke-width="2.5" fill="none" opacity="0.5"/>
+        <rect x="92" y="162" width="16" height="20" rx="3" fill="#C5FF00" opacity="0.5"/>
+      </svg>
+      <div class="mister-card__label">Disapprova</div>
+      <div class="mister-card__name">Il Mister</div>
+      <div class="mister-card__desc">Errore · retrocessione · time-out</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 03 · PLAYER CARDS RARITY -->
+<section>
+  <div class="sec__header">
+    <span class="sec__num">03 · Carte giocatori</span>
+    <h2 class="sec__title">Cinque rarità,<br>cinque atmosfere.</h2>
+    <p class="sec__sub">Sistema rarità tipo Clash Royale applicato al calcio. Ogni giocatore indovinato sblocca una carta da collezione. Hover per shine effect.</p>
+  </div>
+  <div class="cards-row">
+
+    <div class="player-card player-card--common">
+      <span class="player-card__rarity">Common</span>
+      <div class="player-card__art">
+        <svg viewBox="0 0 100 100" fill="rgba(255,255,255,0.9)">
+          <circle cx="50" cy="35" r="18"/>
+          <path d="M 20 90 Q 20 60 50 60 Q 80 60 80 90 Z"/>
+        </svg>
+      </div>
+      <div class="player-card__name">Marco Rossi</div>
+      <div class="player-card__role">Difensore</div>
+      <div class="player-card__stars">
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+      </div>
+    </div>
+
+    <div class="player-card player-card--rare">
+      <span class="player-card__rarity">Rare</span>
+      <div class="player-card__art">
+        <svg viewBox="0 0 100 100" fill="rgba(255,255,255,0.95)">
+          <circle cx="50" cy="35" r="18"/>
+          <path d="M 20 90 Q 20 60 50 60 Q 80 60 80 90 Z"/>
+        </svg>
+      </div>
+      <div class="player-card__name">Vialli</div>
+      <div class="player-card__role">Attaccante</div>
+      <div class="player-card__stars">
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+      </div>
+    </div>
+
+    <div class="player-card player-card--epic">
+      <span class="player-card__rarity">Epic</span>
+      <div class="player-card__art">
+        <svg viewBox="0 0 100 100" fill="rgba(255,255,255,0.95)">
+          <circle cx="50" cy="35" r="18"/>
+          <path d="M 20 90 Q 20 60 50 60 Q 80 60 80 90 Z"/>
+        </svg>
+      </div>
+      <div class="player-card__name">Pirlo</div>
+      <div class="player-card__role">Regista</div>
+      <div class="player-card__stars">
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+      </div>
+    </div>
+
+    <div class="player-card player-card--legendary">
+      <span class="player-card__rarity">Legendary</span>
+      <div class="player-card__art">
+        <svg viewBox="0 0 100 100" fill="rgba(255,255,255,0.95)">
+          <circle cx="50" cy="35" r="18"/>
+          <path d="M 20 90 Q 20 60 50 60 Q 80 60 80 90 Z"/>
+        </svg>
+      </div>
+      <div class="player-card__name">Baggio</div>
+      <div class="player-card__role">Trequartista</div>
+      <div class="player-card__stars">
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+      </div>
+    </div>
+
+    <div class="player-card player-card--mythic">
+      <span class="player-card__rarity">Mythic</span>
+      <div class="player-card__art">
+        <svg viewBox="0 0 100 100" fill="rgba(15,20,25,0.85)">
+          <circle cx="50" cy="35" r="18"/>
+          <path d="M 20 90 Q 20 60 50 60 Q 80 60 80 90 Z"/>
+        </svg>
+      </div>
+      <div class="player-card__name">Maradona</div>
+      <div class="player-card__role">Fantasia</div>
+      <div class="player-card__stars">
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        <svg class="player-card__star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 04 · BUTTONS -->
+<section>
+  <div class="sec__header">
+    <span class="sec__num">04 · Pulsanti</span>
+    <h2 class="sec__title">Press veri,<br>peso reale.</h2>
+    <p class="sec__sub">Pulsanti chunky con drop shadow gioco-stile. Premuti affondano (3px). Niente flat-tech tight 6px.</p>
+  </div>
+  <div class="btn-stage">
+    <div class="btn-tile">
+      <div class="btn-tile__label">Primary · stati</div>
+      <div class="btn-tile__stack">
+        <button class="gbtn gbtn--primary">Gioca ora</button>
+        <button class="gbtn gbtn--primary gbtn--lg gbtn--icon-r">
+          Inizia il Daily
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <button class="gbtn gbtn--primary gbtn--full">CTA full-width</button>
+      </div>
+    </div>
+    <div class="btn-tile">
+      <div class="btn-tile__label">Gold · Coral · Ghost</div>
+      <div class="btn-tile__stack">
+        <button class="gbtn gbtn--gold">★ Sblocca Premium</button>
+        <button class="gbtn gbtn--coral">Esci dal match</button>
+        <button class="gbtn gbtn--ghost">Più tardi</button>
+      </div>
+    </div>
+    <div class="btn-tile">
+      <div class="btn-tile__label">Pressed (active state)</div>
+      <div class="btn-tile__stack">
+        <button class="gbtn gbtn--primary" style="transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1)">Premuto · affonda</button>
+        <button class="gbtn gbtn--gold" style="transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1)">Drop 3px</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · STATUS / GAMIFICATION -->
+<section>
+  <div class="sec__header">
+    <span class="sec__num">05 · Status & Gamification</span>
+    <h2 class="sec__title">Il valore visibile.</h2>
+    <p class="sec__sub">Streak con fiamma vera, XP bar animata, trofei con halo, Cambi a forma di cuore. Tutto comunica un'identità ludica.</p>
+  </div>
+  <div class="gam-grid">
+
+    <div class="streak-tile">
+      <div class="streak-tile__halo"></div>
+      <svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="flame1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFD93D"/>
+            <stop offset="0.5" stop-color="#FF8C42"/>
+            <stop offset="1" stop-color="#FF6B35"/>
+          </linearGradient>
+          <linearGradient id="flameCore" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFE76D"/>
+            <stop offset="1" stop-color="#FFD93D"/>
+          </linearGradient>
+        </defs>
+        <!-- Outer flame -->
+        <path d="M 40 5 Q 60 30 55 55 Q 70 50 70 75 Q 70 95 40 95 Q 10 95 10 75 Q 10 50 25 55 Q 20 30 40 5 Z" fill="url(#flame1)"/>
+        <!-- Inner flame -->
+        <path d="M 40 25 Q 52 45 48 65 Q 58 60 58 78 Q 58 90 40 90 Q 22 90 22 78 Q 22 60 32 65 Q 28 45 40 25 Z" fill="url(#flameCore)"/>
+        <!-- Core -->
+        <ellipse cx="40" cy="78" rx="12" ry="10" fill="#FFFFFF" opacity="0.6"/>
+      </svg>
+      <div class="streak-tile__num">28</div>
+      <div class="streak-tile__label">Filotto Giorni</div>
+    </div>
+
+    <div class="xp-tile">
+      <div class="xp-tile__head">
+        <div class="xp-tile__level">12</div>
+        <div class="xp-tile__name">Caratura</div>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-bar__fill"></div>
+      </div>
+      <div class="xp-tile__stats">
+        <span><b>€34.2M</b></span>
+        <span>€52M next →</span>
+      </div>
+    </div>
+
+    <div class="trophy-tile">
+      <div class="trophy-tile__halo"></div>
+      <svg viewBox="0 0 80 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="trophy1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#FFE76D"/>
+            <stop offset="1" stop-color="#E8B821"/>
+          </linearGradient>
+        </defs>
+        <!-- Cup body -->
+        <path d="M 22 15 L 58 15 L 56 50 Q 56 60 40 60 Q 24 60 24 50 Z" fill="url(#trophy1)"/>
+        <!-- Highlight -->
+        <path d="M 26 18 L 34 18 L 33 45 Q 33 50 28 50 Z" fill="rgba(255,255,255,0.3)"/>
+        <!-- Handles -->
+        <path d="M 22 22 Q 12 22 12 32 Q 12 42 22 42" stroke="url(#trophy1)" stroke-width="4" fill="none"/>
+        <path d="M 58 22 Q 68 22 68 32 Q 68 42 58 42" stroke="url(#trophy1)" stroke-width="4" fill="none"/>
+        <!-- Base -->
+        <rect x="32" y="60" width="16" height="8" fill="url(#trophy1)"/>
+        <rect x="22" y="68" width="36" height="10" rx="2" fill="url(#trophy1)"/>
+        <rect x="18" y="78" width="44" height="6" rx="2" fill="#E8B821"/>
+        <!-- Star -->
+        <path d="M 40 22 L 43 30 L 51 31 L 45 36 L 47 44 L 40 40 L 33 44 L 35 36 L 29 31 L 37 30 Z" fill="#FFFFFF" opacity="0.8"/>
+      </svg>
+      <div class="trophy-tile__count">14</div>
+      <div class="trophy-tile__label">Trofei</div>
+    </div>
+
+    <div class="hearts-tile">
+      <div class="hearts-tile__row">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="heart1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FF8585"/>
+              <stop offset="1" stop-color="#FF6B6B"/>
+            </linearGradient>
+          </defs>
+          <path d="M 12 21 Q 4 15 4 9 Q 4 5 8 5 Q 11 5 12 8 Q 13 5 16 5 Q 20 5 20 9 Q 20 15 12 21 Z" fill="url(#heart1)"/>
+          <path d="M 8 8 Q 8 11 11 13" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <svg viewBox="0 0 24 24">
+          <path d="M 12 21 Q 4 15 4 9 Q 4 5 8 5 Q 11 5 12 8 Q 13 5 16 5 Q 20 5 20 9 Q 20 15 12 21 Z" fill="url(#heart1)"/>
+          <path d="M 8 8 Q 8 11 11 13" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <svg viewBox="0 0 24 24">
+          <path d="M 12 21 Q 4 15 4 9 Q 4 5 8 5 Q 11 5 12 8 Q 13 5 16 5 Q 20 5 20 9 Q 20 15 12 21 Z" fill="url(#heart1)"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,107,107,0.3)" stroke-width="2">
+          <path d="M 12 21 Q 4 15 4 9 Q 4 5 8 5 Q 11 5 12 8 Q 13 5 16 5 Q 20 5 20 9 Q 20 15 12 21 Z"/>
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,107,107,0.3)" stroke-width="2">
+          <path d="M 12 21 Q 4 15 4 9 Q 4 5 8 5 Q 11 5 12 8 Q 13 5 16 5 Q 20 5 20 9 Q 20 15 12 21 Z"/>
+        </svg>
+      </div>
+      <div class="hearts-tile__count">3<span>/5</span></div>
+      <div class="hearts-tile__label">Cambi · 03:42</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 06 · BADGES -->
+<section>
+  <div class="sec__header">
+    <span class="sec__num">06 · Badges & status</span>
+    <h2 class="sec__title">Etichette di gioco.</h2>
+    <p class="sec__sub">Pill rotonde piene (game style) per status: live, premium, rarità, eventi. Non solo "hairline editorial".</p>
+  </div>
+  <div class="badges-stage">
+    <div class="badge-tile">
+      <div class="badge-tile__label">Status di gioco</div>
+      <div class="badge-tile__row">
+        <span class="g-badge g-badge--live">Live</span>
+        <span class="g-badge g-badge--lime">Nuovo</span>
+        <span class="g-badge g-badge--gold">Premium</span>
+        <span class="g-badge g-badge--coral">Hot</span>
+        <span class="g-badge g-badge--blue">Info</span>
+        <span class="g-badge g-badge--purple">Epic</span>
+      </div>
+    </div>
+    <div class="badge-tile">
+      <div class="badge-tile__label">Eventi tematici</div>
+      <div class="badge-tile__row">
+        <span class="g-badge g-badge--lime">⚽ Champions Night</span>
+        <span class="g-badge g-badge--coral">🔥 Derby Week</span>
+        <span class="g-badge g-badge--gold">★ Pallone d'Oro</span>
+        <span class="g-badge g-badge--outline">Mercato</span>
+      </div>
+    </div>
+    <div class="badge-tile">
+      <div class="badge-tile__label">Counters</div>
+      <div class="badge-tile__row">
+        <span class="g-badge g-badge--outline">+ €2.4M oggi</span>
+        <span class="g-badge g-badge--outline">28 Filotto</span>
+        <span class="g-badge g-badge--gold">14 Trofei</span>
+        <span class="g-badge g-badge--lime">3° Serie A</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · MOBILE SCREENS -->
+<section>
+  <div class="sec__header">
+    <span class="sec__num">07 · Schermate mobili</span>
+    <h2 class="sec__title">Le pagine, vere.</h2>
+    <p class="sec__sub">Tre schermate reali al livello game UI: Hub home con character e currency, Win celebration con player card sbloccata e ricompense, Duello live con timer ring e battle layout.</p>
+  </div>
+
+  <div class="phones-row">
+
+    <!-- PHONE 1 · HUB HOME -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="status-bar">
+            <span>9:41</span>
+            <span class="status-bar__dots"></span>
+          </div>
+          <div class="app">
+            <div class="hub-header">
+              <div class="hub-avatar">
+                <div class="hub-avatar__pic">MR</div>
+                <div class="hub-avatar__name">
+                  Marco
+                  <small>Caratura 12</small>
+                </div>
+              </div>
+              <div class="hub-header__currency">
+                <div class="curr-pill curr-pill--gold">
+                  <div class="curr-pill__icon">
+                    <svg viewBox="0 0 24 24" fill="#0F1419"><circle cx="12" cy="12" r="9" fill="none" stroke="#0F1419" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-weight="900" font-size="10">€</text></svg>
+                  </div>
+                  340
+                </div>
+                <div class="curr-pill curr-pill--lime">
+                  <div class="curr-pill__icon">
+                    <svg viewBox="0 0 24 24" fill="#0F1419"><path d="M 12 3 L 14 9 L 21 10 L 16 14 L 17 21 L 12 18 L 7 21 L 8 14 L 3 10 L 10 9 Z"/></svg>
+                  </div>
+                  12
+                </div>
+              </div>
+            </div>
+
+            <div class="hub-streak">
+              <div class="hub-streak__flame">
+                <svg viewBox="0 0 80 100">
+                  <defs>
+                    <linearGradient id="flameMini" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#FFD93D"/>
+                      <stop offset="0.5" stop-color="#FF8C42"/>
+                      <stop offset="1" stop-color="#FF6B35"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M 40 5 Q 60 30 55 55 Q 70 50 70 75 Q 70 95 40 95 Q 10 95 10 75 Q 10 50 25 55 Q 20 30 40 5 Z" fill="url(#flameMini)"/>
+                  <ellipse cx="40" cy="78" rx="12" ry="10" fill="#FFFFFF" opacity="0.6"/>
+                </svg>
+              </div>
+              <div class="hub-streak__text">
+                <strong>28 giorni</strong>
+                <small>Continua il filotto · −12h alla deadline</small>
+              </div>
+              <button class="hub-streak__cta">Gioca</button>
+            </div>
+
+            <div class="hub-grid">
+              <div class="hub-card hub-card--daily">
+                <span class="hub-card__badge">Oggi</span>
+                <div class="hub-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <circle cx="10" cy="10" r="7"/><path d="M15.5 15.5L20 20"/>
+                  </svg>
+                </div>
+                <div>
+                  <div class="hub-card__title">Daily Player</div>
+                  <div class="hub-card__sub">Indovina · 8 indizi · #143</div>
+                </div>
+              </div>
+              <div class="hub-card hub-card--duel">
+                <div class="hub-card__icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12L7 8V11H17V8L21 12L17 16V13H7V16Z"/></svg>
+                </div>
+                <div>
+                  <div class="hub-card__title">Duello</div>
+                  <div class="hub-card__sub">3 sfide pendenti</div>
+                </div>
+              </div>
+              <div class="hub-card hub-card--grid">
+                <div class="hub-card__icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="5" height="5" rx="1"/><rect x="9.5" y="3" width="5" height="5" rx="1"/><rect x="16" y="3" width="5" height="5" rx="1"/><rect x="3" y="9.5" width="5" height="5" rx="1"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><rect x="16" y="9.5" width="5" height="5" rx="1"/><rect x="3" y="16" width="5" height="5" rx="1"/><rect x="9.5" y="16" width="5" height="5" rx="1"/><rect x="16" y="16" width="5" height="5" rx="1"/></svg>
+                </div>
+                <div>
+                  <div class="hub-card__title">Grid</div>
+                  <div class="hub-card__sub">7/9 chiusa · oggi</div>
+                </div>
+              </div>
+              <div class="hub-card hub-card--live">
+                <div class="hub-card__icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                </div>
+                <div>
+                  <div class="hub-card__title">Live</div>
+                  <div class="hub-card__sub">Inter–Milan 1–1</div>
+                </div>
+              </div>
+              <div class="hub-card hub-card--career">
+                <div class="hub-card__icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/><path d="M11 13v6h2v-6"/><path d="M9 21h6"/></svg>
+                </div>
+                <div>
+                  <div class="hub-card__title">Carriera</div>
+                  <div class="hub-card__sub">Serie A · S4</div>
+                </div>
+              </div>
+              <div class="hub-card hub-card--explore">
+                <div class="hub-card__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M16 8L13 16L11 14L9 12L16 8Z" fill="currentColor"/></svg>
+                </div>
+                <div>
+                  <div class="hub-card__title">Esplora</div>
+                  <div class="hub-card__sub">Storia '90</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hub-bottom-nav">
+              <div class="hub-nav-item hub-nav-item--active">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L3 11h2v9h5v-6h4v6h5v-9h2L12 3Z"/></svg>
+                <span>Home</span>
+              </div>
+              <div class="hub-nav-item">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 21h10v-3H7v3ZM6 4v8a6 6 0 0 0 12 0V4H6Z"/></svg>
+                <span>Lega</span>
+              </div>
+              <div class="hub-nav-item hub-nav-item--play">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg>
+              </div>
+              <div class="hub-nav-item">
+                <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0v1H4v-1Z"/></svg>
+                <span>Profilo</span>
+              </div>
+              <div class="hub-nav-item">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6 2 2 6 2 12s4 10 10 10 10-4 10-10S18 2 12 2Zm0 4l1.4 4.6L18 12l-4.6 1.4L12 18l-1.4-4.6L6 12l4.6-1.4L12 6Z"/></svg>
+                <span>Esplora</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label"><span class="num">1</span> Hub home</div>
+    </div>
+
+    <!-- PHONE 2 · WIN -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="status-bar">
+            <span>9:43</span>
+            <span class="status-bar__dots"></span>
+          </div>
+          <div class="win-screen">
+            <div class="win-confetti">
+              <span style="left:10%;top:20%;background:#C5FF00;transform:rotate(15deg)"></span>
+              <span style="left:25%;top:40%;background:#FFD93D;transform:rotate(-30deg)"></span>
+              <span style="left:65%;top:25%;background:#9B72F2;transform:rotate(20deg)"></span>
+              <span style="left:80%;top:50%;background:#FF6B6B;transform:rotate(45deg)"></span>
+              <span style="left:45%;top:10%;background:#4ECDC4;transform:rotate(-15deg)"></span>
+              <span style="left:15%;top:60%;background:#C5FF00;transform:rotate(60deg)"></span>
+              <span style="left:88%;top:15%;background:#FFD93D;transform:rotate(0deg)"></span>
+            </div>
+
+            <div class="win-badge">
+              <div class="win-badge__ring"></div>
+              <svg class="win-badge__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 13l5 5L20 7"/>
+              </svg>
+            </div>
+
+            <h1 class="win-title">Indovinato!</h1>
+            <p class="win-sub">5 tentativi · 18% top community</p>
+
+            <div class="win-player">
+              <span class="win-player__rarity">Legendary</span>
+              <div class="win-player__art">
+                <svg viewBox="0 0 100 100" fill="currentColor">
+                  <circle cx="50" cy="35" r="18"/>
+                  <path d="M 20 90 Q 20 60 50 60 Q 80 60 80 90 Z"/>
+                </svg>
+              </div>
+              <div class="win-player__name">Roberto Baggio</div>
+              <div class="win-player__bio">Trequartista · Pallone d'Oro 1993</div>
+            </div>
+
+            <div class="win-rewards">
+              <div class="reward-tile">
+                <svg class="reward-tile__icon" viewBox="0 0 24 24" fill="#C5FF00"><circle cx="12" cy="12" r="9" fill="none" stroke="#C5FF00" stroke-width="2"/><text x="12" y="16" text-anchor="middle" font-weight="900" font-size="10" fill="#0F1419">€</text></svg>
+                <div class="reward-tile__num lime">+€5M</div>
+                <div class="reward-tile__label">Caratura</div>
+              </div>
+              <div class="reward-tile">
+                <svg class="reward-tile__icon" viewBox="0 0 24 24" fill="#FFD93D"><path d="M 12 3 L 14 9 L 21 10 L 16 14 L 17 21 L 12 18 L 7 21 L 8 14 L 3 10 L 10 9 Z"/></svg>
+                <div class="reward-tile__num gold">+25</div>
+                <div class="reward-tile__label">XP</div>
+              </div>
+              <div class="reward-tile">
+                <svg class="reward-tile__icon" viewBox="0 0 24 24" fill="#FF6B35"><path d="M 12 2 Q 18 8 16 14 Q 20 12 20 17 Q 20 22 12 22 Q 4 22 4 17 Q 4 12 8 14 Q 6 8 12 2 Z"/></svg>
+                <div class="reward-tile__num" style="color:#FF6B35">29 →</div>
+                <div class="reward-tile__label">Filotto</div>
+              </div>
+            </div>
+
+            <button class="gbtn gbtn--primary gbtn--full gbtn--lg">Continua</button>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label"><span class="num">2</span> Vittoria + Carta</div>
+    </div>
+
+    <!-- PHONE 3 · DUELLO -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="status-bar">
+            <span>21:08</span>
+            <span class="status-bar__dots"></span>
+          </div>
+          <div class="app">
+            <div class="duel-vs">
+              <div class="duel-player duel-player--me">
+                <div class="duel-player__avatar">MR</div>
+                <div class="duel-player__name">Marco</div>
+                <div class="duel-player__score">31</div>
+              </div>
+              <div class="duel-vs__sep">vs</div>
+              <div class="duel-player duel-player--opp">
+                <div class="duel-player__avatar">LO</div>
+                <div class="duel-player__name">Lorenzo</div>
+                <div class="duel-player__score">22</div>
+              </div>
+            </div>
+
+            <div class="duel-round">Round <b>4 di 5</b> · Storia</div>
+
+            <div class="duel-timer">
+              <div class="duel-timer__ring">
+                <svg viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"/>
+                  <circle cx="50" cy="50" r="42" stroke="url(#timerGrad)" stroke-width="8" fill="none"
+                          stroke-dasharray="264" stroke-dashoffset="120" stroke-linecap="round"/>
+                  <defs>
+                    <linearGradient id="timerGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0" stop-color="#C5FF00"/>
+                      <stop offset="1" stop-color="#9FCC00"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="duel-timer__num">7</div>
+              </div>
+            </div>
+
+            <div class="duel-question">
+              In che anno il Milan ha vinto la sua <b>prima</b> Coppa dei Campioni?
+            </div>
+
+            <div class="duel-answers">
+              <button class="duel-answer">1958</button>
+              <button class="duel-answer duel-answer--correct">1963</button>
+              <button class="duel-answer">1969</button>
+              <button class="duel-answer">1974</button>
+            </div>
+
+            <div style="text-align:center;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#C5FF00;margin-top:auto;padding:4px 8px;background:rgba(197,255,0,0.08);border-radius:8px">
+              ⚡ Bonus velocità · +8 punti
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-label"><span class="num">3</span> Duello live</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-tag">Goal · Mobile Game UI · <span class="lime">v1.0</span> · maggio 2026</div>
+  <div class="footer-cta">Questa è la direzione, finalmente.</div>
+</footer>
+
+</body>
+</html>

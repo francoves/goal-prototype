@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goal · Prototipo v2 — foto vere, card vive, copy onesto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#0F1419;--bg-1:#161C24;--bg-2:#1E2530;--bg-3:#2A3340;
+  --ink:#FFFFFF;--ink-2:#C5CCD8;--ink-3:#8B96A8;--ink-4:#5A6478;
+  --lime:#C5FF00;--coral:#FF6B6B;--gold:#FFD93D;--purple:#9B72F2;--blue:#4ECDC4;
+  --fire:#FF6B35;
+
+  /* Rarity */
+  --r-common:#94A3B8;
+  --r-rare:#4ECDC4;
+  --r-epic:#9B72F2;
+  --r-legend:#FFD93D;
+  --r-mythic:#C5FF00;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:500 16px/1.5 'Onest',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+svg{display:block;max-width:100%}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+img{display:block;max-width:100%}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:50;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;background:rgba(15,20,25,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06)}
+.topbar__brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-0.02em}
+.topbar__logo{width:34px;height:34px;background:linear-gradient(135deg,var(--lime) 0%,#9FCC00 100%);border-radius:10px;display:grid;place-items:center;color:var(--bg);font-weight:900;font-size:18px;box-shadow:0 4px 12px rgba(197,255,0,0.3),inset 0 1px 0 rgba(255,255,255,0.4)}
+.topbar__pill{padding:5px 12px;background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.3);border-radius:99px;font-weight:700;font-size:11px;color:var(--fire);letter-spacing:0.04em;text-transform:uppercase}
+
+/* INTRO — copy senza AI patterns */
+.intro{padding:80px 32px 30px;max-width:880px;margin:0 auto}
+.intro h1{font-weight:900;font-size:clamp(48px,7vw,76px);line-height:1.02;letter-spacing:-0.04em;margin-bottom:18px}
+.intro h1 span{color:var(--lime)}
+.intro p{font-size:17px;color:var(--ink-2);line-height:1.55;max-width:600px}
+.intro__note{margin-top:18px;font-size:12px;color:var(--ink-4);font-style:italic;max-width:560px;line-height:1.55}
+
+/* SCREENS GRID */
+.screens-section{padding:50px 24px;max-width:1600px;margin:0 auto}
+.screens-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px}
+@media (max-width:1400px){.screens-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:1080px){.screens-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:700px){.screens-grid{grid-template-columns:1fr;max-width:380px;margin:0 auto}}
+.cell{display:flex;flex-direction:column;align-items:center;gap:14px}
+.cell__lbl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:12px;color:var(--ink-2);text-transform:uppercase;letter-spacing:0.06em}
+.cell__num{width:22px;height:22px;background:var(--lime);color:var(--bg);border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:10px;font-family:'JetBrains Mono',monospace}
+.cell__sub{font-size:11px;color:var(--ink-4);font-weight:500;text-transform:none;letter-spacing:0;margin-top:2px;text-align:center;max-width:260px}
+
+/* PHONE FRAME */
+.phone{width:100%;max-width:340px;aspect-ratio:9/19.5;background:#000;border-radius:42px;border:9px solid #1A1F26;padding:9px;box-shadow:0 32px 64px rgba(0,0,0,0.6),inset 0 0 0 1px rgba(255,255,255,0.06);position:relative;overflow:hidden}
+.phone::before{content:'';position:absolute;top:16px;left:50%;transform:translateX(-50%);width:100px;height:28px;background:#000;border-radius:99px;z-index:10}
+.screen{width:100%;height:100%;background:var(--bg);border-radius:32px;overflow:hidden;position:relative;font-size:13px;color:var(--ink)}
+.statusbar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:14px 26px 0;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:var(--ink);z-index:4}
+.statusbar__dots::after{content:'•••'}
+.app{padding:52px 16px 18px;height:100%;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+
+/* =========================================================
+   SCREEN 1 · WELCOME — copy diretto, no AI patterns
+   ========================================================= */
+.s1-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1577467014381-aa7c13a3c0c2?w=600&q=80') center/cover;z-index:0;filter:saturate(1.1) contrast(1.1)}
+.s1-bg::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,20,25,0.4) 0%,rgba(15,20,25,0.6) 30%,rgba(15,20,25,0.95) 75%,var(--bg) 100%)}
+.s1-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 20%,rgba(197,255,0,0.15) 0%,transparent 50%)}
+.s1-content{position:relative;z-index:2;padding:54px 24px 24px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:12px}
+.s1-logo{width:52px;height:52px;background:linear-gradient(135deg,var(--lime) 0%,#9FCC00 100%);border-radius:16px;display:grid;place-items:center;color:var(--bg);font:900 28px 'Onest';box-shadow:0 8px 24px rgba(197,255,0,0.4),inset 0 2px 0 rgba(255,255,255,0.4);margin-bottom:6px}
+.s1-eyebrow{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.15em;color:var(--lime)}
+.s1-title{font-weight:900;font-size:36px;line-height:1;letter-spacing:-0.035em}
+.s1-title em{font-style:normal;color:var(--lime)}
+.s1-sub{font-size:13px;color:var(--ink-2);line-height:1.55;margin-bottom:4px}
+.s1-cta{padding:15px;background:linear-gradient(180deg,#D7FF3D 0%,var(--lime) 50%,#9FCC00 100%);color:var(--bg);font-weight:800;font-size:14px;border-radius:14px;text-align:center;box-shadow:0 4px 0 #7A9F00,inset 0 1px 0 rgba(255,255,255,0.3)}
+.s1-cta-2{padding:13px;background:rgba(255,255,255,0.06);color:var(--ink);font-weight:600;font-size:13px;border-radius:14px;text-align:center;border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(10px)}
+
+/* =========================================================
+   SCREEN 2 · CHOOSE TEAM — con flags piccole
+   ========================================================= */
+.s2-h{padding-top:6px}
+.s2-eb{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;display:flex;justify-content:space-between}
+.s2-eb b{color:var(--lime)}
+.s2-title{font-weight:900;font-size:26px;letter-spacing:-0.025em;line-height:1.05;margin-bottom:4px}
+.s2-sub{font-size:12px;color:var(--ink-3);margin-bottom:8px}
+.s2-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex:1;align-content:start}
+.team{background:var(--bg-1);border:1.5px solid rgba(255,255,255,0.05);border-radius:13px;padding:8px 5px;text-align:center;cursor:pointer;transition:all 200ms;position:relative;overflow:hidden}
+.team:hover{border-color:rgba(197,255,0,0.4);transform:translateY(-1px)}
+.team--on{border-color:var(--lime);background:linear-gradient(180deg,rgba(197,255,0,0.12) 0%,rgba(197,255,0,0.04) 100%);box-shadow:0 0 16px rgba(197,255,0,0.2),inset 0 1px 0 rgba(197,255,0,0.2)}
+.team--on::after{content:'✓';position:absolute;top:4px;right:5px;width:14px;height:14px;background:var(--lime);color:var(--bg);border-radius:50%;font-size:9px;font-weight:900;display:grid;place-items:center}
+.team__c{width:32px;height:32px;border-radius:50%;margin:0 auto 4px;display:grid;place-items:center;font:900 11px 'Onest';color:var(--ink);position:relative;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.team__n{font-weight:700;font-size:9px;color:var(--ink-2);text-transform:uppercase;letter-spacing:0.04em;line-height:1.1}
+
+.s2-bottom{margin-top:auto;display:flex;flex-direction:column;gap:6px;padding-top:8px}
+.s2-cta{padding:14px;background:linear-gradient(180deg,#D7FF3D 0%,var(--lime) 50%,#9FCC00 100%);color:var(--bg);font-weight:800;font-size:14px;border-radius:14px;text-align:center;box-shadow:0 3px 0 #7A9F00}
+.s2-skip{text-align:center;font-size:12px;color:var(--ink-3);font-weight:600;padding:6px}
+
+/* =========================================================
+   SCREEN 3 · HUB HOME — card con identità diverse
+   ========================================================= */
+.hh{display:flex;justify-content:space-between;align-items:center}
+.hh-l{display:flex;align-items:center;gap:10px}
+.hh-pic{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--lime) 0%,#9FCC00 100%);display:grid;place-items:center;color:var(--bg);font:900 15px 'Onest';box-shadow:0 4px 12px rgba(197,255,0,0.3);position:relative}
+.hh-pic::after{content:'12';position:absolute;bottom:-3px;right:-4px;min-width:18px;height:18px;padding:0 4px;background:var(--gold);color:var(--bg);border-radius:99px;display:grid;place-items:center;font:800 10px 'JetBrains Mono';border:2px solid var(--bg)}
+.hh-n{font-weight:800;font-size:13px;letter-spacing:-0.01em}
+.hh-n small{display:block;font-weight:600;font-size:9px;color:var(--ink-3);margin-top:1px;text-transform:uppercase;letter-spacing:0.06em}
+.cur{display:flex;gap:5px}
+.cur-i{display:inline-flex;align-items:center;gap:4px;padding:4px 9px 4px 4px;background:rgba(0,0,0,0.4);border-radius:99px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10px;border:1px solid rgba(255,255,255,0.06)}
+.cur-i__b{width:14px;height:14px;border-radius:50%;display:grid;place-items:center}
+.cur-i--g .cur-i__b{background:var(--gold)}
+.cur-i--l .cur-i__b{background:var(--lime)}
+
+/* STREAK BANNER — più ricco con texture flame */
+.streak{background:radial-gradient(ellipse at top left,#3D2210 0%,#1A0F08 100%);border:1px solid rgba(255,107,53,0.3);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+.streak::before{content:'';position:absolute;top:-30%;right:-20%;width:60%;height:160%;background:radial-gradient(ellipse,rgba(255,107,53,0.4) 0%,transparent 60%);animation:flicker 2.8s ease-in-out infinite;pointer-events:none}
+@keyframes flicker{0%,100%{opacity:0.5;transform:translate(0,0)}50%{opacity:0.9;transform:translate(-2px,2px)}}
+.streak svg{width:34px;height:42px;flex-shrink:0;position:relative;filter:drop-shadow(0 0 10px rgba(255,107,53,0.7))}
+.streak__t{flex:1;position:relative}
+.streak__t b{display:block;font-weight:800;font-size:18px;letter-spacing:-0.02em;line-height:1}
+.streak__t small{font-size:10px;color:#FF8C42;font-weight:600;margin-top:2px;display:block}
+.streak__cta{padding:7px 12px;background:linear-gradient(180deg,#FF8C42 0%,#FF6B35 100%);color:var(--ink);border-radius:10px;font-weight:800;font-size:11px;box-shadow:0 2px 0 #C04A1F;text-transform:uppercase;letter-spacing:0.04em;position:relative}
+
+/* MODE CARDS — ognuna con identità diversa */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:1}
+
+/* Daily — full width, foto giocatore sfocata in bg */
+.mode-daily{grid-column:span 2;background:linear-gradient(135deg,#9FCC00 0%,var(--lime) 100%);color:var(--bg);border-radius:16px;padding:14px;position:relative;overflow:hidden;min-height:118px;box-shadow:0 6px 16px rgba(197,255,0,0.25)}
+.mode-daily__bg{position:absolute;top:-10%;right:-15%;width:55%;height:130%;border-radius:50%;background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg/250px-%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg');background-size:cover;background-position:center;filter:blur(8px) saturate(1.2);opacity:0.4;mix-blend-mode:luminosity}
+.mode-daily__c{position:relative}
+.mode-daily__h{display:flex;justify-content:space-between;align-items:start;margin-bottom:auto}
+.mode-daily__b{display:inline-block;padding:3px 9px;background:var(--bg);color:var(--lime);font-weight:800;font-size:9px;text-transform:uppercase;letter-spacing:0.08em;border-radius:99px}
+.mode-daily__n{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:10px;opacity:0.6;letter-spacing:0.04em}
+.mode-daily__t{font-weight:900;font-size:22px;letter-spacing:-0.025em;line-height:1;margin-top:32px}
+.mode-daily__s{font-size:11px;font-weight:700;opacity:0.7;margin-top:3px}
+
+/* Duello — purple */
+.mode-duel{background:linear-gradient(135deg,#9B72F2 0%,#7C3AED 100%);color:#fff;border-radius:14px;padding:12px;position:relative;overflow:hidden;min-height:98px;display:flex;flex-direction:column;justify-content:space-between}
+.mode-duel__b{position:absolute;top:8px;right:8px;background:#fff;color:#7C3AED;font-weight:900;font-size:9px;padding:2px 6px;border-radius:99px;letter-spacing:0.04em}
+.mode-duel__c{display:flex;gap:-6px;align-items:center}
+.mode-duel__av{width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:#7C3AED;display:grid;place-items:center;font:900 9px 'Onest';margin-left:-6px}
+.mode-duel__av:first-child{margin-left:0}
+.mode-duel__t{font-weight:800;font-size:13px;line-height:1}
+.mode-duel__s{font-size:10px;opacity:0.85;font-weight:600;margin-top:2px}
+
+/* Grid — aqua */
+.mode-grid{background:linear-gradient(135deg,#4ECDC4 0%,#14B8A6 100%);color:var(--bg);border-radius:14px;padding:12px;position:relative;overflow:hidden;min-height:98px;display:flex;flex-direction:column;justify-content:space-between}
+.mode-grid__vis{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;width:38px;height:38px;margin-bottom:6px}
+.mode-grid__vis span{background:var(--bg);border-radius:2px;opacity:0.85}
+.mode-grid__vis span.empty{opacity:0.2}
+.mode-grid__t{font-weight:800;font-size:13px;line-height:1}
+.mode-grid__s{font-size:10px;opacity:0.75;font-weight:700;margin-top:2px}
+
+/* Live — coral con pulse */
+.mode-live{background:linear-gradient(135deg,#FF6B6B 0%,#DC2626 100%);color:#fff;border-radius:14px;padding:12px;position:relative;overflow:hidden;min-height:98px;display:flex;flex-direction:column;justify-content:space-between}
+.mode-live__dot{position:absolute;top:10px;right:10px;width:7px;height:7px;background:#fff;border-radius:50%;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.5)}}
+.mode-live__match{font-weight:800;font-size:12px;line-height:1.2}
+.mode-live__score{font-family:'JetBrains Mono',monospace;font-weight:900;font-size:20px;margin-top:4px;letter-spacing:-0.02em}
+.mode-live__min{font-size:10px;font-weight:700;opacity:0.85;margin-top:2px}
+
+/* Carriera — gold */
+.mode-carr{background:linear-gradient(135deg,var(--gold) 0%,#F59E0B 100%);color:var(--bg);border-radius:14px;padding:12px;position:relative;overflow:hidden;min-height:98px;display:flex;flex-direction:column;justify-content:space-between}
+.mode-carr__path{display:flex;align-items:center;gap:3px}
+.mode-carr__step{width:8px;height:8px;border-radius:50%;background:var(--bg);opacity:0.3}
+.mode-carr__step.done{opacity:1}
+.mode-carr__step.curr{width:12px;height:12px;background:var(--bg);box-shadow:0 0 0 2px var(--gold),0 0 0 3px var(--bg)}
+.mode-carr__line{flex:1;height:2px;background:var(--bg);opacity:0.3;border-radius:2px}
+.mode-carr__t{font-weight:800;font-size:13px;line-height:1}
+.mode-carr__s{font-size:10px;font-weight:700;opacity:0.75;margin-top:2px}
+
+/* Esplora — dark con compass */
+.mode-esp{background:linear-gradient(135deg,#2A3340 0%,#1E2530 100%);border:1px solid rgba(255,255,255,0.08);color:#fff;border-radius:14px;padding:12px;position:relative;overflow:hidden;min-height:98px;display:flex;flex-direction:column;justify-content:space-between}
+.mode-esp__icon{width:24px;height:24px;color:var(--ink-2)}
+.mode-esp__t{font-weight:800;font-size:13px;line-height:1}
+.mode-esp__s{font-size:10px;color:var(--ink-3);font-weight:600;margin-top:2px}
+
+/* BOTTOM NAV */
+.bn{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px 6px 14px;background:var(--bg-1);border-top:1px solid rgba(255,255,255,0.06);border-radius:24px 24px 0 0}
+.nv{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-3)}
+.nv svg{width:20px;height:20px}
+.nv span{font-weight:700;font-size:8px;text-transform:uppercase;letter-spacing:0.04em}
+.nv--active{color:var(--lime)}
+.nv--play svg{width:32px;height:32px;padding:8px;background:linear-gradient(180deg,var(--lime) 0%,#9FCC00 100%);border-radius:50%;color:var(--bg);box-shadow:0 4px 14px rgba(197,255,0,0.4);margin-top:-16px}
+
+/* =========================================================
+   SCREEN 4 · DAILY INTRO — foto vera sfocata
+   ========================================================= */
+.s4-mast{display:flex;justify-content:space-between;align-items:baseline;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-3);padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.s4-mast b{color:var(--lime)}
+.s4-h{margin-top:4px}
+.s4-h__t{font-weight:900;font-size:24px;letter-spacing:-0.025em;line-height:1.05;margin-bottom:2px}
+.s4-h__s{font-size:11px;color:var(--ink-3);font-weight:600}
+.s4-photo{position:relative;width:100%;aspect-ratio:1;border-radius:20px;overflow:hidden;margin:10px 0;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08)}
+.s4-photo img{width:100%;height:100%;object-fit:cover;filter:blur(28px) saturate(1.3) brightness(0.7);transform:scale(1.15)}
+.s4-photo::after{content:'?';position:absolute;inset:0;display:grid;place-items:center;font:900 130px 'Onest';color:rgba(255,255,255,0.85);text-shadow:0 4px 20px rgba(0,0,0,0.6);line-height:1}
+.s4-photo__edition{position:absolute;top:10px;left:12px;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:9px;color:#fff;text-transform:uppercase;letter-spacing:0.08em;background:rgba(0,0,0,0.5);padding:3px 8px;border-radius:99px;backdrop-filter:blur(10px);z-index:2}
+.s4-photo__att{position:absolute;bottom:10px;right:12px;display:flex;gap:3px;z-index:2}
+.s4-photo__att span{width:14px;height:4px;background:rgba(255,255,255,0.3);border-radius:99px}
+.s4-photo__att span.used{background:var(--fire)}
+.s4-photo__att span.curr{background:var(--lime)}
+
+.s4-clues{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.s4-clue{background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px 10px;position:relative;overflow:hidden}
+.s4-clue__l{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3)}
+.s4-clue__v{font-weight:700;font-size:13px;margin-top:2px;display:flex;align-items:center;gap:5px}
+.s4-clue__v img{height:11px;width:auto;border-radius:1px}
+.s4-cta{margin-top:auto;padding:14px;background:linear-gradient(180deg,#D7FF3D 0%,var(--lime) 50%,#9FCC00 100%);color:var(--bg);font-weight:800;font-size:14px;border-radius:14px;text-align:center;box-shadow:0 3px 0 #7A9F00}
+
+/* =========================================================
+   SCREEN 5 · DAILY WON — Baggio rivelato
+   ========================================================= */
+.s5{position:relative;height:100%;display:flex;flex-direction:column;padding:54px 16px 18px;gap:8px}
+.s5-bg{position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(255,217,61,0.18) 0%,transparent 50%);pointer-events:none}
+.s5-conf{position:absolute;inset:54px 0 60% 0;pointer-events:none;z-index:2}
+.s5-conf span{position:absolute;width:6px;height:10px;border-radius:2px}
+.s5-mast{position:relative;display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-3)}
+.s5-mast b{color:var(--gold)}
+.s5-photo-wrap{position:relative;margin:8px auto 0}
+.s5-photo{width:140px;height:140px;border-radius:50%;overflow:hidden;border:5px solid var(--gold);box-shadow:0 0 40px rgba(255,217,61,0.6),inset 0 0 0 2px rgba(0,0,0,0.4);position:relative}
+.s5-photo img{width:100%;height:100%;object-fit:cover}
+.s5-photo::after{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,0.15) 50%,transparent 70%);pointer-events:none}
+.s5-stamp{position:absolute;top:0;right:-10px;background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--bg);padding:5px 11px;border-radius:99px;font-weight:900;font-size:9px;text-transform:uppercase;letter-spacing:0.08em;border:2px solid var(--bg);z-index:3;box-shadow:0 4px 10px rgba(0,0,0,0.4)}
+.s5-flag{position:absolute;bottom:4px;left:4px;width:24px;height:18px;border-radius:3px;overflow:hidden;border:2px solid var(--bg);box-shadow:0 2px 6px rgba(0,0,0,0.4);z-index:3}
+.s5-flag img{width:100%;height:100%;object-fit:cover}
+.s5-name{text-align:center;font-weight:900;font-size:24px;letter-spacing:-0.03em;margin-top:12px;line-height:1}
+.s5-bio{text-align:center;font-size:11px;color:var(--ink-3);margin-top:4px;font-weight:600}
+.s5-bio b{color:var(--gold);font-weight:800}
+.s5-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.s5-stat{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:8px 6px;text-align:center;position:relative;overflow:hidden}
+.s5-stat__v{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:17px;line-height:1}
+.s5-stat__v.l{color:var(--lime)}
+.s5-stat__v.g{color:var(--gold)}
+.s5-stat__v.f{color:var(--fire)}
+.s5-stat__l{font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-top:3px}
+.s5-action{display:grid;grid-template-columns:1fr 1.6fr;gap:6px;margin-top:auto}
+.s5-action button{padding:13px 8px;font-weight:800;font-size:12px;border-radius:12px}
+.s5-share{background:rgba(255,255,255,0.06);color:var(--ink);border:1px solid rgba(255,255,255,0.1)}
+.s5-next{background:linear-gradient(180deg,#D7FF3D 0%,var(--lime) 50%,#9FCC00 100%);color:var(--bg);box-shadow:0 3px 0 #7A9F00}
+
+/* =========================================================
+   SCREEN 6 · PROFILE / COLLECTION — CARTE VIVE
+   ========================================================= */
+.s6-h{display:flex;align-items:center;gap:12px}
+.s6-pic{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--lime) 0%,#9FCC00 100%);display:grid;place-items:center;font:900 20px 'Onest';color:var(--bg);box-shadow:0 4px 14px rgba(197,255,0,0.3);position:relative}
+.s6-pic small{position:absolute;bottom:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;background:var(--gold);color:var(--bg);border-radius:99px;display:grid;place-items:center;font:800 11px 'JetBrains Mono';border:2px solid var(--bg)}
+.s6-n b{display:block;font-weight:900;font-size:16px;letter-spacing:-0.02em}
+.s6-n span{font-size:10px;color:var(--ink-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-top:2px}
+.s6-n span b{display:inline;color:var(--lime);font-weight:800;letter-spacing:normal}
+.s6-stats{display:flex;gap:5px}
+.s6-stat{flex:1;text-align:center;padding:7px 4px;background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:10px}
+.s6-stat__v{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:15px;line-height:1}
+.s6-stat__v.l{color:var(--lime)}
+.s6-stat__v.g{color:var(--gold)}
+.s6-stat__v.f{color:var(--fire)}
+.s6-stat__l{font-size:8px;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);font-family:'Onest',sans-serif;font-weight:700;margin-top:3px}
+.s6-tabs{display:flex;gap:3px;padding:3px;background:var(--bg-1);border-radius:10px;font-weight:700;font-size:10px}
+.s6-tab{flex:1;padding:6px;text-align:center;border-radius:7px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.04em}
+.s6-tab--on{background:var(--lime);color:var(--bg)}
+
+/* COLLECTION GRID — cards molto vive */
+.col-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;grid-auto-rows:128px;min-height:0;flex-shrink:1}
+
+/* Player card — base */
+.pc{position:relative;border-radius:11px;overflow:hidden;cursor:pointer;transition:transform 280ms cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);background:linear-gradient(180deg,#2A3340,#1E2530)}
+.pc:hover{transform:translateY(-3px) scale(1.03)}
+.pc__bg{position:absolute;inset:0;background-size:cover;background-position:center top;background-color:#1E2530}
+.pc--common .pc__bg{background-color:#475569}
+.pc--rare .pc__bg{background-color:#0F766E}
+.pc--epic .pc__bg{background-color:#7C3AED}
+.pc--legend .pc__bg{background-color:#92400E}
+.pc--mythic .pc__bg{background-color:#65A30D}
+.pc__overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,0.4) 60%,rgba(0,0,0,0.95) 100%)}
+.pc__pattern{position:absolute;inset:0;background-image:radial-gradient(circle at 50% 50%,rgba(255,255,255,0.06) 1px,transparent 1px);background-size:6px 6px;mix-blend-mode:overlay;opacity:0.6}
+.pc__strip{position:absolute;left:0;top:0;bottom:0;width:3px}
+.pc__rarity{position:absolute;top:5px;right:5px;padding:2px 6px;border-radius:99px;font-weight:900;font-size:7px;text-transform:uppercase;letter-spacing:0.06em;z-index:3;box-shadow:0 2px 6px rgba(0,0,0,0.5)}
+.pc__flag{position:absolute;top:5px;left:5px;width:18px;height:13px;border-radius:2px;overflow:hidden;border:1px solid rgba(0,0,0,0.4);box-shadow:0 1px 3px rgba(0,0,0,0.4);z-index:3}
+.pc__flag img{width:100%;height:100%;object-fit:cover;display:block}
+.pc__pos{position:absolute;bottom:24px;left:5px;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);color:#fff;padding:2px 6px;border-radius:4px;font-weight:800;font-size:8px;text-transform:uppercase;letter-spacing:0.04em;z-index:3}
+.pc__name{position:absolute;bottom:5px;left:5px;right:5px;font-weight:800;font-size:10px;line-height:1.1;letter-spacing:-0.01em;z-index:3;color:#fff}
+.pc__stars{position:absolute;bottom:5px;right:5px;display:flex;gap:0px;z-index:3}
+.pc__stars svg{width:8px;height:8px;color:var(--gold);filter:drop-shadow(0 1px 1px rgba(0,0,0,0.6))}
+
+/* RARITY treatments — ognuna identità diversa */
+.pc--common{border:2px solid var(--r-common)}
+.pc--common .pc__rarity{background:var(--r-common);color:var(--bg)}
+.pc--common .pc__strip{background:var(--r-common)}
+
+.pc--rare{border:2px solid var(--r-rare);box-shadow:0 4px 14px rgba(78,205,196,0.3),inset 0 1px 0 rgba(78,205,196,0.3)}
+.pc--rare .pc__rarity{background:var(--r-rare);color:var(--bg)}
+.pc--rare .pc__strip{background:linear-gradient(180deg,var(--r-rare),#14B8A6)}
+
+.pc--epic{border:2px solid var(--r-epic);box-shadow:0 4px 16px rgba(155,114,242,0.4),inset 0 1px 0 rgba(155,114,242,0.3)}
+.pc--epic .pc__rarity{background:var(--r-epic);color:#fff}
+.pc--epic .pc__strip{background:linear-gradient(180deg,var(--r-epic),#7C3AED)}
+.pc--epic .pc__overlay{background:linear-gradient(180deg,rgba(155,114,242,0.15) 0%,transparent 30%,rgba(0,0,0,0.5) 60%,rgba(0,0,0,0.95) 100%)}
+
+.pc--legend{border:2px solid var(--r-legend);box-shadow:0 4px 20px rgba(255,217,61,0.5),inset 0 1px 0 rgba(255,217,61,0.4)}
+.pc--legend .pc__rarity{background:linear-gradient(135deg,#FFE76D,var(--r-legend));color:var(--bg)}
+.pc--legend .pc__strip{background:linear-gradient(180deg,#FFE76D,var(--r-legend),#F59E0B)}
+.pc--legend .pc__overlay{background:linear-gradient(180deg,rgba(255,217,61,0.18) 0%,transparent 35%,rgba(0,0,0,0.5) 60%,rgba(0,0,0,0.95) 100%)}
+.pc--legend::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 30%,rgba(255,217,61,0.18) 48%,transparent 60%);pointer-events:none;animation:shine 3.5s ease-in-out infinite}
+@keyframes shine{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+
+.pc--mythic{border:2px solid var(--r-mythic);box-shadow:0 4px 24px rgba(197,255,0,0.55),inset 0 1px 0 rgba(197,255,0,0.4);animation:mythicGlow 3s ease-in-out infinite}
+.pc--mythic .pc__rarity{background:linear-gradient(135deg,#D7FF3D,var(--r-mythic));color:var(--bg)}
+.pc--mythic .pc__strip{background:linear-gradient(180deg,#D7FF3D,var(--r-mythic),#9FCC00)}
+.pc--mythic .pc__overlay{background:linear-gradient(180deg,rgba(197,255,0,0.2) 0%,transparent 30%,rgba(0,0,0,0.5) 60%,rgba(0,0,0,0.95) 100%)}
+@keyframes mythicGlow{0%,100%{box-shadow:0 4px 24px rgba(197,255,0,0.5),inset 0 1px 0 rgba(197,255,0,0.4)}50%{box-shadow:0 4px 32px rgba(197,255,0,0.75),inset 0 1px 0 rgba(197,255,0,0.5)}}
+.pc--mythic::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 35%,rgba(197,255,0,0.22) 50%,transparent 65%);pointer-events:none;animation:shine 2.5s ease-in-out infinite}
+
+/* Locked card */
+.pc--locked{border:2px dashed rgba(255,255,255,0.08);background:var(--bg-1)}
+.pc--locked .pc__bg,.pc--locked .pc__overlay,.pc--locked .pc__pattern{display:none}
+.pc--locked__icon{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-4);z-index:2}
+.pc--locked__icon svg{width:20px;height:20px}
+.pc--locked__name{position:absolute;bottom:5px;left:5px;right:5px;font-weight:800;font-size:10px;color:var(--ink-4);text-align:center;font-family:'JetBrains Mono',monospace}
+
+/* =========================================================
+   SCREEN 7 · LEGA LEADERBOARD — riche row + flag
+   ========================================================= */
+.s7-mast{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.s7-mast b{font-weight:800;font-size:14px;letter-spacing:-0.01em}
+.s7-mast small{display:block;font-size:9px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-top:1px;font-weight:700}
+.s7-tier{padding:5px 11px;background:linear-gradient(135deg,#FFE76D,var(--gold));color:var(--bg);font-weight:900;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;border-radius:99px;box-shadow:0 2px 8px rgba(255,217,61,0.4)}
+.s7-me{background:linear-gradient(135deg,rgba(197,255,0,0.14) 0%,rgba(197,255,0,0.06) 100%);border:1px solid rgba(197,255,0,0.35);border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden}
+.s7-me::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lime)}
+.s7-me__r{font:900 22px 'JetBrains Mono';color:var(--lime);min-width:30px;text-align:right}
+.s7-me__av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--lime) 0%,#9FCC00 100%);display:grid;place-items:center;font:900 12px 'Onest';color:var(--bg)}
+.s7-me__n{flex:1;font-weight:800;font-size:13px;letter-spacing:-0.01em}
+.s7-me__n small{display:block;font-size:9px;color:var(--ink-3);font-weight:700;margin-top:1px;text-transform:uppercase;letter-spacing:0.04em}
+.s7-me__n small b{color:var(--lime)}
+.s7-me__p{font:800 15px 'JetBrains Mono';color:var(--lime)}
+
+.s7-list{display:flex;flex-direction:column;gap:3px;flex:1;overflow-y:auto}
+.s7-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:10px;position:relative}
+.s7-row--top{background:linear-gradient(90deg,rgba(255,217,61,0.1) 0%,transparent 100%)}
+.s7-row--prom{background:rgba(197,255,0,0.04)}
+.s7-row--demo{background:rgba(255,107,107,0.04)}
+.s7-row__r{font:800 14px 'JetBrains Mono';color:var(--ink-3);min-width:22px;text-align:right}
+.s7-row__r.gold{color:var(--gold);font-size:15px}
+.s7-row__r.silver{color:#C0C0C0;font-size:15px}
+.s7-row__r.bronze{color:#CD7F32;font-size:15px}
+.s7-row__av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 10px 'Onest';color:#fff;position:relative;flex-shrink:0}
+.s7-row__av__flag{position:absolute;bottom:-2px;right:-2px;width:11px;height:8px;border-radius:1px;overflow:hidden;border:1px solid var(--bg);background:#333}
+.s7-row__av__flag img{width:100%;height:100%;object-fit:cover;display:block}
+.s7-row__n{flex:1;font-weight:700;font-size:11px;letter-spacing:-0.01em}
+.s7-row__n small{display:block;font-size:9px;color:var(--ink-4);font-weight:600;margin-top:1px}
+.s7-row__p{font:800 11px 'JetBrains Mono';color:var(--ink-2)}
+.s7-div{display:flex;align-items:center;gap:8px;margin:5px 0;font:700 9px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.08em;color:var(--lime)}
+.s7-div::before,.s7-div::after{content:'';flex:1;height:1px;background:rgba(197,255,0,0.25)}
+.s7-div--demo{color:var(--coral)}
+.s7-div--demo::before,.s7-div--demo::after{background:rgba(255,107,107,0.25)}
+
+/* =========================================================
+   SCREEN 8 · DUELLO — VS con flag
+   ========================================================= */
+.s8-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:linear-gradient(180deg,var(--bg-1) 0%,var(--bg-2) 100%);border-radius:16px;padding:12px;border:1px solid rgba(255,255,255,0.06);position:relative}
+.s8-p{text-align:center}
+.s8-p__av{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font:900 17px 'Onest';position:relative}
+.s8-p--me .s8-p__av{background:linear-gradient(135deg,var(--lime) 0%,#9FCC00 100%);color:var(--bg);box-shadow:0 4px 12px rgba(197,255,0,0.3)}
+.s8-p--opp .s8-p__av{background:linear-gradient(135deg,#FF6B6B 0%,#DC2626 100%);color:#fff}
+.s8-p__av__flag{position:absolute;bottom:-2px;right:-2px;width:14px;height:11px;border-radius:2px;overflow:hidden;border:2px solid var(--bg);background:#333;z-index:2}
+.s8-p__av__flag img{width:100%;height:100%;object-fit:cover;display:block}
+.s8-p__n{font-weight:800;font-size:11px;letter-spacing:-0.01em}
+.s8-p__s{font:900 24px 'JetBrains Mono';margin-top:2px;line-height:1}
+.s8-p--me .s8-p__s{color:var(--lime)}
+.s8-vs__x{font-weight:900;font-size:14px;color:var(--ink-3)}
+.s8-round{text-align:center;font-weight:700;font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em}
+.s8-round b{color:var(--lime)}
+.s8-timer{display:flex;justify-content:center;margin:4px 0}
+.s8-timer__r{width:90px;height:90px;position:relative}
+.s8-timer__r svg{transform:rotate(-90deg);width:100%;height:100%}
+.s8-timer__n{position:absolute;inset:0;display:grid;place-items:center;font:900 30px 'JetBrains Mono';color:var(--lime)}
+.s8-q{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:12px;text-align:center;font-weight:700;font-size:13px;line-height:1.4}
+.s8-q b{color:var(--lime)}
+.s8-ar{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.s8-a{background:var(--bg-2);border:1px solid rgba(255,255,255,0.06);border-radius:11px;padding:12px 8px;text-align:center;font-weight:800;font-size:13px}
+.s8-a--ok{background:linear-gradient(180deg,#C5FF00 0%,#9FCC00 100%);color:var(--bg);border-color:var(--lime);box-shadow:0 0 14px rgba(197,255,0,0.4)}
+.s8-bonus{text-align:center;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:var(--lime);padding:6px;background:rgba(197,255,0,0.08);border-radius:8px;margin-top:auto}
+
+/* FOOTER */
+footer{padding:50px 32px;text-align:center;background:var(--bg-1);margin-top:50px;border-top:1px solid rgba(255,255,255,0.06)}
+.foot-m{font-weight:700;font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em}
+.foot-m .l{color:var(--lime)}
+.foot-c{font-weight:900;font-size:22px;margin-top:12px;letter-spacing:-0.02em}
+.foot-c .l{color:var(--lime)}
+.foot-n{font-size:11px;color:var(--ink-4);margin-top:14px;line-height:1.55;max-width:540px;margin-left:auto;margin-right:auto;font-style:italic}
+
+/* TEAM COLORS — known Serie A clubs */
+.tc-juve{background:repeating-linear-gradient(90deg,#000 0 4px,#fff 4px 8px);color:#000;text-shadow:0 1px 2px rgba(255,255,255,0.8)}
+.tc-milan{background:linear-gradient(135deg,#A4040C 0%,#000 100%);color:#fff}
+.tc-inter{background:linear-gradient(135deg,#0066A3 0%,#000 100%);color:#fff}
+.tc-roma{background:linear-gradient(135deg,#8E1F2F 0%,#F0BC42 100%);color:#fff}
+.tc-lazio{background:linear-gradient(135deg,#87D8F7 0%,#0E5292 100%);color:#fff}
+.tc-napoli{background:linear-gradient(135deg,#12A0D7 0%,#003D80 100%);color:#fff}
+.tc-fiore{background:linear-gradient(135deg,#5B1F8C 0%,#2E0E4A 100%);color:#fff}
+.tc-atalanta{background:linear-gradient(135deg,#1F62B6 0%,#000 100%);color:#fff}
+.tc-toro{background:linear-gradient(135deg,#7A1F2A 0%,#3A0D14 100%);color:#fff}
+.tc-bologna{background:linear-gradient(135deg,#A0182D 0%,#0E2954 100%);color:#fff}
+.tc-genoa{background:linear-gradient(135deg,#A8222C 0%,#0E2954 100%);color:#fff}
+.tc-samp{background:linear-gradient(135deg,#1163AF 0%,#A8222C 100%);color:#fff}
+.tc-lecce{background:linear-gradient(135deg,#FBC02D 0%,#A02020 100%);color:#000}
+.tc-empoli{background:linear-gradient(135deg,#1163AF 0%,#0A3D6E 100%);color:#fff}
+.tc-udinese{background:linear-gradient(135deg,#000 0%,#5A5A5A 100%);color:#fff}
+.tc-verona{background:linear-gradient(135deg,#FBC02D 0%,#0E2954 100%);color:#000}
+.tc-cagliari{background:linear-gradient(135deg,#A2182A 0%,#0E2954 100%);color:#fff}
+.tc-monza{background:linear-gradient(135deg,#A8182A 0%,#fff 100%);color:#fff}
+.tc-como{background:linear-gradient(135deg,#0066A3 0%,#fff 100%);color:#fff}
+.tc-parma{background:linear-gradient(135deg,#FBC02D 0%,#0E2954 100%);color:#000}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="topbar__brand">
+    <div class="topbar__logo">G</div>
+    Goal · Prototipo
+  </div>
+  <div class="topbar__pill">v2 · foto vere · card vive</div>
+</nav>
+
+<!-- INTRO — copy diretto, niente AI patterns -->
+<section class="intro">
+  <h1>Otto schermate.<br>Carte con foto vere.<br>Copy che <span>parla italiano</span>.</h1>
+  <p>Riscrittura completa. Foto Wikimedia (Baggio, Pirlo, Maldini, Totti, Maradona, Buffon), bandiere flagcdn, squadre Serie A con colori reali, e niente più frasi a tre affermazioni o "X. Non Y." nel copy.</p>
+  <p class="intro__note">v2 risolve due problemi insieme: card piatte (ora hanno bandiera, ruolo, stelle, holographic shine sulle rarità alte) e copy AI-tells (ora frasi singole, idiomi calcistici, niente liste a tre).</p>
+</section>
+
+<!-- SCREENS GRID -->
+<section class="screens-section">
+  <div class="screens-grid">
+
+    <!-- ============ SCREEN 1 · WELCOME ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="statusbar__dots"></span></div>
+          <div class="s1-bg"></div>
+          <div class="s1-content">
+            <div class="s1-logo">G</div>
+            <div class="s1-eyebrow">Football italiano · ogni giorno</div>
+            <h1 class="s1-title">Si gioca.<br>Anche <em>oggi</em>.</h1>
+            <p class="s1-sub">L'app italiana di sfide quotidiane sul calcio. Mille beta tester selezionati prima del lancio di settembre.</p>
+            <button class="s1-cta">Entra in waitlist</button>
+            <button class="s1-cta-2">Ho già un account</button>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">1</span><span>Welcome<span class="cell__sub">Hero photo stadio · waitlist</span></span></div>
+    </div>
+
+    <!-- ============ SCREEN 2 · CHOOSE TEAM ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="statusbar__dots"></span></div>
+          <div class="app">
+            <div class="s2-h">
+              <div class="s2-eb"><span>Onboarding · <b>02 / 04</b></span><span>Salta →</span></div>
+              <h2 class="s2-title">Chi tifi?</h2>
+              <p class="s2-sub">La cambi anche dopo. Tranquillo.</p>
+            </div>
+            <div class="s2-grid">
+              <div class="team"><div class="team__c tc-juve">J</div><div class="team__n">Juve</div></div>
+              <div class="team team--on"><div class="team__c tc-milan">M</div><div class="team__n">Milan</div></div>
+              <div class="team"><div class="team__c tc-inter">I</div><div class="team__n">Inter</div></div>
+              <div class="team"><div class="team__c tc-roma">R</div><div class="team__n">Roma</div></div>
+              <div class="team"><div class="team__c tc-lazio">L</div><div class="team__n">Lazio</div></div>
+              <div class="team"><div class="team__c tc-napoli">N</div><div class="team__n">Napoli</div></div>
+              <div class="team"><div class="team__c tc-fiore">F</div><div class="team__n">Fiore</div></div>
+              <div class="team"><div class="team__c tc-atalanta">A</div><div class="team__n">Atal.</div></div>
+              <div class="team"><div class="team__c tc-toro">T</div><div class="team__n">Toro</div></div>
+              <div class="team"><div class="team__c tc-bologna">B</div><div class="team__n">Bologna</div></div>
+              <div class="team"><div class="team__c tc-genoa">G</div><div class="team__n">Genoa</div></div>
+              <div class="team"><div class="team__c tc-samp">S</div><div class="team__n">Samp</div></div>
+              <div class="team"><div class="team__c tc-cagliari">C</div><div class="team__n">Cagliari</div></div>
+              <div class="team"><div class="team__c tc-lecce">L</div><div class="team__n">Lecce</div></div>
+              <div class="team"><div class="team__c tc-empoli">E</div><div class="team__n">Empoli</div></div>
+              <div class="team"><div class="team__c tc-udinese">U</div><div class="team__n">Udin.</div></div>
+              <div class="team"><div class="team__c tc-verona">V</div><div class="team__n">Verona</div></div>
+              <div class="team"><div class="team__c tc-monza">M</div><div class="team__n">Monza</div></div>
+              <div class="team"><div class="team__c tc-como">C</div><div class="team__n">Como</div></div>
+              <div class="team"><div class="team__c tc-parma">P</div><div class="team__n">Parma</div></div>
+            </div>
+            <div class="s2-bottom">
+              <button class="s2-cta">Vai avanti col Milan</button>
+              <div class="s2-skip">— oppure cerco la mia squadra</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">2</span><span>Squadra del cuore<span class="cell__sub">20 Serie A con colori reali · check lime</span></span></div>
+    </div>
+
+    <!-- ============ SCREEN 3 · HUB HOME ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="statusbar__dots"></span></div>
+          <div class="app">
+            <div class="hh">
+              <div class="hh-l">
+                <div class="hh-pic">MR</div>
+                <div class="hh-n">Buongiorno, Marco<small>Caratura €34M</small></div>
+              </div>
+              <div class="cur">
+                <div class="cur-i cur-i--g"><div class="cur-i__b"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.5" fill="none" stroke="#0F1419" stroke-width="1"/><text x="5" y="7" text-anchor="middle" font-weight="900" font-size="5" fill="#0F1419">€</text></svg></div>340</div>
+                <div class="cur-i cur-i--l"><div class="cur-i__b"><svg width="10" height="10" viewBox="0 0 16 16"><path d="M 8 2 L 9 6 L 13 6.5 L 10 9 L 11 13 L 8 11 L 5 13 L 6 9 L 3 6.5 L 7 6 Z" fill="#0F1419"/></svg></div>12</div>
+              </div>
+            </div>
+            <div class="streak">
+              <svg viewBox="0 0 80 100"><defs><linearGradient id="fl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD93D"/><stop offset="0.5" stop-color="#FF8C42"/><stop offset="1" stop-color="#FF6B35"/></linearGradient></defs><path d="M 40 5 Q 60 30 55 55 Q 70 50 70 75 Q 70 95 40 95 Q 10 95 10 75 Q 10 50 25 55 Q 20 30 40 5 Z" fill="url(#fl1)"/><ellipse cx="40" cy="78" rx="12" ry="10" fill="#fff" opacity="0.5"/></svg>
+              <div class="streak__t"><b>28 giorni di filotto</b><small>Mancano 12 ore</small></div>
+              <button class="streak__cta">Salva</button>
+            </div>
+            <div class="modes">
+              <!-- Daily — foto Baggio sfocata sul lato -->
+              <div class="mode-daily">
+                <div class="mode-daily__bg"></div>
+                <div class="mode-daily__c">
+                  <div class="mode-daily__h">
+                    <span class="mode-daily__b">Oggi</span>
+                    <span class="mode-daily__n">#143</span>
+                  </div>
+                  <div class="mode-daily__t">Trequartista,<br>anni '90.</div>
+                  <div class="mode-daily__s">Otto indizi · 12.847 ci stanno provando</div>
+                </div>
+              </div>
+              <!-- Duello con avatar -->
+              <div class="mode-duel">
+                <span class="mode-duel__b">3</span>
+                <div class="mode-duel__c">
+                  <div class="mode-duel__av" style="background:linear-gradient(135deg,var(--lime),#9FCC00);color:#0F1419">LO</div>
+                  <div class="mode-duel__av" style="background:linear-gradient(135deg,#FF6B6B,#DC2626)">SG</div>
+                  <div class="mode-duel__av" style="background:linear-gradient(135deg,#4ECDC4,#14B8A6);color:#0F1419">AC</div>
+                </div>
+                <div>
+                  <div class="mode-duel__t">Duello</div>
+                  <div class="mode-duel__s">Lorenzo ti aspetta</div>
+                </div>
+              </div>
+              <!-- Grid visual 3x3 -->
+              <div class="mode-grid">
+                <div class="mode-grid__vis">
+                  <span></span><span></span><span></span>
+                  <span></span><span></span><span class="empty"></span>
+                  <span></span><span class="empty"></span><span class="empty"></span>
+                </div>
+                <div>
+                  <div class="mode-grid__t">Grid</div>
+                  <div class="mode-grid__s">7 su 9 oggi</div>
+                </div>
+              </div>
+              <!-- Live -->
+              <div class="mode-live">
+                <span class="mode-live__dot"></span>
+                <div class="mode-live__match">Inter–Milan</div>
+                <div>
+                  <div class="mode-live__score">1–1</div>
+                  <div class="mode-live__min">67' · pronostici aperti</div>
+                </div>
+              </div>
+              <!-- Carriera con path -->
+              <div class="mode-carr">
+                <div class="mode-carr__path">
+                  <div class="mode-carr__step done"></div><div class="mode-carr__line" style="opacity:1"></div>
+                  <div class="mode-carr__step done"></div><div class="mode-carr__line" style="opacity:1"></div>
+                  <div class="mode-carr__step curr"></div><div class="mode-carr__line"></div>
+                  <div class="mode-carr__step"></div>
+                </div>
+                <div>
+                  <div class="mode-carr__t">Carriera</div>
+                  <div class="mode-carr__s">In Serie A, stagione 4</div>
+                </div>
+              </div>
+              <!-- Esplora -->
+              <div class="mode-esp">
+                <svg class="mode-esp__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M16 8L13 16L11 14L9 12L16 8Z" fill="currentColor"/></svg>
+                <div>
+                  <div class="mode-esp__t">Esplora</div>
+                  <div class="mode-esp__s">Anni '90 in Serie A</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bn">
+            <div class="nv nv--active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L3 11h2v9h5v-6h4v6h5v-9h2L12 3Z"/></svg><span>Home</span></div>
+            <div class="nv"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 21h10v-3H7v3ZM6 4v8a6 6 0 0 0 12 0V4H6Z"/></svg><span>Lega</span></div>
+            <div class="nv nv--play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></div>
+            <div class="nv"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0v1H4v-1Z"/></svg><span>Profilo</span></div>
+            <div class="nv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M16 8L13 16L11 14L9 12L16 8Z" fill="currentColor"/></svg><span>Esplora</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">3</span><span>Hub home<span class="cell__sub">Ogni card ha identità · daily con Baggio bg</span></span></div>
+    </div>
+
+    <!-- ============ SCREEN 4 · DAILY INTRO ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:43</span><span class="statusbar__dots"></span></div>
+          <div class="app">
+            <div class="s4-mast"><span>Daily · <b>19.05.2026</b></span><span>#143</span></div>
+            <div class="s4-h">
+              <h2 class="s4-h__t">Trequartista, anni '90.</h2>
+              <p class="s4-h__s">Quattro indizi rivelati su otto</p>
+            </div>
+            <div class="s4-photo">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg/400px-%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg" alt="">
+              <div class="s4-photo__edition">12.847 oggi</div>
+              <div class="s4-photo__att">
+                <span class="used"></span><span class="used"></span><span class="used"></span><span class="used"></span>
+                <span class="curr"></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <div class="s4-clues">
+              <div class="s4-clue"><div class="s4-clue__l">Lega</div><div class="s4-clue__v">Serie A</div></div>
+              <div class="s4-clue"><div class="s4-clue__l">Nazione</div><div class="s4-clue__v"><img src="https://flagcdn.com/w40/it.png" alt="">Italia</div></div>
+              <div class="s4-clue"><div class="s4-clue__l">Ruolo</div><div class="s4-clue__v">Trequartista</div></div>
+              <div class="s4-clue"><div class="s4-clue__l">Trofei</div><div class="s4-clue__v">2 Scudetti</div></div>
+            </div>
+            <button class="s4-cta">Indovina · te ne restano 4</button>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">4</span><span>Daily Player<span class="cell__sub">Foto Baggio sfocata + bandiera Italia</span></span></div>
+    </div>
+
+    <!-- ============ SCREEN 5 · DAILY WON ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="s5">
+            <div class="s5-bg"></div>
+            <div class="s5-conf">
+              <span style="left:10%;top:10%;background:#C5FF00;transform:rotate(15deg)"></span>
+              <span style="left:25%;top:25%;background:#FFD93D;transform:rotate(-30deg)"></span>
+              <span style="left:65%;top:14%;background:#9B72F2;transform:rotate(20deg)"></span>
+              <span style="left:82%;top:32%;background:#FF6B6B;transform:rotate(45deg)"></span>
+              <span style="left:45%;top:6%;background:#4ECDC4;transform:rotate(-15deg)"></span>
+              <span style="left:88%;top:9%;background:#FFD93D;transform:rotate(0deg)"></span>
+            </div>
+            <div class="statusbar"><span>9:44</span><span class="statusbar__dots"></span></div>
+            <div class="s5-mast" style="margin-top:46px"><span>Indovinato · <b>5 su 8</b></span><span>Top 18%</span></div>
+            <div class="s5-photo-wrap">
+              <div class="s5-photo">
+                <span class="s5-stamp">Legendary</span>
+                <div class="s5-flag"><img src="https://flagcdn.com/w80/it.png" alt="Italia"></div>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg/400px-%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg" alt="Baggio">
+              </div>
+            </div>
+            <h2 class="s5-name">Roberto Baggio</h2>
+            <p class="s5-bio">Il Divin Codino · <b>Pallone d'Oro 1993</b></p>
+            <div class="s5-stats">
+              <div class="s5-stat"><div class="s5-stat__v l">+€5M</div><div class="s5-stat__l">Caratura</div></div>
+              <div class="s5-stat"><div class="s5-stat__v g">+25</div><div class="s5-stat__l">XP</div></div>
+              <div class="s5-stat"><div class="s5-stat__v f">29</div><div class="s5-stat__l">Filotto</div></div>
+            </div>
+            <div class="s5-action">
+              <button class="s5-share">↗ Condividi</button>
+              <button class="s5-next">Continua</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">5</span><span>Indovinato — Baggio<span class="cell__sub">Foto vera rivelata + bandiera tricolore</span></span></div>
+    </div>
+
+    <!-- ============ SCREEN 6 · PROFILE / COLLECTION ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="statusbar__dots"></span></div>
+          <div class="app">
+            <div class="s6-h">
+              <div class="s6-pic">MR<small>12</small></div>
+              <div class="s6-n"><b>Marco Rossi</b><span>Caratura <b>€34M</b> · Milan</span></div>
+            </div>
+            <div class="s6-stats">
+              <div class="s6-stat"><div class="s6-stat__v l">28</div><div class="s6-stat__l">Filotto</div></div>
+              <div class="s6-stat"><div class="s6-stat__v g">14</div><div class="s6-stat__l">Trofei</div></div>
+              <div class="s6-stat"><div class="s6-stat__v">47</div><div class="s6-stat__l">Carte</div></div>
+              <div class="s6-stat"><div class="s6-stat__v">3°</div><div class="s6-stat__l">Lega</div></div>
+            </div>
+            <div class="s6-tabs">
+              <div class="s6-tab s6-tab--on">Collezione</div>
+              <div class="s6-tab">Bacheca</div>
+              <div class="s6-tab">Stats</div>
+            </div>
+            <div class="col-grid">
+
+              <!-- Baggio · Legendary -->
+              <div class="pc pc--legend">
+                <div class="pc__bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg/400px-%D8%B1%D9%88%D8%A8%D8%B1%D8%AA%D9%88_%D8%A8%D8%A7%D8%AC%D9%88_%28cropped%29.jpg')"></div>
+                <div class="pc__overlay"></div>
+                <div class="pc__pattern"></div>
+                <div class="pc__strip"></div>
+                <div class="pc__rarity">LGD</div>
+                <div class="pc__flag"><img src="https://flagcdn.com/w40/it.png" alt=""></div>
+                <div class="pc__pos">TRQ</div>
+                <div class="pc__name">R. Baggio</div>
+                <div class="pc__stars">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                </div>
+              </div>
+
+              <!-- Pirlo · Epic -->
+              <div class="pc pc--epic">
+                <div class="pc__bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/20150616_-_Portugal_-_Italie_-_Gen%C3%A8ve_-_Andrea_Pirlo_%28cropped%29.jpg/400px-20150616_-_Portugal_-_Italie_-_Gen%C3%A8ve_-_Andrea_Pirlo_%28cropped%29.jpg')"></div>
+                <div class="pc__overlay"></div>
+                <div class="pc__pattern"></div>
+                <div class="pc__strip"></div>
+                <div class="pc__rarity">EPI</div>
+                <div class="pc__flag"><img src="https://flagcdn.com/w40/it.png" alt=""></div>
+                <div class="pc__pos">REG</div>
+                <div class="pc__name">A. Pirlo</div>
+                <div class="pc__stars">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                </div>
+              </div>
+
+              <!-- Totti · Epic -->
+              <div class="pc pc--epic">
+                <div class="pc__bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/KL-2018_%284%29.jpg/400px-KL-2018_%284%29.jpg')"></div>
+                <div class="pc__overlay"></div>
+                <div class="pc__pattern"></div>
+                <div class="pc__strip"></div>
+                <div class="pc__rarity">EPI</div>
+                <div class="pc__flag"><img src="https://flagcdn.com/w40/it.png" alt=""></div>
+                <div class="pc__pos">ATT</div>
+                <div class="pc__name">F. Totti</div>
+                <div class="pc__stars">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                </div>
+              </div>
+
+              <!-- Maldini · Rare -->
+              <div class="pc pc--rare">
+                <div class="pc__bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Paolo_Maldini_AC_Milan_Technical_director_2018.jpg/400px-Paolo_Maldini_AC_Milan_Technical_director_2018.jpg')"></div>
+                <div class="pc__overlay"></div>
+                <div class="pc__pattern"></div>
+                <div class="pc__strip"></div>
+                <div class="pc__rarity">RAR</div>
+                <div class="pc__flag"><img src="https://flagcdn.com/w40/it.png" alt=""></div>
+                <div class="pc__pos">DIF</div>
+                <div class="pc__name">P. Maldini</div>
+                <div class="pc__stars">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                </div>
+              </div>
+
+              <!-- Maradona · Mythic -->
+              <div class="pc pc--mythic">
+                <div class="pc__bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Argentina_celebrando_copa_%28cropped%29.jpg/400px-Argentina_celebrando_copa_%28cropped%29.jpg')"></div>
+                <div class="pc__overlay"></div>
+                <div class="pc__pattern"></div>
+                <div class="pc__strip"></div>
+                <div class="pc__rarity">MYT</div>
+                <div class="pc__flag"><img src="https://flagcdn.com/w40/ar.png" alt=""></div>
+                <div class="pc__pos">FNT</div>
+                <div class="pc__name">D. Maradona</div>
+                <div class="pc__stars">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                </div>
+              </div>
+
+              <!-- Buffon · Legendary -->
+              <div class="pc pc--legend">
+                <div class="pc__bg" style="background-image:url('https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Norway_Italy_-_June_2025_A_44_%28Gianluigi_Buffon%29.jpg/400px-Norway_Italy_-_June_2025_A_44_%28Gianluigi_Buffon%29.jpg')"></div>
+                <div class="pc__overlay"></div>
+                <div class="pc__pattern"></div>
+                <div class="pc__strip"></div>
+                <div class="pc__rarity">LGD</div>
+                <div class="pc__flag"><img src="https://flagcdn.com/w40/it.png" alt=""></div>
+                <div class="pc__pos">POR</div>
+                <div class="pc__name">G. Buffon</div>
+                <div class="pc__stars">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+                </div>
+              </div>
+
+              <!-- Locked × 3 -->
+              <div class="pc pc--locked"><div class="pc--locked__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 1 1 6 0v3"/></svg></div><div class="pc--locked__name">???</div></div>
+              <div class="pc pc--locked"><div class="pc--locked__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 1 1 6 0v3"/></svg></div><div class="pc--locked__name">???</div></div>
+              <div class="pc pc--locked"><div class="pc--locked__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 1 1 6 0v3"/></svg></div><div class="pc--locked__name">???</div></div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">6</span><span>Collezione vera<span class="cell__sub">6 carte con foto Wikipedia + bandiere + ruolo + stelle</span></span></div>
+    </div>
+
+    <!-- ============ SCREEN 7 · LEGA ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>9:41</span><span class="statusbar__dots"></span></div>
+          <div class="app">
+            <div class="s7-mast">
+              <div><b>Lega Settimanale</b><small>Domenica chiude</small></div>
+              <span class="s7-tier">Serie A</span>
+            </div>
+            <div class="s7-me">
+              <div class="s7-me__r">3°</div>
+              <div class="s7-me__av">MR</div>
+              <div class="s7-me__n">Marco Rossi<small>Tu · <b>−74 dal terzo</b> alla promozione</small></div>
+              <div class="s7-me__p">847</div>
+            </div>
+            <div class="s7-list">
+              <div class="s7-row s7-row--top">
+                <div class="s7-row__r gold">1°</div>
+                <div class="s7-row__av" style="background:linear-gradient(135deg,#FFD93D,#F59E0B);color:#0F1419">FB<div class="s7-row__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s7-row__n">Federico B.<small>Promosso in Champions</small></div>
+                <div class="s7-row__p">1.124</div>
+              </div>
+              <div class="s7-row s7-row--top">
+                <div class="s7-row__r silver">2°</div>
+                <div class="s7-row__av" style="background:linear-gradient(135deg,#9B72F2,#7C3AED)">SG<div class="s7-row__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s7-row__n">Simone G.<small>Promosso</small></div>
+                <div class="s7-row__p">962</div>
+              </div>
+              <div class="s7-div">↑ promozione · sette dentro</div>
+              <div class="s7-row s7-row--prom">
+                <div class="s7-row__r">4°</div>
+                <div class="s7-row__av" style="background:linear-gradient(135deg,#4ECDC4,#14B8A6);color:#0F1419">LF<div class="s7-row__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s7-row__n">Luca F.<small>Bordo · −74 da te</small></div>
+                <div class="s7-row__p">773</div>
+              </div>
+              <div class="s7-row s7-row--prom">
+                <div class="s7-row__r">5°</div>
+                <div class="s7-row__av" style="background:linear-gradient(135deg,#FF6B6B,#DC2626)">AC<div class="s7-row__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s7-row__n">Andrea C.<small></small></div>
+                <div class="s7-row__p">743</div>
+              </div>
+              <div class="s7-row s7-row--prom">
+                <div class="s7-row__r">6°</div>
+                <div class="s7-row__av" style="background:linear-gradient(135deg,#FF8C42,#FF6B35)">MD<div class="s7-row__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s7-row__n">Matteo D.<small></small></div>
+                <div class="s7-row__p">689</div>
+              </div>
+              <div class="s7-row s7-row--prom">
+                <div class="s7-row__r">7°</div>
+                <div class="s7-row__av" style="background:linear-gradient(135deg,#C5FF00,#9FCC00);color:#0F1419">PE<div class="s7-row__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s7-row__n">Pietro E.<small>Ultimo posto utile</small></div>
+                <div class="s7-row__p">612</div>
+              </div>
+              <div class="s7-div s7-div--demo">↓ retrocede · cinque fuori</div>
+              <div class="s7-row s7-row--demo">
+                <div class="s7-row__r">26°</div>
+                <div class="s7-row__av" style="background:#5A6478">GR<div class="s7-row__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s7-row__n">Giulio R.<small></small></div>
+                <div class="s7-row__p">187</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">7</span><span>Lega Settimanale<span class="cell__sub">Tier gold · bandiere · promozione e retrocessione</span></span></div>
+    </div>
+
+    <!-- ============ SCREEN 8 · DUELLO ============ -->
+    <div class="cell">
+      <div class="phone">
+        <div class="screen">
+          <div class="statusbar"><span>21:08</span><span class="statusbar__dots"></span></div>
+          <div class="app">
+            <div class="s8-vs">
+              <div class="s8-p s8-p--me">
+                <div class="s8-p__av">MR<div class="s8-p__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s8-p__n">Marco</div>
+                <div class="s8-p__s">31</div>
+              </div>
+              <div class="s8-vs__x">vs</div>
+              <div class="s8-p s8-p--opp">
+                <div class="s8-p__av">LO<div class="s8-p__av__flag"><img src="https://flagcdn.com/w20/it.png" alt=""></div></div>
+                <div class="s8-p__n">Lorenzo</div>
+                <div class="s8-p__s">22</div>
+              </div>
+            </div>
+            <div class="s8-round">Quarto round su cinque · Storia</div>
+            <div class="s8-timer">
+              <div class="s8-timer__r">
+                <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"/><circle cx="50" cy="50" r="42" stroke="url(#tg)" stroke-width="8" fill="none" stroke-dasharray="264" stroke-dashoffset="120" stroke-linecap="round"/><defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C5FF00"/><stop offset="1" stop-color="#9FCC00"/></linearGradient></defs></svg>
+                <div class="s8-timer__n">7</div>
+              </div>
+            </div>
+            <div class="s8-q">Il Milan ha vinto la sua <b>prima</b> Coppa dei Campioni a Wembley. Anno?</div>
+            <div class="s8-ar">
+              <button class="s8-a">1958</button>
+              <button class="s8-a s8-a--ok">1963</button>
+              <button class="s8-a">1969</button>
+              <button class="s8-a">1974</button>
+            </div>
+            <div class="s8-bonus">Bonus se rispondi entro tre secondi · +8</div>
+          </div>
+        </div>
+      </div>
+      <div class="cell__lbl"><span class="cell__num">8</span><span>Duello live<span class="cell__sub">Avatar con bandiera · timer · domanda specifica</span></span></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-m">Goal · Prototipo · <span class="l">v2</span> · maggio 2026</div>
+  <div class="foot-c">Adesso si <span class="l">costruisce.</span></div>
+  <div class="foot-n">Foto Wikimedia + flagcdn solo per il mockup. In produzione: silhouette generiche e calciatori AI immaginari per evitare i problemi di image rights. Squadre Serie A mostrate solo coi colori sociali, mai con loghi reali.</div>
+</footer>
+
+</body>
+</html>

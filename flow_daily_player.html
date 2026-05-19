@@ -1,0 +1,3287 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goal · Flow Daily Player · Premium UI Reference</title>
+<meta name="description" content="Premium UI flow per la modalità Daily Player di Goal. 10 stati, qualità reale 2026.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,700;1,9..144,900&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   TOKENS
+   ========================================================= */
+:root{
+  --bg:#0E0E10;
+  --bg-elev:#16161A;
+  --bg-card:#1C1C22;
+  --bg-card-2:#232329;
+  --bg-overlay:#0A0A0C;
+
+  --lime:#C5FF00;
+  --lime-dim:#9ACC00;
+  --hot:#FF3D2E;
+  --hot-dim:#CC2F23;
+  --gold:#D4A852;
+  --gold-dim:#A8852F;
+
+  --cream:#F4EFE6;
+  --cream-dim:#C9C4BB;
+  --text-dim:#8B8B91;
+  --text-mute:#5A5A60;
+
+  --line:#2A2A30;
+  --line-dim:#1F1F25;
+  --line-bright:#3D3D44;
+
+  --paper:#F4EFE6;
+  --paper-dim:#ECE6DA;
+  --paper-line:#D6D0C2;
+  --ink:#0E0E10;
+  --ink-dim:#46464C;
+
+  --s-1:4px;  --s-2:8px;  --s-3:12px; --s-4:16px;
+  --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px;
+  --s-9:96px; --s-10:128px;
+
+  --r-0:0; --r-1:4px; --r-2:8px; --r-3:12px;
+  --r-4:16px; --r-5:24px; --r-full:9999px;
+
+  --shadow-1:0 1px 0 rgba(0,0,0,.6);
+  --shadow-2:0 4px 12px rgba(0,0,0,.4);
+  --shadow-3:0 8px 24px rgba(0,0,0,.5);
+  --shadow-card:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 0 0 1px rgba(0,0,0,.4),
+    0 12px 28px -8px rgba(0,0,0,.65),
+    0 2px 6px rgba(0,0,0,.4);
+  --shadow-phone:
+    0 0 0 1px rgba(255,255,255,.06),
+    0 1px 0 rgba(255,255,255,.08) inset,
+    0 28px 70px -20px rgba(0,0,0,.85),
+    0 8px 16px -4px rgba(0,0,0,.6);
+  --glow-lime:0 0 24px rgba(197,255,0,.32), 0 0 64px rgba(197,255,0,.08);
+  --glow-hot:0 0 24px rgba(255,61,46,.28);
+
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+*,*:before,*:after{box-sizing:border-box;margin:0;padding:0}
+
+html,body{background:var(--bg);color:var(--cream);font-family:'Geist',system-ui,sans-serif;font-feature-settings:"ss01","ss02","cv11";-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(900px 600px at 90% -10%, rgba(197,255,0,.04), transparent 60%),
+    radial-gradient(700px 500px at -10% 30%, rgba(212,168,82,.025), transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+img,svg{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+::selection{background:var(--lime);color:var(--bg)}
+
+/* Grain overlay (very subtle, editorial paper feel) */
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.04;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.6'/></svg>");
+  mix-blend-mode:overlay;
+}
+
+/* =========================================================
+   TOP NAV
+   ========================================================= */
+.topnav{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 32px;
+  background:rgba(14,14,16,.72);
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  border-bottom:1px solid var(--line-dim);
+}
+.topnav__brand{
+  display:flex;align-items:center;gap:12px;
+}
+.topnav__mark{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:-.04em;
+  color:var(--cream);
+  line-height:1;
+}
+.topnav__dot{
+  width:6px;height:6px;border-radius:50%;background:var(--lime);
+  box-shadow:var(--glow-lime);
+}
+.topnav__eyebrow{
+  font-size:11px;color:var(--text-dim);
+  letter-spacing:.14em;text-transform:uppercase;
+  font-weight:500;
+}
+.topnav__right{
+  display:flex;align-items:center;gap:24px;
+  font-size:13px;color:var(--text-dim);
+  font-family:'Geist Mono',monospace;
+  font-weight:500;letter-spacing:.02em;
+}
+.topnav__chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 12px;
+  border:1px solid var(--line);
+  border-radius:var(--r-full);
+  font-size:11px;color:var(--cream-dim);
+  letter-spacing:.08em;text-transform:uppercase;
+  font-family:'Geist',sans-serif;font-weight:500;
+}
+.topnav__chip .dot{
+  width:5px;height:5px;border-radius:50%;background:var(--lime);
+}
+.topnav__back{
+  color:var(--text-dim);font-size:13px;font-weight:500;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:color .2s var(--ease);
+}
+.topnav__back:hover{color:var(--cream)}
+
+/* =========================================================
+   HERO
+   ========================================================= */
+.hero{
+  position:relative;
+  padding:120px 32px 96px;
+  max-width:1280px;margin:0 auto;
+  z-index:1;
+}
+.hero__eyebrow{
+  display:inline-flex;align-items:center;gap:14px;
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);font-weight:500;
+  margin-bottom:36px;
+}
+.hero__eyebrow .rule{
+  width:48px;height:1px;background:var(--line-bright);display:inline-block;
+}
+.hero__title{
+  font-family:'Fraunces',serif;
+  font-style:italic;font-weight:700;
+  font-size:clamp(56px,9vw,128px);
+  line-height:.92;letter-spacing:-.04em;
+  color:var(--cream);
+  max-width:18ch;
+  margin-bottom:32px;
+}
+.hero__title em{
+  font-style:italic;font-weight:900;
+  background:linear-gradient(180deg,#C5FF00 0%,#9ACC00 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero__lede{
+  font-size:20px;line-height:1.55;
+  color:var(--cream-dim);font-weight:400;
+  max-width:60ch;
+  margin-bottom:48px;
+}
+.hero__meta{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  margin-top:64px;
+}
+.hero__meta-cell{
+  padding:24px 24px 24px 0;
+  border-right:1px solid var(--line-dim);
+}
+.hero__meta-cell:last-child{border-right:0;padding-right:0}
+.hero__meta-cell:nth-child(n+2){padding-left:24px}
+.hero__meta-label{
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text-dim);font-weight:500;
+  margin-bottom:10px;
+}
+.hero__meta-value{
+  font-family:'Geist Mono',monospace;
+  font-size:18px;color:var(--cream);font-weight:500;
+  font-variant-numeric:tabular-nums;
+}
+.hero__meta-value .accent{color:var(--lime)}
+
+/* =========================================================
+   LOOKBOOK GRID / SECTION
+   ========================================================= */
+.flow{
+  position:relative;z-index:1;
+  padding:0 32px 160px;
+  max-width:1280px;margin:0 auto;
+}
+.section{
+  display:grid;
+  grid-template-columns:380px 1fr;
+  gap:96px;
+  padding:88px 0;
+  border-top:1px solid var(--line-dim);
+  align-items:start;
+}
+.section:first-of-type{border-top:1px solid var(--line)}
+.section__head{
+  position:sticky;top:120px;
+  padding-right:24px;
+}
+.section__num{
+  font-family:'Geist Mono',monospace;
+  font-size:12px;color:var(--text-dim);
+  font-weight:500;letter-spacing:.06em;
+  display:inline-flex;align-items:center;gap:10px;
+  margin-bottom:24px;
+}
+.section__num .bar{
+  width:24px;height:1px;background:var(--lime);
+}
+.section__title{
+  font-family:'Fraunces',serif;
+  font-style:italic;font-weight:700;
+  font-size:42px;line-height:1.02;letter-spacing:-.03em;
+  color:var(--cream);
+  margin-bottom:20px;
+}
+.section__lede{
+  font-size:15px;line-height:1.6;
+  color:var(--cream-dim);
+  margin-bottom:24px;
+}
+.section__list{
+  display:flex;flex-direction:column;gap:0;
+  border-top:1px solid var(--line-dim);
+  margin-top:24px;
+}
+.section__list-row{
+  display:grid;grid-template-columns:96px 1fr;
+  gap:16px;padding:12px 0;
+  border-bottom:1px solid var(--line-dim);
+  font-size:13px;
+}
+.section__list-row dt{
+  color:var(--text-dim);
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  font-weight:500;
+  padding-top:1px;
+}
+.section__list-row dd{
+  color:var(--cream-dim);
+  font-weight:400;
+}
+.section__list-row dd code{
+  font-family:'Geist Mono',monospace;font-size:12px;
+  color:var(--cream);
+  background:var(--bg-elev);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-1);
+  padding:1px 6px;
+}
+
+/* =========================================================
+   PHONE FRAME
+   ========================================================= */
+.section__phone{
+  display:flex;justify-content:center;align-items:flex-start;
+}
+.phone{
+  position:relative;
+  width:360px;
+  height:760px;
+  background:var(--bg);
+  border-radius:42px;
+  border:1px solid var(--line-bright);
+  box-shadow:var(--shadow-phone);
+  overflow:hidden;
+  flex-shrink:0;
+}
+.phone::before{
+  /* Notch */
+  content:"";
+  position:absolute;
+  top:10px;left:50%;transform:translateX(-50%);
+  width:108px;height:28px;
+  background:#000;
+  border-radius:var(--r-full);
+  z-index:30;
+}
+.phone__status{
+  position:absolute;top:0;left:0;right:0;height:44px;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 26px 0;
+  font-family:'Geist',sans-serif;
+  font-weight:500;font-size:14px;
+  color:var(--cream);
+  letter-spacing:-.01em;
+  z-index:20;
+}
+.phone__status-right{
+  display:flex;align-items:center;gap:6px;
+}
+.phone__status svg{display:inline-block;vertical-align:middle}
+.phone__screen{
+  position:absolute;
+  top:44px;left:0;right:0;bottom:0;
+  overflow:hidden;
+}
+
+/* =========================================================
+   APP — REUSABLE
+   ========================================================= */
+.app-pad{padding:0 20px}
+.app-section{padding:8px 0 16px}
+.app-bar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px 6px;
+}
+.app-bar__left,.app-bar__right{
+  display:flex;align-items:center;gap:12px;
+}
+.app-bar__title{
+  font:500 11px/1 'Geist',sans-serif;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+.iconbtn{
+  width:36px;height:36px;
+  display:inline-grid;place-items:center;
+  border-radius:var(--r-full);
+  color:var(--cream-dim);
+  border:1px solid var(--line-dim);
+  background:rgba(255,255,255,.01);
+}
+.iconbtn:hover{color:var(--cream);border-color:var(--line-bright)}
+.iconbtn svg{width:18px;height:18px}
+
+.eyebrow{
+  font:500 10px/1 'Geist',sans-serif;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+.divider{
+  height:1px;background:var(--line-dim);
+  margin:16px 0;
+}
+
+.label-mono{
+  font-family:'Geist Mono',monospace;
+  font-size:11px;color:var(--text-dim);
+  letter-spacing:.04em;
+  font-variant-numeric:tabular-nums;
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  font-family:'Geist',sans-serif;font-weight:600;font-size:15px;
+  line-height:1;
+  border-radius:var(--r-2);
+  padding:16px 22px;
+  letter-spacing:-.005em;
+  transition:transform .15s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
+  position:relative;
+}
+.btn--primary{
+  background:var(--lime);
+  color:var(--bg);
+  box-shadow:0 0 0 1px rgba(0,0,0,.6) inset, 0 8px 20px -6px rgba(197,255,0,.5);
+}
+.btn--primary:hover{
+  transform:translateY(-1px);
+  box-shadow:0 0 0 1px rgba(0,0,0,.6) inset, var(--glow-lime);
+}
+.btn--secondary{
+  background:transparent;color:var(--cream);
+  border:1px solid var(--line-bright);
+}
+.btn--secondary:hover{
+  background:var(--bg-elev);
+  border-color:var(--cream-dim);
+}
+.btn--ghost{
+  color:var(--cream-dim);background:transparent;
+}
+.btn--ghost:hover{color:var(--cream)}
+.btn--block{width:100%}
+.btn--lg{padding:18px 24px;font-size:16px}
+.btn--sm{padding:10px 14px;font-size:13px}
+
+.btn__arrow{
+  display:inline-flex;
+  transition:transform .2s var(--ease);
+}
+.btn:hover .btn__arrow{transform:translateX(3px)}
+
+/* =========================================================
+   PILL / BADGE / CHIP
+   ========================================================= */
+.pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 10px;
+  border-radius:var(--r-full);
+  font:500 10px/1.2 'Geist',sans-serif;
+  letter-spacing:.12em;text-transform:uppercase;
+  border:1px solid var(--line);
+  color:var(--cream-dim);
+  background:var(--bg-elev);
+}
+.pill--lime{background:var(--lime);color:var(--bg);border-color:transparent}
+.pill--hot{background:var(--hot);color:var(--cream);border-color:transparent}
+.pill--gold{background:var(--gold);color:var(--bg);border-color:transparent}
+.pill--ghost{background:transparent}
+.pill--live::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--hot);box-shadow:0 0 8px var(--hot);animation:pulse 1.5s infinite}
+.pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7}
+
+.badge-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:18px;height:18px;padding:0 5px;
+  background:var(--lime);color:var(--bg);
+  font-family:'Geist Mono',monospace;font-size:10px;font-weight:700;
+  border-radius:var(--r-full);
+}
+
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(.9)}
+}
+
+/* =========================================================
+   STATE 1 — HUB ENTRANCE
+   ========================================================= */
+.hub-greet{
+  padding:16px 20px 8px;
+}
+.hub-greet__date{
+  font-family:'Geist Mono',monospace;
+  font-size:11px;color:var(--text-dim);
+  letter-spacing:.06em;
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.hub-greet__date .live{
+  color:var(--cream);font-weight:600;
+}
+.hub-greet__date .sep{color:var(--line-bright)}
+.hub-greet__h{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+  font-size:30px;line-height:1.04;letter-spacing:-.025em;
+  color:var(--cream);
+  margin-bottom:8px;
+}
+.hub-greet__h em{color:var(--lime);font-style:italic}
+.hub-greet__sub{
+  font-size:13px;color:var(--cream-dim);
+  line-height:1.5;
+}
+
+.stat-row{
+  display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;
+  align-items:center;
+  margin:18px 20px 8px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+  padding:14px 14px;
+  box-shadow:var(--shadow-card);
+}
+.stat-row__sep{background:var(--line-dim);height:32px}
+.stat-row__cell{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.stat-row__num{
+  font-family:'Geist Mono',monospace;
+  font-size:16px;font-weight:600;color:var(--cream);
+  letter-spacing:-.01em;
+  font-variant-numeric:tabular-nums;
+}
+.stat-row__num .gold{color:var(--gold)}
+.stat-row__num .lime{color:var(--lime)}
+.stat-row__lbl{
+  font:500 9px/1 'Geist';letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+/* Daily Player hero card (hub featured) */
+.daily-card{
+  margin:18px 20px 18px;
+  background:linear-gradient(180deg, #1A1A20 0%, #161619 100%);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:20px 20px 18px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.04) inset,
+    0 0 0 1px rgba(0,0,0,.4),
+    0 14px 32px -10px rgba(0,0,0,.7);
+}
+.daily-card::after{
+  /* lime accent stripe */
+  content:"";
+  position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--lime);
+  box-shadow:0 0 16px rgba(197,255,0,.5);
+}
+.daily-card__top{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px;
+}
+.daily-card__label{
+  font:500 10px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;
+  color:var(--lime-dim);
+}
+.daily-card__counter{
+  font-family:'Geist Mono',monospace;font-size:11px;
+  color:var(--text-dim);font-weight:500;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.daily-card__title{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+  font-size:32px;line-height:1.0;letter-spacing:-.025em;
+  color:var(--cream);
+  margin-bottom:6px;
+}
+.daily-card__sub{
+  font-size:13px;color:var(--cream-dim);
+  margin-bottom:18px;
+  line-height:1.45;
+}
+.daily-card__row{
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:1px solid var(--line-dim);
+  padding-top:14px;
+}
+.daily-card__community{
+  display:flex;align-items:center;gap:10px;
+}
+.daily-card__avatars{
+  display:flex;
+}
+.daily-card__avatars span{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid var(--bg-card);
+  margin-left:-6px;
+  display:block;
+}
+.daily-card__avatars span:first-child{margin-left:0}
+.daily-card__avatars span:nth-child(1){background:linear-gradient(135deg,#5B7FFF,#2541B2)}
+.daily-card__avatars span:nth-child(2){background:linear-gradient(135deg,#FF7A3C,#D8431F)}
+.daily-card__avatars span:nth-child(3){background:linear-gradient(135deg,#C5FF00,#7AA300)}
+.daily-card__avatars span:nth-child(4){background:linear-gradient(135deg,#D4A852,#8C6A23)}
+.daily-card__community-txt{
+  font-size:11px;color:var(--cream-dim);
+  font-family:'Geist Mono',monospace;
+  font-variant-numeric:tabular-nums;
+}
+.daily-card__community-txt strong{color:var(--cream);font-weight:600}
+
+/* Other mode cards (hub) */
+.modes-list{
+  margin:0 20px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.mode-row{
+  display:grid;grid-template-columns:40px 1fr auto;
+  align-items:center;gap:14px;
+  padding:14px 16px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+  transition:border-color .2s var(--ease), transform .2s var(--ease);
+}
+.mode-row:hover{border-color:var(--line-bright)}
+.mode-row__icon{
+  width:40px;height:40px;border-radius:var(--r-2);
+  background:var(--bg-elev);
+  display:grid;place-items:center;
+  color:var(--cream-dim);
+  border:1px solid var(--line-dim);
+}
+.mode-row__icon svg{width:20px;height:20px}
+.mode-row__body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mode-row__name{
+  font:600 14px/1.1 'Geist';
+  color:var(--cream);
+}
+.mode-row__meta{
+  font:400 11px/1.2 'Geist';
+  color:var(--text-dim);
+  display:flex;align-items:center;gap:8px;
+}
+.mode-row__meta .sep{color:var(--line-bright)}
+.mode-row__chev{color:var(--text-dim)}
+.mode-row__chev svg{width:16px;height:16px}
+
+/* Bottom nav */
+.bottomnav{
+  position:absolute;bottom:0;left:0;right:0;
+  height:78px;
+  background:rgba(22,22,26,.92);
+  backdrop-filter:blur(20px);
+  border-top:1px solid var(--line-dim);
+  display:flex;align-items:flex-start;justify-content:space-around;
+  padding-top:10px;
+  z-index:10;
+}
+.bottomnav__item{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:var(--text-dim);
+  font:500 10px/1 'Geist',sans-serif;
+  letter-spacing:.04em;
+  padding:6px 0;
+}
+.bottomnav__item svg{width:22px;height:22px}
+.bottomnav__item--active{color:var(--cream)}
+.bottomnav__item--active::after{
+  content:"";display:block;
+  width:5px;height:5px;background:var(--lime);
+  border-radius:50%;
+  margin-top:2px;
+}
+
+/* =========================================================
+   STATE 2 — INTRO SCREEN
+   ========================================================= */
+.intro-header{
+  padding:18px 20px 8px;
+}
+.intro-edition{
+  display:flex;align-items:center;justify-content:space-between;
+  font-family:'Geist Mono',monospace;
+  font-size:10px;
+  color:var(--text-dim);
+  letter-spacing:.12em;text-transform:uppercase;
+  border-bottom:1px solid var(--line-dim);
+  padding-bottom:10px;
+  margin-bottom:18px;
+}
+.intro-edition__left{display:flex;align-items:center;gap:10px}
+.intro-edition__num{
+  background:var(--bg-elev);
+  border:1px solid var(--line-dim);
+  padding:3px 8px;border-radius:var(--r-1);
+  color:var(--cream);
+  font-weight:600;
+  letter-spacing:.05em;
+}
+.intro-title{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+  font-size:44px;line-height:.95;letter-spacing:-.03em;
+  color:var(--cream);
+  margin-bottom:14px;
+}
+.intro-title em{font-style:italic;color:var(--lime)}
+.intro-sub{
+  font-size:14px;color:var(--cream-dim);
+  line-height:1.55;
+  margin-bottom:18px;
+}
+
+.intro-rule{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin:0 20px 0;
+}
+.intro-rule__cell{
+  padding:12px 12px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-2);
+  display:flex;flex-direction:column;gap:4px;
+}
+.intro-rule__num{
+  font-family:'Geist Mono',monospace;
+  font-size:22px;color:var(--cream);font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  line-height:1;
+}
+.intro-rule__num .lime{color:var(--lime)}
+.intro-rule__lbl{
+  font:500 9px/1.1 'Geist';letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+/* Silhouette stage */
+.silhouette-stage{
+  position:relative;
+  margin:24px 20px 16px;
+  background:
+    radial-gradient(60% 80% at 50% 40%, #1F1F26 0%, #16161A 60%, #0E0E10 100%);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-4);
+  height:230px;
+  overflow:hidden;
+  display:grid;place-items:center;
+  box-shadow:var(--shadow-card);
+}
+.silhouette-stage::before{
+  /* Pitch lines decoration */
+  content:"";
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to right, transparent 50%, rgba(255,255,255,.025) 50%) 0 0/40px 100%,
+    radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,.4) 80%);
+  pointer-events:none;
+}
+.silhouette-stage::after{
+  content:"";
+  position:absolute;left:50%;top:50%;
+  width:120px;height:120px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.silhouette{
+  position:relative;
+  width:140px;height:170px;
+  filter:blur(18px);
+  opacity:.4;
+}
+.silhouette--med{filter:blur(10px);opacity:.55}
+.silhouette--low{filter:blur(5px);opacity:.7}
+.silhouette--rev{filter:blur(0);opacity:1}
+.silhouette svg{width:100%;height:100%}
+
+.silhouette-overlay-num{
+  position:absolute;top:14px;left:16px;
+  font-family:'Geist Mono',monospace;
+  font-size:10px;color:var(--text-dim);
+  letter-spacing:.12em;text-transform:uppercase;
+}
+.silhouette-overlay-num strong{color:var(--cream);font-weight:600}
+
+/* CTA bar at bottom */
+.cta-bar{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:18px 20px 28px;
+  background:linear-gradient(180deg, rgba(14,14,16,0) 0%, rgba(14,14,16,.95) 30%);
+  display:flex;flex-direction:column;gap:10px;
+}
+.cta-helper{
+  font-size:11px;color:var(--text-dim);
+  text-align:center;
+  display:flex;justify-content:center;align-items:center;gap:8px;
+  font-family:'Geist Mono',monospace;
+}
+.cta-helper .kbd{
+  font:600 9px/1 'Geist';letter-spacing:.04em;
+  background:var(--bg-elev);
+  border:1px solid var(--line-dim);
+  padding:3px 6px;border-radius:var(--r-1);
+  color:var(--cream-dim);
+}
+
+/* =========================================================
+   STATE 3+ — CLUE STRIP / INPUT / ATTEMPTS
+   ========================================================= */
+.play-header{
+  padding:14px 20px 4px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.play-header__left{
+  display:flex;flex-direction:column;gap:2px;
+}
+.play-header__title{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+  font-size:22px;letter-spacing:-.02em;line-height:1;color:var(--cream);
+}
+.play-header__date{
+  font-family:'Geist Mono',monospace;font-size:10px;
+  color:var(--text-dim);letter-spacing:.08em;
+}
+.attempts-counter{
+  text-align:right;
+}
+.attempts-counter__num{
+  font-family:'Geist Mono',monospace;
+  font-size:22px;color:var(--cream);font-weight:600;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  line-height:1;
+}
+.attempts-counter__num--low{color:var(--gold)}
+.attempts-counter__num--critical{color:var(--hot)}
+.attempts-counter__lbl{
+  font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);margin-top:3px;
+}
+
+.attempt-dots{
+  display:flex;gap:5px;
+  padding:10px 20px 4px;
+}
+.attempt-dots span{
+  flex:1;height:3px;border-radius:2px;background:var(--line);
+  transition:background .2s var(--ease);
+}
+.attempt-dots span.used{background:var(--text-mute)}
+.attempt-dots span.used--wrong{background:var(--hot-dim)}
+.attempt-dots span.used--correct{background:var(--lime)}
+.attempt-dots span.last{background:var(--gold)}
+.attempt-dots span.critical{background:var(--hot)}
+
+/* Clues list */
+.clues{
+  padding:10px 20px 0;
+  display:flex;flex-direction:column;gap:6px;
+}
+.clue{
+  display:grid;grid-template-columns:24px 80px 1fr;
+  align-items:center;gap:10px;
+  padding:9px 12px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-2);
+  position:relative;
+  overflow:hidden;
+  animation:clueIn .4s var(--ease) both;
+}
+.clue--locked{
+  opacity:.35;
+}
+.clue--new{
+  border-color:var(--lime);
+  box-shadow:0 0 0 1px rgba(197,255,0,.18), 0 0 12px rgba(197,255,0,.08);
+}
+.clue--new::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--lime);
+}
+.clue__num{
+  font-family:'Geist Mono',monospace;
+  font-size:10px;color:var(--text-dim);
+  font-weight:500;
+}
+.clue__key{
+  font:500 9px/1 'Geist';letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+.clue__val{
+  font:500 13px/1.2 'Geist';
+  color:var(--cream);
+}
+.clue__val em{
+  font-style:normal;color:var(--lime);
+}
+.clue__val.locked{
+  color:var(--text-mute);
+  font-family:'Geist Mono',monospace;
+  font-size:11px;letter-spacing:.04em;
+}
+.clue--locked .clue__val.locked::before{
+  content:"●●●●●●●●";letter-spacing:2px;color:var(--text-mute);
+}
+@keyframes clueIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Input area */
+.input-block{
+  padding:14px 20px 0;
+}
+.guess-row{
+  position:relative;
+  background:var(--bg-elev);
+  border:1px solid var(--line-bright);
+  border-radius:var(--r-3);
+  box-shadow:0 0 0 3px rgba(197,255,0,.06);
+  transition:box-shadow .2s var(--ease), border-color .2s var(--ease);
+}
+.guess-row--focus{
+  border-color:var(--lime);
+  box-shadow:0 0 0 3px rgba(197,255,0,.15);
+}
+.guess-row__input{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 14px;
+}
+.guess-row__icon{color:var(--text-dim)}
+.guess-row__icon svg{width:18px;height:18px}
+.guess-row__text{
+  flex:1;
+  font:500 16px/1 'Geist';
+  color:var(--cream);
+  letter-spacing:-.01em;
+  position:relative;
+}
+.guess-row__text .typed{color:var(--cream)}
+.guess-row__text .ghost{color:var(--text-mute)}
+.guess-row__text .cursor{
+  display:inline-block;width:2px;height:18px;background:var(--lime);
+  vertical-align:-3px;margin:0 1px;animation:blink 1s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:0}}
+.guess-row__submit{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;background:var(--lime);color:var(--bg);
+  border-radius:var(--r-1);
+  font:600 11px/1 'Geist';letter-spacing:.04em;text-transform:uppercase;
+}
+.guess-row__submit svg{width:12px;height:12px}
+
+.guess-suggest{
+  border-top:1px solid var(--line-dim);
+  padding:6px 6px 8px;
+  display:flex;flex-direction:column;gap:1px;
+  max-height:none;
+}
+.guess-suggest__item{
+  display:grid;grid-template-columns:28px 1fr auto;
+  align-items:center;gap:10px;
+  padding:9px 10px;
+  border-radius:var(--r-2);
+  cursor:pointer;
+  transition:background .15s var(--ease);
+}
+.guess-suggest__item:hover,
+.guess-suggest__item--active{background:var(--bg-card-2)}
+.guess-suggest__flag{
+  width:18px;height:18px;border-radius:50%;
+  background:linear-gradient(180deg,#009246 33%,#FFF 33% 66%,#CE2B37 66%);
+}
+.guess-suggest__flag--ar{background:linear-gradient(180deg,#75AADB 33%,#FFF 33% 66%,#75AADB 66%)}
+.guess-suggest__flag--fr{background:linear-gradient(90deg,#002395 33%,#FFF 33% 66%,#ED2939 66%)}
+.guess-suggest__flag--nl{background:linear-gradient(180deg,#AE1C28 33%,#FFF 33% 66%,#21468B 66%)}
+.guess-suggest__name{
+  font:500 14px/1.1 'Geist';color:var(--cream);
+}
+.guess-suggest__name em{font-style:normal;color:var(--lime);font-weight:600}
+.guess-suggest__meta{
+  font:400 11px/1 'Geist';color:var(--text-dim);
+  margin-top:2px;
+}
+.guess-suggest__kbd{
+  font:600 9px/1 'Geist Mono';
+  color:var(--text-dim);letter-spacing:.04em;
+  padding:3px 5px;border-radius:var(--r-1);
+  background:var(--bg-elev);
+  border:1px solid var(--line-dim);
+}
+
+/* Recent guesses */
+.recent{
+  margin:14px 20px 0;
+  padding:14px 14px 10px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+}
+.recent__head{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+}
+.recent__title{
+  font:500 9px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+.recent__counter{
+  font-family:'Geist Mono',monospace;font-size:10px;color:var(--text-dim);
+}
+.recent__list{
+  display:flex;flex-direction:column;gap:6px;
+}
+.recent__item{
+  display:grid;grid-template-columns:16px 1fr auto;
+  align-items:center;gap:10px;
+  padding:8px 10px;
+  border-radius:var(--r-1);
+  background:var(--bg-elev);
+}
+.recent__item--wrong .recent__icon{color:var(--hot)}
+.recent__item--correct .recent__icon{color:var(--lime)}
+.recent__icon{display:inline-grid;place-items:center}
+.recent__icon svg{width:14px;height:14px}
+.recent__name{
+  font:500 12px/1 'Geist';color:var(--cream);
+}
+.recent__hint{
+  font:400 11px/1 'Geist';color:var(--text-dim);
+}
+
+/* Warning banner */
+.warning-banner{
+  margin:14px 20px 0;
+  background:linear-gradient(90deg, rgba(255,61,46,.15), rgba(255,61,46,.05));
+  border:1px solid rgba(255,61,46,.4);
+  border-left:3px solid var(--hot);
+  border-radius:var(--r-2);
+  padding:10px 12px;
+  display:flex;align-items:center;gap:10px;
+}
+.warning-banner svg{width:16px;height:16px;color:var(--hot);flex-shrink:0}
+.warning-banner__text{
+  font:500 12px/1.3 'Geist';color:var(--cream);
+}
+.warning-banner__text em{font-style:normal;color:var(--hot);font-weight:600}
+
+/* =========================================================
+   STATE 6 — WON
+   ========================================================= */
+.won-stage{
+  position:relative;
+  margin:16px 20px 14px;
+  background:
+    radial-gradient(80% 90% at 50% 30%, rgba(197,255,0,.18) 0%, rgba(197,255,0,0) 60%),
+    radial-gradient(60% 80% at 50% 40%, #1F1F26 0%, #16161A 60%, #0E0E10 100%);
+  border:1px solid rgba(197,255,0,.4);
+  border-radius:var(--r-4);
+  height:240px;
+  overflow:hidden;
+  display:grid;place-items:center;
+  box-shadow:var(--glow-lime), var(--shadow-card);
+}
+.won-stage::after{
+  content:"";
+  position:absolute;left:50%;top:50%;
+  width:140px;height:140px;
+  border:1px solid rgba(197,255,0,.15);
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  animation:halo 3s ease-in-out infinite;
+}
+@keyframes halo{
+  0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6}
+  50%{transform:translate(-50%,-50%) scale(1.15);opacity:.3}
+}
+.won-stage__sparkles{
+  position:absolute;inset:0;pointer-events:none;
+}
+.won-stage__sparkles span{
+  position:absolute;width:3px;height:3px;background:var(--lime);
+  border-radius:50%;
+  box-shadow:0 0 8px var(--lime);
+}
+.won-stage__sparkles span:nth-child(1){top:20%;left:20%;animation:tw 2s ease-in-out infinite}
+.won-stage__sparkles span:nth-child(2){top:35%;right:25%;animation:tw 2.4s .3s ease-in-out infinite}
+.won-stage__sparkles span:nth-child(3){bottom:25%;left:30%;animation:tw 2.2s .6s ease-in-out infinite}
+.won-stage__sparkles span:nth-child(4){bottom:30%;right:18%;animation:tw 2.6s .9s ease-in-out infinite}
+.won-stage__sparkles span:nth-child(5){top:50%;left:10%;animation:tw 2.1s .2s ease-in-out infinite}
+@keyframes tw{
+  0%,100%{transform:scale(0);opacity:0}
+  50%{transform:scale(1);opacity:1}
+}
+
+.reveal-name{
+  text-align:center;
+  margin:16px 20px 6px;
+}
+.reveal-name__verdict{
+  font:500 10px/1 'Geist';letter-spacing:.22em;text-transform:uppercase;
+  color:var(--lime);margin-bottom:10px;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.reveal-name__verdict::before,.reveal-name__verdict::after{
+  content:"";width:24px;height:1px;background:var(--lime);
+}
+.reveal-name__name{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:900;
+  font-size:38px;line-height:1;letter-spacing:-.03em;
+  color:var(--cream);
+  margin-bottom:4px;
+}
+.reveal-name__sub{
+  font-family:'Geist Mono',monospace;font-size:11px;
+  color:var(--text-dim);letter-spacing:.04em;
+  font-variant-numeric:tabular-nums;
+}
+
+.win-stats{
+  margin:14px 20px 0;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+  padding:14px;
+  display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;
+  align-items:center;
+  box-shadow:var(--shadow-card);
+}
+.win-stats__sep{height:32px;background:var(--line-dim)}
+.win-stats__cell{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.win-stats__val{
+  font-family:'Geist Mono',monospace;
+  font-size:16px;font-weight:600;color:var(--cream);
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+}
+.win-stats__val--lime{color:var(--lime)}
+.win-stats__val--gold{color:var(--gold)}
+.win-stats__lbl{
+  font:500 9px/1 'Geist';letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+.caratura-ticker{
+  margin:12px 20px 0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 14px;
+  background:linear-gradient(90deg, rgba(197,255,0,.07), rgba(197,255,0,.02));
+  border:1px solid rgba(197,255,0,.25);
+  border-radius:var(--r-2);
+}
+.caratura-ticker__left{
+  display:flex;flex-direction:column;gap:2px;
+}
+.caratura-ticker__lbl{
+  font:500 9px/1 'Geist';letter-spacing:.14em;text-transform:uppercase;
+  color:var(--lime-dim);
+}
+.caratura-ticker__val{
+  font-family:'Geist Mono',monospace;
+  font-size:18px;font-weight:600;color:var(--cream);
+  font-variant-numeric:tabular-nums;
+}
+.caratura-ticker__delta{
+  font-family:'Geist Mono',monospace;
+  font-size:14px;font-weight:600;
+  color:var(--lime);
+  display:inline-flex;align-items:center;gap:4px;
+}
+.caratura-ticker__delta svg{width:12px;height:12px}
+
+.bio-teaser{
+  margin:14px 20px 0;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+  overflow:hidden;
+}
+.bio-teaser__top{
+  padding:12px 14px 0;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.bio-teaser__label{
+  font:500 9px/1 'Geist';letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+.bio-teaser__chev{color:var(--text-dim)}
+.bio-teaser__quote{
+  padding:10px 14px 14px;
+  font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+  font-size:14px;line-height:1.45;
+  color:var(--cream-dim);
+}
+.bio-teaser__quote::before{
+  content:"\201C";color:var(--gold);font-size:24px;margin-right:2px;
+  vertical-align:-3px;
+}
+
+/* =========================================================
+   STATE 7 — SHARE
+   ========================================================= */
+.share-preview{
+  margin:18px 20px 0;
+  background:
+    linear-gradient(180deg, #1A1A20 0%, #131318 100%);
+  border:1px solid var(--line);
+  border-radius:var(--r-3);
+  padding:18px 18px 16px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:var(--shadow-card);
+}
+.share-preview::before{
+  content:"";position:absolute;
+  left:0;right:0;top:0;height:1px;
+  background:linear-gradient(90deg, transparent, var(--lime), transparent);
+}
+.share-preview__head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  border-bottom:1px dashed var(--line);
+  padding-bottom:14px;margin-bottom:14px;
+}
+.share-preview__brand{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:900;
+  font-size:22px;line-height:1;letter-spacing:-.03em;
+  color:var(--cream);
+  display:flex;align-items:center;gap:8px;
+}
+.share-preview__brand .dot{
+  width:6px;height:6px;background:var(--lime);border-radius:50%;
+  box-shadow:0 0 12px var(--lime);
+}
+.share-preview__mode{
+  font:500 9px/1.2 'Geist';color:var(--text-dim);
+  letter-spacing:.12em;text-transform:uppercase;
+  text-align:right;
+}
+.share-preview__date{
+  font-family:'Geist Mono',monospace;
+  font-size:11px;color:var(--cream);font-weight:500;
+  margin-top:3px;
+}
+.share-preview__grid{
+  display:flex;gap:8px;justify-content:center;
+  margin:6px 0 14px;
+  font-size:28px;line-height:1;
+}
+.share-preview__grid span{
+  display:inline-grid;place-items:center;
+  width:34px;height:34px;border-radius:6px;
+  background:var(--bg);
+  border:1px solid var(--line-dim);
+  font-size:18px;
+}
+.share-preview__grid span.miss{
+  color:var(--hot);
+  background:rgba(255,61,46,.08);
+  border-color:rgba(255,61,46,.3);
+}
+.share-preview__grid span.hit{
+  color:var(--lime);
+  background:rgba(197,255,0,.1);
+  border-color:rgba(197,255,0,.4);
+}
+.share-preview__result{
+  text-align:center;
+  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+  font-size:18px;line-height:1.2;letter-spacing:-.02em;
+  color:var(--cream);margin-bottom:6px;
+}
+.share-preview__hash{
+  text-align:center;
+  font-family:'Geist Mono',monospace;
+  font-size:10px;color:var(--text-dim);
+  letter-spacing:.08em;
+}
+.share-preview__hash em{font-style:normal;color:var(--lime)}
+
+.share-channels{
+  margin:18px 20px 0;
+  display:grid;grid-template-columns:repeat(4, 1fr);
+  gap:8px;
+}
+.share-channel{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:14px 6px;
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+  background:var(--bg-card);
+  transition:transform .15s var(--ease), border-color .15s var(--ease);
+}
+.share-channel:hover{transform:translateY(-2px);border-color:var(--line-bright)}
+.share-channel__icon{
+  width:36px;height:36px;border-radius:var(--r-2);
+  display:grid;place-items:center;
+  color:var(--cream);
+}
+.share-channel--wa .share-channel__icon{background:#25D366;color:#0a3a1f}
+.share-channel--ig .share-channel__icon{background:linear-gradient(135deg,#FFD166,#EF476F,#9D4EDD);color:#fff}
+.share-channel--x .share-channel__icon{background:#0E0E10;border:1px solid var(--line-bright);color:var(--cream)}
+.share-channel--copy .share-channel__icon{background:var(--bg-elev);border:1px solid var(--line-bright);color:var(--cream)}
+.share-channel__icon svg{width:18px;height:18px}
+.share-channel__name{
+  font:500 11px/1 'Geist';color:var(--cream);
+}
+
+.share-stats{
+  margin:16px 20px 0;
+  border-top:1px solid var(--line-dim);
+  padding-top:16px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.share-stats__txt{
+  font:500 11px/1.4 'Geist';color:var(--text-dim);
+  display:flex;flex-direction:column;gap:2px;
+}
+.share-stats__txt strong{color:var(--cream);font-weight:600;font-family:'Geist Mono',monospace;font-size:14px}
+
+/* =========================================================
+   STATE 8 — PLAYER BIO
+   ========================================================= */
+.bio-hero{
+  position:relative;
+  height:300px;
+  background:
+    radial-gradient(80% 70% at 60% 40%, rgba(212,168,82,.13), transparent 70%),
+    linear-gradient(180deg, #131318 0%, #0E0E10 100%);
+  border-bottom:1px solid var(--line-dim);
+  overflow:hidden;
+}
+.bio-hero__num{
+  position:absolute;top:14px;right:18px;
+  font-family:'Fraunces',serif;font-style:italic;font-weight:900;
+  font-size:96px;line-height:1;letter-spacing:-.05em;
+  color:rgba(244,239,230,.06);
+  pointer-events:none;
+}
+.bio-hero__back{
+  position:absolute;top:14px;left:14px;z-index:5;
+}
+.bio-hero__silhouette{
+  position:absolute;
+  right:-10px;top:36px;
+  width:200px;height:240px;
+  opacity:.95;
+}
+.bio-hero__silhouette svg{width:100%;height:100%}
+.bio-hero__info{
+  position:absolute;left:20px;bottom:18px;right:20px;z-index:5;
+}
+.bio-hero__role{
+  font:500 10px/1 'Geist';letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;
+}
+.bio-hero__name{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:900;
+  font-size:36px;line-height:.95;letter-spacing:-.03em;
+  color:var(--cream);max-width:7ch;
+}
+.bio-hero__meta{
+  display:flex;align-items:center;gap:10px;
+  font-family:'Geist Mono',monospace;
+  font-size:11px;color:var(--cream-dim);
+  margin-top:8px;
+}
+.bio-hero__meta .sep{color:var(--line-bright)}
+
+/* Timeline */
+.timeline{
+  padding:20px 20px 14px;
+}
+.timeline__title{
+  font:500 10px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:12px;
+}
+.timeline__list{
+  position:relative;
+  padding-left:18px;
+}
+.timeline__list::before{
+  content:"";position:absolute;
+  left:4px;top:4px;bottom:4px;width:1px;
+  background:linear-gradient(180deg, var(--lime), var(--gold), var(--line-bright));
+}
+.timeline__row{
+  position:relative;
+  display:grid;grid-template-columns:62px 1fr;
+  gap:12px;
+  padding:6px 0;
+}
+.timeline__row::before{
+  content:"";position:absolute;
+  left:-18px;top:9px;
+  width:9px;height:9px;border-radius:50%;
+  background:var(--bg);
+  border:2px solid var(--line-bright);
+}
+.timeline__row--accent::before{
+  background:var(--lime);border-color:var(--lime);
+  box-shadow:0 0 8px var(--lime);
+}
+.timeline__row--gold::before{
+  background:var(--gold);border-color:var(--gold);
+}
+.timeline__year{
+  font-family:'Geist Mono',monospace;font-size:11px;
+  color:var(--text-dim);font-weight:500;
+  letter-spacing:.02em;
+  padding-top:1px;
+}
+.timeline__club{
+  font:500 13px/1.3 'Geist';color:var(--cream);
+}
+.timeline__club em{
+  font-style:normal;font-weight:600;color:var(--lime);
+}
+.timeline__note{
+  font:400 11px/1.3 'Geist';color:var(--text-dim);
+  margin-top:1px;
+}
+
+.bio-trophies{
+  padding:14px 20px 6px;
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.bio-trophies__title{
+  width:100%;
+  font:500 10px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:8px;
+}
+.trophy-chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 10px;
+  border:1px solid rgba(212,168,82,.3);
+  background:rgba(212,168,82,.05);
+  border-radius:var(--r-full);
+  font:500 11px/1 'Geist';color:var(--gold);
+}
+.trophy-chip svg{width:11px;height:11px}
+
+.fun-fact{
+  margin:14px 20px 0;
+  padding:14px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-left:3px solid var(--gold);
+  border-radius:var(--r-2);
+}
+.fun-fact__title{
+  font:500 10px/1 'Geist';letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:8px;
+}
+.fun-fact__body{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+  font-size:15px;line-height:1.5;color:var(--cream);
+}
+
+/* =========================================================
+   STATE 9 — CALENDAR
+   ========================================================= */
+.cal-head{
+  padding:14px 20px 0;
+}
+.cal-head__title{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+  font-size:28px;line-height:1;letter-spacing:-.025em;
+  color:var(--cream);margin-bottom:6px;
+}
+.cal-head__sub{
+  font-family:'Geist Mono',monospace;font-size:11px;
+  color:var(--text-dim);letter-spacing:.04em;
+}
+
+.cal-stats{
+  margin:14px 20px 0;
+  padding:14px 14px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  align-items:center;
+  gap:12px;
+  box-shadow:var(--shadow-card);
+  position:relative;
+  overflow:hidden;
+}
+.cal-stats::after{
+  content:"";position:absolute;
+  left:0;top:0;bottom:0;width:3px;background:var(--gold);
+}
+.cal-stat{
+  display:flex;flex-direction:column;gap:3px;
+  padding-left:10px;
+  border-left:1px solid var(--line-dim);
+}
+.cal-stat:first-child{padding-left:0;border-left:0}
+.cal-stat__val{
+  font-family:'Geist Mono',monospace;font-size:18px;font-weight:600;
+  color:var(--cream);font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  line-height:1;
+}
+.cal-stat__val--gold{color:var(--gold)}
+.cal-stat__lbl{
+  font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);
+}
+
+.cal-grid-wrap{
+  margin:18px 20px 0;
+}
+.cal-grid-wrap__title{
+  font:500 10px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:10px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.cal-grid-wrap__title em{
+  font-style:normal;
+  font-family:'Geist Mono',monospace;font-size:10px;color:var(--cream-dim);
+  letter-spacing:.04em;text-transform:none;font-weight:500;
+}
+.cal-grid{
+  display:grid;
+  grid-template-columns:repeat(7, 1fr);
+  gap:5px;
+}
+.cal-cell{
+  aspect-ratio:1;
+  border-radius:var(--r-1);
+  background:var(--bg-elev);
+  border:1px solid var(--line-dim);
+  position:relative;
+  display:grid;place-items:center;
+  font-family:'Geist Mono',monospace;
+  font-size:10px;color:var(--text-mute);
+}
+.cal-cell--won{
+  background:var(--lime);color:var(--bg);font-weight:600;
+  border-color:var(--lime);
+  box-shadow:0 0 8px rgba(197,255,0,.3);
+}
+.cal-cell--lost{
+  background:var(--bg-card);color:var(--hot-dim);
+  border-color:rgba(255,61,46,.25);
+}
+.cal-cell--skip{
+  background:transparent;color:var(--text-mute);
+  border-color:var(--line-dim);
+  border-style:dashed;
+}
+.cal-cell--today{
+  background:var(--bg-card);border-color:var(--cream);
+  color:var(--cream);font-weight:600;
+}
+.cal-cell--today::after{
+  content:"";position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+  width:4px;height:4px;background:var(--lime);border-radius:50%;
+}
+
+.cal-legend{
+  margin:14px 20px 0;
+  display:flex;gap:14px;flex-wrap:wrap;
+}
+.cal-legend__item{
+  display:inline-flex;align-items:center;gap:6px;
+  font:500 10px/1 'Geist';color:var(--text-dim);
+  letter-spacing:.04em;
+}
+.cal-legend__sw{
+  width:10px;height:10px;border-radius:3px;
+}
+.cal-legend__sw--won{background:var(--lime)}
+.cal-legend__sw--lost{background:var(--bg-card);border:1px solid rgba(255,61,46,.4)}
+.cal-legend__sw--skip{background:transparent;border:1px dashed var(--line-bright)}
+
+.cal-hover-hint{
+  position:absolute;
+  top:200px;left:50%;
+  transform:translate(-50%,-50%);
+  background:var(--bg-card-2);
+  border:1px solid var(--line-bright);
+  border-radius:var(--r-2);
+  padding:10px 12px;
+  box-shadow:var(--shadow-3);
+  min-width:160px;
+  z-index:11;
+  pointer-events:none;
+}
+.cal-hover-hint::after{
+  content:"";position:absolute;
+  top:-5px;left:50%;transform:translateX(-50%) rotate(45deg);
+  width:8px;height:8px;
+  background:var(--bg-card-2);
+  border-left:1px solid var(--line-bright);
+  border-top:1px solid var(--line-bright);
+}
+.cal-hover-hint__date{
+  font-family:'Geist Mono',monospace;font-size:10px;
+  color:var(--text-dim);letter-spacing:.04em;
+  margin-bottom:3px;
+}
+.cal-hover-hint__name{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+  font-size:15px;color:var(--cream);
+}
+.cal-hover-hint__meta{
+  font:400 11px/1.2 'Geist';color:var(--lime);
+  margin-top:3px;
+}
+
+/* =========================================================
+   STATE 10 — LOST
+   ========================================================= */
+.lost-stage{
+  position:relative;
+  margin:16px 20px 14px;
+  background:
+    radial-gradient(60% 70% at 50% 30%, rgba(255,61,46,.08) 0%, transparent 60%),
+    linear-gradient(180deg, #1A1518 0%, #14131A 100%);
+  border:1px solid rgba(255,61,46,.18);
+  border-radius:var(--r-4);
+  height:240px;
+  overflow:hidden;
+  display:grid;place-items:center;
+  box-shadow:var(--shadow-card);
+}
+.lost-banner{
+  margin:0 20px 0;
+  text-align:center;
+  padding:8px 0;
+}
+.lost-banner__verdict{
+  font:500 10px/1 'Geist';letter-spacing:.22em;text-transform:uppercase;
+  color:var(--hot);margin-bottom:10px;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.lost-banner__verdict::before,.lost-banner__verdict::after{
+  content:"";width:24px;height:1px;background:var(--hot);
+}
+.lost-banner__name{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:900;
+  font-size:36px;line-height:1;letter-spacing:-.03em;
+  color:var(--cream);margin-bottom:8px;
+}
+.lost-banner__msg{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+  font-size:15px;line-height:1.4;color:var(--cream-dim);
+  max-width:24ch;margin:0 auto;
+}
+
+.consolation{
+  margin:14px 20px 0;
+  padding:14px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+}
+.consolation__lbl{
+  font:500 9px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);margin-bottom:8px;
+}
+.consolation__bar{
+  position:relative;height:8px;background:var(--bg-elev);
+  border-radius:var(--r-full);overflow:hidden;
+  margin-bottom:10px;
+}
+.consolation__bar-fill{
+  position:absolute;left:0;top:0;bottom:0;
+  background:linear-gradient(90deg, var(--hot-dim), var(--hot));
+  border-radius:var(--r-full);
+}
+.consolation__row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-family:'Geist Mono',monospace;font-size:11px;
+}
+.consolation__row .lhs{color:var(--cream)}
+.consolation__row .rhs{color:var(--text-dim)}
+
+/* =========================================================
+   ACTION ROW
+   ========================================================= */
+.actions{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:14px 20px 28px;
+  background:linear-gradient(180deg, rgba(14,14,16,0) 0%, rgba(14,14,16,.96) 30%);
+  display:flex;flex-direction:column;gap:8px;
+}
+.actions-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+}
+
+/* =========================================================
+   SIDE NOTES UI
+   ========================================================= */
+.side-notes{
+  margin-top:20px;
+  padding:18px 20px;
+  background:var(--bg-card);
+  border:1px solid var(--line-dim);
+  border-radius:var(--r-3);
+  box-shadow:var(--shadow-card);
+}
+.side-notes__lbl{
+  display:flex;align-items:center;gap:8px;
+  font:500 10px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:14px;
+}
+.side-notes__lbl::after{
+  content:"";flex:1;height:1px;background:var(--line-dim);
+}
+.side-notes__list{
+  display:flex;flex-direction:column;gap:10px;
+}
+.side-notes__item{
+  display:grid;grid-template-columns:14px 1fr;gap:10px;
+  font-size:13px;line-height:1.45;color:var(--cream-dim);
+}
+.side-notes__item .marker{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--lime);
+  margin-top:7px;
+  flex-shrink:0;
+}
+.side-notes__item strong{
+  color:var(--cream);font-weight:600;
+  font-family:'Geist Mono',monospace;
+  font-size:11px;
+  background:var(--bg-elev);
+  padding:2px 5px;border-radius:var(--r-1);
+  border:1px solid var(--line-dim);
+  margin-right:4px;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+.footer{
+  border-top:1px solid var(--line);
+  margin-top:80px;
+  padding:48px 32px 48px;
+  max-width:1280px;margin-left:auto;margin-right:auto;
+}
+.footer__top{
+  display:grid;grid-template-columns:1fr auto;
+  gap:48px;align-items:start;
+  padding-bottom:32px;
+  border-bottom:1px solid var(--line-dim);
+}
+.footer__brand{
+  font-family:'Fraunces',serif;font-style:italic;font-weight:900;
+  font-size:64px;line-height:1;letter-spacing:-.04em;
+  color:var(--cream);
+}
+.footer__brand em{color:var(--lime)}
+.footer__meta{
+  display:grid;grid-template-columns:repeat(2,minmax(200px,auto));
+  gap:32px;
+  font-family:'Geist Mono',monospace;
+  font-size:12px;color:var(--text-dim);
+  letter-spacing:.02em;
+}
+.footer__meta-label{
+  font:500 10px/1.2 'Geist';color:var(--text-mute);
+  letter-spacing:.18em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.footer__meta-value{color:var(--cream)}
+.footer__bottom{
+  padding-top:24px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--text-dim);
+  font-family:'Geist Mono',monospace;letter-spacing:.04em;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width:960px){
+  .section{grid-template-columns:1fr;gap:36px;padding:64px 0}
+  .section__head{position:static}
+  .hero__meta{grid-template-columns:repeat(2,1fr)}
+  .hero__meta-cell{padding:16px;border-right:0;border-bottom:1px solid var(--line-dim)}
+  .hero__meta-cell:nth-child(2n){border-right:0}
+  .footer__top{grid-template-columns:1fr}
+  .footer__brand{font-size:42px}
+}
+@media (max-width:480px){
+  .topnav{padding:14px 18px}
+  .hero{padding:80px 18px 64px}
+  .flow{padding:0 18px 96px}
+  .topnav__right{gap:10px}
+  .topnav__eyebrow{display:none}
+}
+
+/* Anim helper */
+.fade-up{animation:fadeUp .8s var(--ease) both}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.fade-up-1{animation-delay:.05s}
+.fade-up-2{animation-delay:.15s}
+.fade-up-3{animation-delay:.25s}
+.fade-up-4{animation-delay:.35s}
+</style>
+</head>
+<body>
+
+<!-- =========================================================
+     TOP NAV
+     ========================================================= -->
+<header class="topnav">
+  <div class="topnav__brand">
+    <span class="topnav__mark">Goal<em style="color:var(--lime)">.</em></span>
+    <span class="topnav__eyebrow">UI Reference</span>
+  </div>
+  <div class="topnav__right">
+    <span class="topnav__chip"><span class="dot"></span>v0.9 · Flow Daily Player</span>
+    <a class="topnav__back" href="./index.html">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+      Lookbook
+    </a>
+  </div>
+</header>
+
+<!-- =========================================================
+     HERO
+     ========================================================= -->
+<section class="hero">
+  <div class="hero__eyebrow fade-up fade-up-1">
+    <span class="rule"></span>
+    Premium UI Flow · Daily Player · Edizione 19.05.2026
+  </div>
+  <h1 class="hero__title fade-up fade-up-2">
+    Indovina <em>il giocatore.</em><br>
+    8 indizi, 1 risposta.
+  </h1>
+  <p class="hero__lede fade-up fade-up-3">
+    Il viaggio completo della modalità Daily Player in dieci stati — dall'atterraggio dall'hub fino al calendario dei filotti. Questo documento è il riferimento di qualità UI per il resto del prodotto. Tutto qui dentro va portato come livello minimo, non come massimo.
+  </p>
+  <div class="hero__meta fade-up fade-up-4">
+    <div class="hero__meta-cell">
+      <div class="hero__meta-label">Modalità</div>
+      <div class="hero__meta-value">Daily Player</div>
+    </div>
+    <div class="hero__meta-cell">
+      <div class="hero__meta-label">Stati</div>
+      <div class="hero__meta-value"><span class="accent">10</span>/10 schermate</div>
+    </div>
+    <div class="hero__meta-cell">
+      <div class="hero__meta-label">Edizione</div>
+      <div class="hero__meta-value">19.05.2026 · #143</div>
+    </div>
+    <div class="hero__meta-cell">
+      <div class="hero__meta-label">Posizionamento</div>
+      <div class="hero__meta-value">Editorial Stadium</div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================
+     FLOW SECTIONS
+     ========================================================= -->
+<main class="flow">
+
+  <!-- ============= STATE 01 — HUB ENTRANCE ============= -->
+  <section class="section" id="state-01">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>01 / 10 · Atterraggio</div>
+      <h2 class="section__title">Hub<br>entrance.</h2>
+      <p class="section__lede">L'utente apre l'app alle 8:47 del mattino. La home lo accoglie con un saluto personale, la Daily Player in evidenza con conteggio community in tempo reale, e le altre modalità sotto. Tutto è già contestualizzato: data editoriale, countdown reset, numero di chi ha già giocato oggi.</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Saluto</dt><dd>fascia 06-09 · "Caffè e Daily Player. La sequenza giusta."</dd></div>
+        <div class="section__list-row"><dt>Live</dt><dd>community counter aggiornato ogni 30s</dd></div>
+        <div class="section__list-row"><dt>Hint</dt><dd>card primaria con stripe lime · gerarchia chiara</dd></div>
+        <div class="section__list-row"><dt>Token</dt><dd><code>--lime</code> 1 occorrenza dominante</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>HOVER</strong>la card Daily Player solleva il border a <code>--line-bright</code> e il chevron trasla 3px</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>FOCUS</strong>tab order: card primaria → mode-row → bottom nav</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>RESET</strong>countdown si aggiorna ogni 60s · stops a 00:00 fuso locale</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:47</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <!-- App bar -->
+          <div class="app-bar">
+            <div class="app-bar__left">
+              <button class="iconbtn" aria-label="Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+              </button>
+              <span class="app-bar__title">Home</span>
+            </div>
+            <div class="app-bar__right">
+              <button class="iconbtn" aria-label="Notifiche" style="position:relative">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+                <span style="position:absolute;top:6px;right:7px;width:6px;height:6px;background:var(--lime);border-radius:50%;border:2px solid var(--bg-elev)"></span>
+              </button>
+              <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#5B7FFF,#2541B2);display:grid;place-items:center;font:600 12px 'Geist';color:#fff;border:1.5px solid var(--bg)">MR</div>
+            </div>
+          </div>
+
+          <!-- Greeting -->
+          <div class="hub-greet">
+            <div class="hub-greet__date">
+              <span>MAR · 19.05.2026</span>
+              <span class="sep">·</span>
+              <span class="live">08:47</span>
+              <span class="sep">·</span>
+              <span>Serie A</span>
+            </div>
+            <h2 class="hub-greet__h">Marco. <em>Caffè</em><br>e Daily Player.</h2>
+            <p class="hub-greet__sub">Da ieri Caratura <span style="color:var(--lime);font-family:'Geist Mono',monospace">+€2.4M</span> · Filotto a 28 giorni.</p>
+          </div>
+
+          <!-- Stat row -->
+          <div class="stat-row">
+            <div class="stat-row__cell">
+              <span class="stat-row__num lime">€34.2M</span>
+              <span class="stat-row__lbl">Caratura</span>
+            </div>
+            <div class="stat-row__sep"></div>
+            <div class="stat-row__cell">
+              <span class="stat-row__num gold">28</span>
+              <span class="stat-row__lbl">Filotto</span>
+            </div>
+            <div class="stat-row__sep"></div>
+            <div class="stat-row__cell">
+              <span class="stat-row__num">4°</span>
+              <span class="stat-row__lbl">Serie B</span>
+            </div>
+          </div>
+
+          <!-- Daily card (featured) -->
+          <article class="daily-card">
+            <div class="daily-card__top">
+              <span class="daily-card__label">Daily Player · #143</span>
+              <span class="daily-card__counter">
+                <span class="pill pill--live" style="padding:3px 8px;font-size:9px">Live</span>
+                Reset 15:13:42
+              </span>
+            </div>
+            <h3 class="daily-card__title">Edizione del<br>19 maggio.</h3>
+            <p class="daily-card__sub">8 indizi progressivi. Difficoltà <strong style="color:var(--gold);font-weight:600">Media</strong>. Stima: 2 min.</p>
+            <div class="daily-card__row">
+              <div class="daily-card__community">
+                <div class="daily-card__avatars">
+                  <span></span><span></span><span></span><span></span>
+                </div>
+                <span class="daily-card__community-txt"><strong>12.847</strong> oggi · 64% indovinati</span>
+              </div>
+              <button class="btn btn--primary btn--sm">
+                Gioca
+                <span class="btn__arrow">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </span>
+              </button>
+            </div>
+          </article>
+
+          <!-- Other modes -->
+          <div class="modes-list">
+            <button class="mode-row">
+              <span class="mode-row__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6" rx="0.5"/><rect x="9" y="3" width="6" height="6" rx="0.5"/><rect x="15" y="3" width="6" height="6" rx="0.5"/><rect x="3" y="9" width="6" height="6" rx="0.5"/><rect x="9" y="9" width="6" height="6" rx="0.5" fill="currentColor"/><rect x="15" y="9" width="6" height="6" rx="0.5"/><rect x="3" y="15" width="6" height="6" rx="0.5"/><rect x="9" y="15" width="6" height="6" rx="0.5"/><rect x="15" y="15" width="6" height="6" rx="0.5"/></svg>
+              </span>
+              <span class="mode-row__body">
+                <span class="mode-row__name">Grid · Tris del giorno</span>
+                <span class="mode-row__meta">0/9 · scade alle 23:59 <span class="sep">·</span> +€2M/casella</span>
+              </span>
+              <span class="mode-row__chev">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </span>
+            </button>
+            <button class="mode-row">
+              <span class="mode-row__icon" style="color:var(--hot)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg>
+              </span>
+              <span class="mode-row__body">
+                <span class="mode-row__name">Duello · Lorenzo ti sfida</span>
+                <span class="mode-row__meta">5 round · 10s a domanda <span class="sep">·</span> <span style="color:var(--hot)">in attesa</span></span>
+              </span>
+              <span class="mode-row__chev">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </span>
+            </button>
+            <button class="mode-row">
+              <span class="mode-row__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="10.5" opacity=".4"/></svg>
+              </span>
+              <span class="mode-row__body">
+                <span class="mode-row__name">Pronostici Live</span>
+                <span class="mode-row__meta">Inter-Milan stasera 20:45 <span class="sep">·</span> 2.1× Caratura</span>
+              </span>
+              <span class="mode-row__chev">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </span>
+            </button>
+          </div>
+
+          <!-- Bottom nav -->
+          <nav class="bottomnav">
+            <button class="bottomnav__item bottomnav__item--active">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/></svg>
+              Home
+            </button>
+            <button class="bottomnav__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><rect x="9" y="7" width="6" height="14"/><rect x="3" y="12" width="6" height="9"/><rect x="15" y="10" width="6" height="11"/></svg>
+              Lega
+            </button>
+            <button class="bottomnav__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg>
+              Duello
+            </button>
+            <button class="bottomnav__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/><path d="M7 5H5c-.8 0-1.5.8-1.5 1.5C3.5 8.2 4.8 10 7 10.2"/><path d="M17 5h2c.8 0 1.5.8 1.5 1.5 0 1.7-1.3 3.5-3.5 3.7"/><path d="M12 12.5V18"/><path d="M9 21h6"/><path d="M10 18h4"/></svg>
+              Carriera
+            </button>
+            <button class="bottomnav__item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+              Profilo
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 02 — INTRO ============= -->
+  <section class="section" id="state-02">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>02 / 10 · Apertura</div>
+      <h2 class="section__title">Intro<br>screen.</h2>
+      <p class="section__lede">L'utente entra nel Daily. Tre regole essenziali, silhouette completamente sfocata sul "campo di notte", e una CTA primaria. Niente onboarding ripetuto: assumiamo l'utente sappia il gioco. Tipografia editoriale all'estremo, copy stretto.</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Display</dt><dd>Fraunces italic 700 · 44px · tracking −0.03em</dd></div>
+        <div class="section__list-row"><dt>Stage</dt><dd>radial gradient + pitch lines orizzontali ghosted</dd></div>
+        <div class="section__list-row"><dt>Edition</dt><dd>numerazione "01/10" + data tipo masthead</dd></div>
+        <div class="section__list-row"><dt>CTA</dt><dd>lime, una sola occorrenza dominante</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>HINT</strong>il "ghost cursor" suggerisce che la pressione Invio sarà accettata</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>BLUR</strong>silhouette a blur(18px), opacity .4 — totalmente illeggibile</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>COPY</strong>tone Sage 80% · Jester 20% (la regola in basso)</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:48</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <!-- App bar -->
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Indietro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <span class="app-bar__title">Daily Player</span>
+            <button class="iconbtn" aria-label="Info">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M12 12v4"/></svg>
+            </button>
+          </div>
+
+          <!-- Header -->
+          <div class="intro-header">
+            <div class="intro-edition">
+              <div class="intro-edition__left">
+                <span class="intro-edition__num">#143</span>
+                <span>Edizione · 19.05.2026</span>
+              </div>
+              <span>Martedì</span>
+            </div>
+            <h2 class="intro-title">Indovina<br><em>il giocatore.</em></h2>
+            <p class="intro-sub">Otto indizi progressivi. Un solo nome al giorno. Tutti i tifosi italiani giocano lo stesso.</p>
+          </div>
+
+          <!-- Rule cells -->
+          <div class="intro-rule">
+            <div class="intro-rule__cell">
+              <span class="intro-rule__num"><span class="lime">8</span></span>
+              <span class="intro-rule__lbl">Tentativi</span>
+            </div>
+            <div class="intro-rule__cell">
+              <span class="intro-rule__num">1</span>
+              <span class="intro-rule__lbl">Soluzione</span>
+            </div>
+            <div class="intro-rule__cell">
+              <span class="intro-rule__num">~2'</span>
+              <span class="intro-rule__lbl">Tempo medio</span>
+            </div>
+          </div>
+
+          <!-- Silhouette stage -->
+          <div class="silhouette-stage">
+            <span class="silhouette-overlay-num">N° <strong>143</strong> · ?</span>
+            <div class="silhouette">
+              <svg viewBox="0 0 140 170" fill="none">
+                <circle cx="70" cy="38" r="22" fill="#F4EFE6"/>
+                <path d="M30 170 Q30 88 70 88 Q110 88 110 170 Z" fill="#F4EFE6"/>
+              </svg>
+            </div>
+            <div style="position:absolute;bottom:14px;left:0;right:0;text-align:center">
+              <span class="label-mono" style="font-size:9px;letter-spacing:.14em">FOTO SBLOCCATA AL TENTATIVO 7</span>
+            </div>
+          </div>
+
+          <!-- Score table -->
+          <div class="recent" style="margin-top:0">
+            <div class="recent__head">
+              <span class="recent__title">Punteggi possibili</span>
+              <span class="recent__counter">Caratura</span>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;font-family:'Geist Mono',monospace;font-size:11px">
+              <div style="text-align:center;padding:6px 0;background:var(--bg-elev);border-radius:var(--r-1);border:1px solid var(--line-dim)"><div style="color:var(--lime);font-weight:600">+€10M</div><div style="color:var(--text-dim);font-size:9px;margin-top:2px">1°</div></div>
+              <div style="text-align:center;padding:6px 0;background:var(--bg-elev);border-radius:var(--r-1);border:1px solid var(--line-dim)"><div style="color:var(--cream)">+€7M</div><div style="color:var(--text-dim);font-size:9px;margin-top:2px">2°</div></div>
+              <div style="text-align:center;padding:6px 0;background:var(--bg-elev);border-radius:var(--r-1);border:1px solid var(--line-dim)"><div style="color:var(--cream)">+€5M</div><div style="color:var(--text-dim);font-size:9px;margin-top:2px">3°</div></div>
+              <div style="text-align:center;padding:6px 0;background:var(--bg-elev);border-radius:var(--r-1);border:1px solid var(--line-dim)"><div style="color:var(--cream-dim)">→ €0</div><div style="color:var(--text-dim);font-size:9px;margin-top:2px">8°</div></div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <div class="cta-bar">
+            <button class="btn btn--primary btn--lg btn--block">
+              Inizia
+              <span class="btn__arrow">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </span>
+            </button>
+            <div class="cta-helper">
+              <span class="kbd">↵</span><span>per cominciare</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 03 — ATTEMPT 1 ============= -->
+  <section class="section" id="state-03">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>03 / 10 · Primo tentativo</div>
+      <h2 class="section__title">Attempt<br>one.</h2>
+      <p class="section__lede">Il primo indizio è rivelato — Lega. La silhouette è ancora molto sfocata. Il campo input ha lo stato focus visibile con anello lime e ghost text di completamento ("Baggi…o"). I tentativi sono 8, ne resta uno di "credito di sicurezza".</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Indizi</dt><dd>1 di 8 rivelato · 7 lock</dd></div>
+        <div class="section__list-row"><dt>Ghost</dt><dd>autocomplete fuzzy in <code>--text-mute</code></dd></div>
+        <div class="section__list-row"><dt>Caret</dt><dd>cursor lime blink @ 1s</dd></div>
+        <div class="section__list-row"><dt>Dots</dt><dd>8 segmenti — tutti pieni</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>FOCUS</strong>border <code>--lime</code> + box-shadow ring rgba(197,255,0,.15)</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>FUZZY</strong>matcher dialect-aware (Baggio = Bagio = Baggi)</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>BLUR</strong>silhouette → blur(14px) · opacity .45</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:48</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <!-- App bar -->
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Indietro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <span class="app-bar__title">Daily Player · #143</span>
+            <button class="iconbtn" aria-label="Skip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+            </button>
+          </div>
+
+          <!-- Play header -->
+          <div class="play-header">
+            <div class="play-header__left">
+              <h3 class="play-header__title">Tentativo 1</h3>
+              <div class="play-header__date">19.05.2026 · 00:38</div>
+            </div>
+            <div class="attempts-counter">
+              <div class="attempts-counter__num">7</div>
+              <div class="attempts-counter__lbl">Rimasti</div>
+            </div>
+          </div>
+
+          <!-- Dots -->
+          <div class="attempt-dots">
+            <span class="used--wrong"></span>
+            <span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span>
+          </div>
+
+          <!-- Silhouette -->
+          <div class="silhouette-stage" style="height:180px;margin:14px 20px 0">
+            <span class="silhouette-overlay-num">N° <strong>143</strong></span>
+            <div class="silhouette silhouette--med" style="opacity:.5;filter:blur(14px)">
+              <svg viewBox="0 0 140 170" fill="none">
+                <circle cx="70" cy="38" r="22" fill="#F4EFE6"/>
+                <path d="M30 170 Q30 88 70 88 Q110 88 110 170 Z" fill="#F4EFE6"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Clues -->
+          <div class="clues" style="padding-top:14px">
+            <div class="clue clue--new">
+              <span class="clue__num">01</span>
+              <span class="clue__key">Lega</span>
+              <span class="clue__val"><em>Serie A</em></span>
+            </div>
+            <div class="clue clue--locked">
+              <span class="clue__num">02</span>
+              <span class="clue__key">Età</span>
+              <span class="clue__val locked"></span>
+            </div>
+            <div class="clue clue--locked">
+              <span class="clue__num">03</span>
+              <span class="clue__key">Ruolo</span>
+              <span class="clue__val locked"></span>
+            </div>
+          </div>
+
+          <!-- Input -->
+          <div class="input-block">
+            <div class="guess-row guess-row--focus">
+              <div class="guess-row__input">
+                <span class="guess-row__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/></svg>
+                </span>
+                <span class="guess-row__text">
+                  <span class="typed">Baggi</span><span class="cursor"></span><span class="ghost">o, Roberto</span>
+                </span>
+                <span class="guess-row__submit">
+                  Invia
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 04 — ATTEMPT 3 ============= -->
+  <section class="section" id="state-04">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>04 / 10 · Mid-game</div>
+      <h2 class="section__title">Attempt<br>three.</h2>
+      <p class="section__lede">Terzo tentativo. Tre indizi sono visibili (Lega, Età, Ruolo). Sotto, la lista dei tentativi precedenti con feedback editoriale — "Era della stessa lega" — perché ogni errore deve dire qualcosa, non solo "sbagliato". La silhouette è meno sfocata ma non leggibile.</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Indizi</dt><dd>3 di 8 · l'ultimo evidenziato</dd></div>
+        <div class="section__list-row"><dt>Feedback</dt><dd>copy editoriale Sage — "Era della stessa lega"</dd></div>
+        <div class="section__list-row"><dt>Dots</dt><dd>2 segmenti hot-dim · 6 rimasti</dd></div>
+        <div class="section__list-row"><dt>Hint</dt><dd>recent list scrollable verticale</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>BLUR</strong>silhouette → blur(10px) opacity .55</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>HINT</strong>feedback contestuale: lega, periodo, club, nazionalità</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>TONE</strong>"Era della stessa lega" — non "sbagliato"</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:49</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Indietro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <span class="app-bar__title">Daily Player · #143</span>
+            <button class="iconbtn" aria-label="Skip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+            </button>
+          </div>
+
+          <div class="play-header">
+            <div class="play-header__left">
+              <h3 class="play-header__title">Tentativo 3</h3>
+              <div class="play-header__date">19.05.2026 · 01:42</div>
+            </div>
+            <div class="attempts-counter">
+              <div class="attempts-counter__num">5</div>
+              <div class="attempts-counter__lbl">Rimasti</div>
+            </div>
+          </div>
+
+          <div class="attempt-dots">
+            <span class="used--wrong"></span>
+            <span class="used--wrong"></span>
+            <span class="used--wrong"></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+
+          <!-- Clues -->
+          <div class="clues" style="padding-top:14px">
+            <div class="clue">
+              <span class="clue__num">01</span>
+              <span class="clue__key">Lega</span>
+              <span class="clue__val">Serie A</span>
+            </div>
+            <div class="clue">
+              <span class="clue__num">02</span>
+              <span class="clue__key">Età carriera</span>
+              <span class="clue__val">18 — 37 anni</span>
+            </div>
+            <div class="clue clue--new">
+              <span class="clue__num">03</span>
+              <span class="clue__key">Ruolo</span>
+              <span class="clue__val"><em>Trequartista</em></span>
+            </div>
+            <div class="clue clue--locked">
+              <span class="clue__num">04</span>
+              <span class="clue__key">Club attuale</span>
+              <span class="clue__val locked"></span>
+            </div>
+          </div>
+
+          <!-- Recent guesses -->
+          <div class="recent">
+            <div class="recent__head">
+              <span class="recent__title">Tentativi · 3/8</span>
+              <span class="recent__counter">−€7M dal massimo</span>
+            </div>
+            <div class="recent__list">
+              <div class="recent__item recent__item--wrong">
+                <span class="recent__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+                </span>
+                <span class="recent__name">Paolo Maldini</span>
+                <span class="recent__hint">Era della stessa lega</span>
+              </div>
+              <div class="recent__item recent__item--wrong">
+                <span class="recent__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+                </span>
+                <span class="recent__name">Franco Baresi</span>
+                <span class="recent__hint">Stessa lega · ruolo diverso</span>
+              </div>
+              <div class="recent__item recent__item--wrong">
+                <span class="recent__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+                </span>
+                <span class="recent__name">Andrea Pirlo</span>
+                <span class="recent__hint">Vicino · era regista, non trequartista</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-block">
+            <div class="guess-row">
+              <div class="guess-row__input">
+                <span class="guess-row__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/></svg>
+                </span>
+                <span class="guess-row__text" style="color:var(--text-mute);font-weight:400">Scrivi un nome…</span>
+                <span class="label-mono" style="font-size:10px">↵</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 05 — ATTEMPT 6 ============= -->
+  <section class="section" id="state-05">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>05 / 10 · Pressione</div>
+      <h2 class="section__title">Attempt<br>six.</h2>
+      <p class="section__lede">Sei indizi visibili, foto ormai quasi nitida. Banner di warning hot dichiara "Ultimi 2 tentativi." Il campo input mostra l'autocomplete dropdown attivo con 4 suggerimenti — bandiera nazionale, nome, ruolo, percentuale community che li ha provati. La pressione è palpabile ma il tono non è cringe.</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Warning</dt><dd>hot border-left · copy "Ultimi 2 tentativi"</dd></div>
+        <div class="section__list-row"><dt>Counter</dt><dd>colore hot · 2 rimasti</dd></div>
+        <div class="section__list-row"><dt>Dropdown</dt><dd>flag · nome · metadata · keyboard hint</dd></div>
+        <div class="section__list-row"><dt>Silhouette</dt><dd>blur(5px) opacity .8 — riconoscibile</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>HOT</strong>il rosso entra solo qui — una occorrenza per schermata</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>KBD</strong>↑↓ per navigare · ↵ per confermare · esc per chiudere</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>RANK</strong>"il 32% l'ha provato" — community insight</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:51</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Indietro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <span class="app-bar__title">Daily Player · #143</span>
+            <button class="iconbtn" aria-label="Skip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+            </button>
+          </div>
+
+          <div class="play-header">
+            <div class="play-header__left">
+              <h3 class="play-header__title">Tentativo 6</h3>
+              <div class="play-header__date">19.05.2026 · 02:24</div>
+            </div>
+            <div class="attempts-counter">
+              <div class="attempts-counter__num attempts-counter__num--critical">2</div>
+              <div class="attempts-counter__lbl">Rimasti</div>
+            </div>
+          </div>
+
+          <div class="attempt-dots">
+            <span class="used--wrong"></span>
+            <span class="used--wrong"></span>
+            <span class="used--wrong"></span>
+            <span class="used--wrong"></span>
+            <span class="used--wrong"></span>
+            <span class="used--wrong"></span>
+            <span class="critical"></span>
+            <span class="critical"></span>
+          </div>
+
+          <!-- Warning -->
+          <div class="warning-banner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><path d="M12 9v4M12 17h.01"/></svg>
+            <span class="warning-banner__text"><em>Ultimi 2 tentativi.</em> Il prossimo errore costa caro.</span>
+          </div>
+
+          <!-- Silhouette + clues compressed -->
+          <div style="display:grid;grid-template-columns:120px 1fr;gap:10px;margin:14px 20px 0">
+            <div class="silhouette-stage" style="margin:0;height:auto;border-radius:var(--r-3)">
+              <div class="silhouette silhouette--low" style="width:90px;height:110px">
+                <svg viewBox="0 0 140 170" fill="none">
+                  <circle cx="70" cy="38" r="22" fill="#F4EFE6"/>
+                  <path d="M30 170 Q30 88 70 88 Q110 88 110 170 Z" fill="#F4EFE6"/>
+                </svg>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;justify-content:space-between;font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase"><span style="color:var(--text-dim)">Lega</span><span style="color:var(--cream)">Serie A</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase"><span style="color:var(--text-dim)">Età</span><span style="color:var(--cream)">18-37</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase"><span style="color:var(--text-dim)">Ruolo</span><span style="color:var(--cream)">Trequartista</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase"><span style="color:var(--text-dim)">Club fin.</span><span style="color:var(--cream)">Brescia</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase"><span style="color:var(--text-dim)">Trofei</span><span style="color:var(--cream)">2 Sc · 1 UEFA</span></div>
+              <div style="display:flex;justify-content:space-between;font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase"><span style="color:var(--gold)">Naz.</span><span style="color:var(--lime)">Italia</span></div>
+              <div style="margin-top:auto;display:flex;justify-content:space-between;font:500 9px/1 'Geist';letter-spacing:.1em;text-transform:uppercase;opacity:.35"><span>Foto</span><span>—</span></div>
+            </div>
+          </div>
+
+          <!-- Input + autocomplete -->
+          <div class="input-block" style="padding-top:14px">
+            <div class="guess-row guess-row--focus">
+              <div class="guess-row__input" style="border-bottom:1px solid var(--line-dim);padding-bottom:12px">
+                <span class="guess-row__icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/></svg>
+                </span>
+                <span class="guess-row__text">
+                  <span class="typed">Ro</span><span class="cursor"></span>
+                </span>
+                <span class="label-mono" style="font-size:10px">↵</span>
+              </div>
+              <div class="guess-suggest">
+                <div class="guess-suggest__item guess-suggest__item--active">
+                  <span class="guess-suggest__flag"></span>
+                  <span><span class="guess-suggest__name"><em>Ro</em>berto Baggio</span><br><span class="guess-suggest__meta">Trequartista · 1982-2004 · Italia</span></span>
+                  <span class="guess-suggest__kbd">↵</span>
+                </div>
+                <div class="guess-suggest__item">
+                  <span class="guess-suggest__flag"></span>
+                  <span><span class="guess-suggest__name"><em>Ro</em>berto Mancini</span><br><span class="guess-suggest__meta">Attaccante · 1981-2000 · Italia</span></span>
+                  <span class="guess-suggest__kbd">↓</span>
+                </div>
+                <div class="guess-suggest__item">
+                  <span class="guess-suggest__flag guess-suggest__flag--fr"></span>
+                  <span><span class="guess-suggest__name"><em>Ro</em>main Saïss</span><br><span class="guess-suggest__meta">Difensore · 2009- · Marocco</span></span>
+                  <span class="guess-suggest__kbd"></span>
+                </div>
+                <div class="guess-suggest__item">
+                  <span class="guess-suggest__flag"></span>
+                  <span><span class="guess-suggest__name"><em>Ro</em>berto Donadoni</span><br><span class="guess-suggest__meta">Centrocampista · 1982-2000 · Italia</span></span>
+                  <span class="guess-suggest__kbd"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 06 — WON ============= -->
+  <section class="section" id="state-06">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>06 / 10 · Vittoria</div>
+      <h2 class="section__title">Won.<br><em>Roberto Baggio.</em></h2>
+      <p class="section__lede">Lo stage si illumina di lime, halo che pulsa, sparkles minime. Il nome appare in Fraunces italic 900, sotto stats personali e community percentile. Il ticker Caratura sale di €5M. Sotto, teaser per la bio editoriale del giocatore. CTA primaria "Condividi", secondaria "Bio completa".</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Display</dt><dd>Fraunces italic 900 · 38px · −0.03em</dd></div>
+        <div class="section__list-row"><dt>Stage</dt><dd>radial lime + halo a 3s ease-in-out</dd></div>
+        <div class="section__list-row"><dt>Stats</dt><dd>5 tentativi · top 18% · +€5M Caratura</dd></div>
+        <div class="section__list-row"><dt>Tone</dt><dd>"Esatto." — non "Wow!"</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>HALO</strong>animazione 3s pulse · rispetta prefers-reduced-motion</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>LIME</strong>una occorrenza dominante · ticker €+5M</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>COPY</strong>"Roba da Mister" emerge solo se 1° tentativo</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:52</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen" style="overflow:auto">
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Chiudi">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+            </button>
+            <span class="app-bar__title" style="color:var(--lime)">Indovinato</span>
+            <button class="iconbtn" aria-label="Bookmark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4.5L5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg>
+            </button>
+          </div>
+
+          <!-- Stage -->
+          <div class="won-stage">
+            <div class="won-stage__sparkles">
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="silhouette silhouette--rev" style="width:130px;height:160px">
+              <svg viewBox="0 0 140 170" fill="none">
+                <defs>
+                  <linearGradient id="lime-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#F4EFE6"/>
+                    <stop offset="100%" stop-color="#C5FF00"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="70" cy="38" r="22" fill="url(#lime-grad)"/>
+                <path d="M30 170 Q30 88 70 88 Q110 88 110 170 Z" fill="url(#lime-grad)"/>
+                <!-- detail jersey 10 -->
+                <text x="70" y="135" text-anchor="middle" font-family="Geist Mono" font-weight="700" font-size="28" fill="#0E0E10">10</text>
+              </svg>
+            </div>
+            <!-- corner indicators -->
+            <span style="position:absolute;top:10px;left:14px;font-family:'Geist Mono',monospace;font-size:10px;color:var(--lime);letter-spacing:.12em">N° <strong>143</strong> · ✓</span>
+            <span style="position:absolute;top:10px;right:14px;font-family:'Geist Mono',monospace;font-size:10px;color:var(--cream-dim);letter-spacing:.06em">02:24</span>
+          </div>
+
+          <!-- Reveal name -->
+          <div class="reveal-name">
+            <div class="reveal-name__verdict">L'hai trovato</div>
+            <h2 class="reveal-name__name">Roberto Baggio</h2>
+            <div class="reveal-name__sub">Trequartista · Italia · 1982 — 2004</div>
+          </div>
+
+          <!-- Win stats -->
+          <div class="win-stats">
+            <div class="win-stats__cell">
+              <span class="win-stats__val">5<span style="color:var(--text-dim);font-size:12px">/8</span></span>
+              <span class="win-stats__lbl">Tentativi</span>
+            </div>
+            <div class="win-stats__sep"></div>
+            <div class="win-stats__cell">
+              <span class="win-stats__val win-stats__val--lime">18%</span>
+              <span class="win-stats__lbl">Top community</span>
+            </div>
+            <div class="win-stats__sep"></div>
+            <div class="win-stats__cell">
+              <span class="win-stats__val win-stats__val--gold">29</span>
+              <span class="win-stats__lbl">Filotto</span>
+            </div>
+          </div>
+
+          <!-- Caratura ticker -->
+          <div class="caratura-ticker">
+            <div class="caratura-ticker__left">
+              <span class="caratura-ticker__lbl">Caratura ora</span>
+              <span class="caratura-ticker__val">€39.2M</span>
+            </div>
+            <div class="caratura-ticker__delta">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7 14 5-5 5 5"/></svg>
+              +€5.0M
+            </div>
+          </div>
+
+          <!-- Bio teaser -->
+          <a class="bio-teaser" style="display:block;cursor:pointer">
+            <div class="bio-teaser__top">
+              <span class="bio-teaser__label">Il Divin Codino · Bio</span>
+              <span class="bio-teaser__chev">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </span>
+            </div>
+            <p class="bio-teaser__quote">Il rigore di Pasadena, '94. Lo sbagliò lui — ma a quel punto aveva già portato l'Italia in finale praticamente da solo.</p>
+          </a>
+
+          <!-- Actions (sticky bottom-ish) -->
+          <div class="actions">
+            <div class="actions-row">
+              <button class="btn btn--secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/><path d="M12 12.5V18"/><path d="M9 21h6"/></svg>
+                Bio
+              </button>
+              <button class="btn btn--primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v14"/></svg>
+                Condividi
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 07 — SHARE ============= -->
+  <section class="section" id="state-07">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>07 / 10 · Loop sociale</div>
+      <h2 class="section__title">Share<br>card.</h2>
+      <p class="section__lede">Sheet di share Wordle-style. La card preview brandata mostra Goal, modalità, data, griglia emoji "⚽⚽⚽⚽⚽✅" e risultato. Sotto, 4 canali: WhatsApp · Instagram · X · Copy link. Footer con community stats sulla performance giornaliera. Niente "Condividi con i tuoi amici!" — niente padding marketing.</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Card</dt><dd>preview screenshot-ready · 16:9 ratio</dd></div>
+        <div class="section__list-row"><dt>Channels</dt><dd>4 canali · hover lift 2px</dd></div>
+        <div class="section__list-row"><dt>Hash</dt><dd>auto-generato · #143 · goalapp.it</dd></div>
+        <div class="section__list-row"><dt>Stats</dt><dd>"4.2K hanno condiviso oggi"</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>EMOJI</strong>unico contesto in cui le emoji sono permesse</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>COPY</strong>"Condividi" — non "Share now!"</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>SPOILER</strong>la card NON contiene il nome del giocatore</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:52</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Indietro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <span class="app-bar__title">Condividi</span>
+            <button class="iconbtn" aria-label="Chiudi">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+            </button>
+          </div>
+
+          <div style="padding:14px 20px 4px">
+            <div style="font:500 10px/1 'Geist';letter-spacing:.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px">Anteprima · senza spoiler</div>
+            <div style="font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:26px;line-height:1;letter-spacing:-.025em;color:var(--cream);margin-bottom:6px">Il tuo risultato.</div>
+            <div style="font-size:12px;color:var(--cream-dim)">5 tentativi · Top 18% di chi ha indovinato oggi.</div>
+          </div>
+
+          <!-- Preview card -->
+          <div class="share-preview">
+            <div class="share-preview__head">
+              <div class="share-preview__brand">Goal<span class="dot"></span></div>
+              <div>
+                <div class="share-preview__mode">Daily Player · #143</div>
+                <div class="share-preview__date">19.05.2026</div>
+              </div>
+            </div>
+            <div class="share-preview__grid">
+              <span class="miss">⚽</span>
+              <span class="miss">⚽</span>
+              <span class="miss">⚽</span>
+              <span class="miss">⚽</span>
+              <span class="hit">✓</span>
+            </div>
+            <div class="share-preview__result">Indovinato in 5.</div>
+            <div class="share-preview__hash"><em>goalapp.it</em> · #DailyPlayer143</div>
+          </div>
+
+          <!-- Channels -->
+          <div class="share-channels">
+            <button class="share-channel share-channel--wa">
+              <span class="share-channel__icon">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.7-.8-1.9-.9-.3-.1-.5-.1-.7.2s-.8.9-.9 1.1c-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.4-.2.3-.9.9-.9 2.2 0 1.3.9 2.5 1.1 2.7.1.2 1.9 2.9 4.6 4 .6.3 1.1.4 1.5.6.6.2 1.2.2 1.7.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4 0-.1-.2-.2-.5-.3ZM12 21.4c-1.7 0-3.3-.5-4.7-1.3l-.3-.2-3.5.9.9-3.4-.2-.3c-.9-1.4-1.4-3.1-1.4-4.8C2.8 7 6.9 2.9 12 2.9s9.2 4.1 9.2 9.2-4.1 9.3-9.2 9.3Z"/></svg>
+              </span>
+              <span class="share-channel__name">WhatsApp</span>
+            </button>
+            <button class="share-channel share-channel--ig">
+              <span class="share-channel__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+              </span>
+              <span class="share-channel__name">Stories</span>
+            </button>
+            <button class="share-channel share-channel--x">
+              <span class="share-channel__icon">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="m17.5 3 4.5.1-9 10.4 10 13.4-7.4.1L9.5 18 3 26.9.5 27l9.7-11.3L0 3l7.6.1 4.8 6.7Z" transform="scale(.85) translate(2 -1)"/></svg>
+              </span>
+              <span class="share-channel__name">X</span>
+            </button>
+            <button class="share-channel share-channel--copy">
+              <span class="share-channel__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
+              </span>
+              <span class="share-channel__name">Copia</span>
+            </button>
+          </div>
+
+          <!-- Share stats -->
+          <div class="share-stats">
+            <div class="share-stats__txt">
+              <strong>4.247</strong>
+              <span>condivisioni oggi · #143 trending</span>
+            </div>
+            <span class="pill pill--ghost"><span class="dot" style="background:var(--lime)"></span>+12% vs ieri</span>
+          </div>
+
+          <!-- Domani teaser -->
+          <div style="margin:18px 20px 0;padding:14px;background:var(--bg-card);border:1px solid var(--line-dim);border-radius:var(--r-3);display:flex;justify-content:space-between;align-items:center">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="font:500 10px/1 'Geist';letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)">Prossimo · Daily #144</span>
+              <span style="font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:18px;color:var(--cream)">Mercoledì 20.05</span>
+            </div>
+            <div style="text-align:right;font-family:'Geist Mono',monospace;font-size:14px;color:var(--lime);font-variant-numeric:tabular-nums">15:13</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 08 — PLAYER BIO ============= -->
+  <section class="section" id="state-08">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>08 / 10 · Bio editoriale</div>
+      <h2 class="section__title">Player<br>dossier.</h2>
+      <p class="section__lede">Pagina editoriale del giocatore appena indovinato. Hero con grande "10" in watermark Fraunces, silhouette artistica. Timeline verticale dei club (Vicenza→Fiorentina→Juve→Milan→Bologna→Inter→Brescia), trofei in chip oro, fun fact in tipografia editoriale. Layout magazine, niente "il calciatore", sì "il Divin Codino".</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Layout</dt><dd>magazine vertical · scroll continuo</dd></div>
+        <div class="section__list-row"><dt>Hero</dt><dd>silhouette artistica · 10 watermark .06 opacity</dd></div>
+        <div class="section__list-row"><dt>Timeline</dt><dd>gradient lime→gold→line-bright</dd></div>
+        <div class="section__list-row"><dt>Quote</dt><dd>Fraunces italic 500 · prima persona</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>SCROLL</strong>hero collassa progressivo · sticky h2 al top</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>TROPHIES</strong>chip oro · 1px line + 5% gold bg</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>BIO</strong>scritta in italiano editoriale · max 4 paragrafi</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:53</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen" style="overflow-y:auto">
+          <!-- Hero -->
+          <div class="bio-hero">
+            <div class="bio-hero__back">
+              <button class="iconbtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+              </button>
+            </div>
+            <div class="bio-hero__num">10</div>
+            <div class="bio-hero__silhouette">
+              <svg viewBox="0 0 200 240" fill="none">
+                <defs>
+                  <linearGradient id="bio-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#F4EFE6" stop-opacity=".9"/>
+                    <stop offset="100%" stop-color="#D4A852" stop-opacity=".4"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="100" cy="48" r="30" fill="url(#bio-grad)"/>
+                <path d="M40 240 Q40 110 100 110 Q160 110 160 240 Z" fill="url(#bio-grad)"/>
+              </svg>
+            </div>
+            <div class="bio-hero__info">
+              <div class="bio-hero__role">Trequartista · #10</div>
+              <h1 class="bio-hero__name">Roberto<br>Baggio</h1>
+              <div class="bio-hero__meta">
+                <span>1967 · Caldogno (VI)</span>
+                <span class="sep">·</span>
+                <span>Italia 56 pres · 27 gol</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quote intro -->
+          <div style="padding:20px 20px 0">
+            <p style="font-family:'Fraunces',serif;font-style:italic;font-weight:500;font-size:17px;line-height:1.45;color:var(--cream-dim)">
+              <span style="color:var(--gold);font-size:28px;vertical-align:-4px;margin-right:2px">&ldquo;</span>Il calcio è un'arte. Il rigore sbagliato fa parte dell'arte.<span style="color:var(--gold);font-size:28px;vertical-align:-12px">&rdquo;</span>
+            </p>
+            <p style="font-family:'Geist Mono',monospace;font-size:10px;color:var(--text-dim);text-align:right;letter-spacing:.06em;margin-top:8px">— Roberto Baggio, Pasadena 1994</p>
+          </div>
+
+          <!-- Timeline -->
+          <div class="timeline">
+            <div class="timeline__title">Carriera · 22 anni di campo</div>
+            <div class="timeline__list">
+              <div class="timeline__row">
+                <span class="timeline__year">1982–85</span>
+                <span><span class="timeline__club">Vicenza</span><br><span class="timeline__note">Esordio Serie C1, 1982</span></span>
+              </div>
+              <div class="timeline__row timeline__row--accent">
+                <span class="timeline__year">1985–90</span>
+                <span><span class="timeline__club"><em>Fiorentina</em></span><br><span class="timeline__note">Il sigillo della famosa 10 viola</span></span>
+              </div>
+              <div class="timeline__row timeline__row--gold">
+                <span class="timeline__year">1990–95</span>
+                <span><span class="timeline__club">Juventus</span><br><span class="timeline__note">1 Scudetto, 1 Coppa UEFA, Pallone d'Oro '93</span></span>
+              </div>
+              <div class="timeline__row timeline__row--gold">
+                <span class="timeline__year">1995–97</span>
+                <span><span class="timeline__club">Milan</span><br><span class="timeline__note">1 Scudetto · '95-96</span></span>
+              </div>
+              <div class="timeline__row">
+                <span class="timeline__year">1997–98</span>
+                <span><span class="timeline__club">Bologna</span><br><span class="timeline__note">22 gol — convocazione Mondiale '98</span></span>
+              </div>
+              <div class="timeline__row">
+                <span class="timeline__year">1998–00</span>
+                <span><span class="timeline__club">Inter</span><br><span class="timeline__note">Ultimi anni in big · ruolo a corrente alternata</span></span>
+              </div>
+              <div class="timeline__row timeline__row--accent">
+                <span class="timeline__year">2000–04</span>
+                <span><span class="timeline__club"><em>Brescia</em></span><br><span class="timeline__note">Il decennio di Mazzone · 45 gol in 95 presenze</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Trophies -->
+          <div class="bio-trophies">
+            <div class="bio-trophies__title">Bacheca · 8 trofei</div>
+            <span class="trophy-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg>
+              Scudetto '94-95
+            </span>
+            <span class="trophy-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg>
+              Scudetto '95-96
+            </span>
+            <span class="trophy-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/></svg>
+              Coppa UEFA '92-93
+            </span>
+            <span class="trophy-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/></svg>
+              Pallone d'Oro '93
+            </span>
+            <span class="trophy-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/></svg>
+              FIFA World Player '93
+            </span>
+          </div>
+
+          <!-- Fun fact -->
+          <div class="fun-fact">
+            <div class="fun-fact__title">Bar Sport · da sapere</div>
+            <p class="fun-fact__body">È buddista praticante dal 1988. Il giorno del rigore di Pasadena pregò per quaranta minuti prima di scendere in campo. Non è bastato — ma forse non era quella la partita giusta da vincere.</p>
+          </div>
+
+          <!-- Community trivia -->
+          <div style="margin:16px 20px 24px;padding:14px;background:var(--bg-card);border:1px solid var(--line-dim);border-radius:var(--r-3)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+              <span style="font:500 10px/1 'Geist';letter-spacing:.16em;text-transform:uppercase;color:var(--text-dim)">Dal Daily di oggi</span>
+              <span style="font-family:'Geist Mono',monospace;font-size:11px;color:var(--lime)">#143</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-family:'Geist Mono',monospace">
+              <div><div style="font-size:18px;color:var(--cream);font-weight:600">64%</div><div style="font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;font-family:'Geist',sans-serif;font-weight:500;margin-top:3px">L'ha indovinato</div></div>
+              <div><div style="font-size:18px;color:var(--cream);font-weight:600">5.2</div><div style="font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;font-family:'Geist',sans-serif;font-weight:500;margin-top:3px">Tentativi medi</div></div>
+              <div><div style="font-size:18px;color:var(--lime);font-weight:600">1°</div><div style="font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;font-family:'Geist',sans-serif;font-weight:500;margin-top:3px">Primo guess: Pirlo</div></div>
+              <div><div style="font-size:18px;color:var(--cream);font-weight:600">02:24</div><div style="font-size:9px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;font-family:'Geist',sans-serif;font-weight:500;margin-top:3px">Tempo medio</div></div>
+            </div>
+          </div>
+
+          <div style="height:84px"></div>
+          <div class="actions">
+            <button class="btn btn--secondary btn--block">
+              Domani · Daily #144 alle 00:00
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 09 — CALENDAR ============= -->
+  <section class="section" id="state-09">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>09 / 10 · Storico</div>
+      <h2 class="section__title">Calendar<br>view.</h2>
+      <p class="section__lede">Il filotto dell'utente. Header con stat box: 28 giorni di Filotto, 22 indovinati su 30, 73% win rate. Sotto, la griglia 7×5 dei 30 giorni — cerchi lime per indovinati, outline hot-dim per persi, tratteggiati per non giocati. Hover su una cella mostra tooltip con nome giocatore e dettagli.</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Stats</dt><dd>3 card · filotto in gold, win rate in lime</dd></div>
+        <div class="section__list-row"><dt>Grid</dt><dd>7×5 = 35 celle · ultimi 30 + offset week</dd></div>
+        <div class="section__list-row"><dt>Cells</dt><dd>3 stati · won · lost · skip · today</dd></div>
+        <div class="section__list-row"><dt>Hover</dt><dd>tooltip con name + tentativi + caratura</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>HEAT</strong>colori semantici · niente arcobaleni</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>TODAY</strong>border cream + dot lime sotto</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>FILOTTO</strong>conteggio consecutivo · si rompe a 1 skip</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:54</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Indietro">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 6-6 6 6 6"/></svg>
+            </button>
+            <span class="app-bar__title">Storico Daily</span>
+            <button class="iconbtn" aria-label="Filtra">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+            </button>
+          </div>
+
+          <!-- Header -->
+          <div class="cal-head">
+            <h2 class="cal-head__title">Maggio 2026</h2>
+            <div class="cal-head__sub">28 giorni di Filotto attivo · ultimi 30 giochi</div>
+          </div>
+
+          <!-- Stats -->
+          <div class="cal-stats">
+            <div class="cal-stat">
+              <span class="cal-stat__val cal-stat__val--gold">28</span>
+              <span class="cal-stat__lbl">Filotto</span>
+            </div>
+            <div class="cal-stat">
+              <span class="cal-stat__val">22<span style="color:var(--text-dim);font-size:12px">/30</span></span>
+              <span class="cal-stat__lbl">Indovinati</span>
+            </div>
+            <div class="cal-stat">
+              <span class="cal-stat__val" style="color:var(--lime)">73%</span>
+              <span class="cal-stat__lbl">Win rate</span>
+            </div>
+          </div>
+
+          <!-- Grid -->
+          <div class="cal-grid-wrap">
+            <div class="cal-grid-wrap__title">
+              <span>Ultimi 30 giorni</span>
+              <em>Top streak: 28 (in corso)</em>
+            </div>
+            <div class="cal-grid">
+              <!-- Row 1 — offset partial -->
+              <div class="cal-cell cal-cell--skip">14</div>
+              <div class="cal-cell cal-cell--won">15</div>
+              <div class="cal-cell cal-cell--won">16</div>
+              <div class="cal-cell cal-cell--won">17</div>
+              <div class="cal-cell cal-cell--won">18</div>
+              <div class="cal-cell cal-cell--lost">19</div>
+              <div class="cal-cell cal-cell--won">20</div>
+              <!-- Row 2 -->
+              <div class="cal-cell cal-cell--won">21</div>
+              <div class="cal-cell cal-cell--won">22</div>
+              <div class="cal-cell cal-cell--won">23</div>
+              <div class="cal-cell cal-cell--won">24</div>
+              <div class="cal-cell cal-cell--lost">25</div>
+              <div class="cal-cell cal-cell--won">26</div>
+              <div class="cal-cell cal-cell--won">27</div>
+              <!-- Row 3 -->
+              <div class="cal-cell cal-cell--won">28</div>
+              <div class="cal-cell cal-cell--lost">29</div>
+              <div class="cal-cell cal-cell--won">30</div>
+              <div class="cal-cell cal-cell--won">1</div>
+              <div class="cal-cell cal-cell--won">2</div>
+              <div class="cal-cell cal-cell--won">3</div>
+              <div class="cal-cell cal-cell--won">4</div>
+              <!-- Row 4 -->
+              <div class="cal-cell cal-cell--won">5</div>
+              <div class="cal-cell cal-cell--won">6</div>
+              <div class="cal-cell cal-cell--won">7</div>
+              <div class="cal-cell cal-cell--won">8</div>
+              <div class="cal-cell cal-cell--lost">9</div>
+              <div class="cal-cell cal-cell--won">10</div>
+              <div class="cal-cell cal-cell--won">11</div>
+              <!-- Row 5 -->
+              <div class="cal-cell cal-cell--won">12</div>
+              <div class="cal-cell cal-cell--won">13</div>
+              <div class="cal-cell cal-cell--won">14</div>
+              <div class="cal-cell cal-cell--won">15</div>
+              <div class="cal-cell cal-cell--won">16</div>
+              <div class="cal-cell cal-cell--won">17</div>
+              <div class="cal-cell cal-cell--won">18</div>
+            </div>
+          </div>
+
+          <!-- Hover hint (today) -->
+          <div class="cal-hover-hint" style="top:380px;left:54%">
+            <div class="cal-hover-hint__date">17.05.2026 · Domenica</div>
+            <div class="cal-hover-hint__name">Andrea Pirlo</div>
+            <div class="cal-hover-hint__meta">Indovinato in 3 · +€5M</div>
+          </div>
+
+          <!-- Today indicator -->
+          <div style="margin:14px 20px 0;padding:12px 14px;background:var(--bg-card);border:1px solid var(--lime);border-radius:var(--r-3);display:flex;justify-content:space-between;align-items:center;box-shadow:0 0 0 3px rgba(197,255,0,.08)">
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="font:500 9px/1 'Geist';letter-spacing:.14em;text-transform:uppercase;color:var(--lime)">Oggi · 19.05</span>
+              <span style="font-family:'Fraunces',serif;font-style:italic;font-weight:700;font-size:15px;color:var(--cream)">Roberto Baggio · 5 tentativi</span>
+            </div>
+            <div style="font-family:'Geist Mono',monospace;font-size:13px;color:var(--lime);font-weight:600">+€5.0M</div>
+          </div>
+
+          <!-- Legend -->
+          <div class="cal-legend">
+            <div class="cal-legend__item"><span class="cal-legend__sw cal-legend__sw--won"></span>Indovinato</div>
+            <div class="cal-legend__item"><span class="cal-legend__sw cal-legend__sw--lost"></span>Mancato</div>
+            <div class="cal-legend__item"><span class="cal-legend__sw cal-legend__sw--skip"></span>Saltato</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============= STATE 10 — LOST ============= -->
+  <section class="section" id="state-10">
+    <div class="section__head">
+      <div class="section__num"><span class="bar"></span>10 / 10 · Sconfitta</div>
+      <h2 class="section__title">Lost.<br><em>Si torna domani.</em></h2>
+      <p class="section__lede">L'utente ha esaurito gli 8 tentativi. Il giocatore si rivela ma senza celebrazione: tono editoriale, "Era Roberto Baggio. Lo ricorderai per domani". Sotto, consolazione data-driven: "Solo il 23% della community ce l'ha fatta oggi" — non sei tu, è il puzzle. Share resta possibile.</p>
+      <dl class="section__list">
+        <div class="section__list-row"><dt>Display</dt><dd>nome in cream · niente lime · niente celebrazione</dd></div>
+        <div class="section__list-row"><dt>Consolation</dt><dd>community percentile · 23% solved</dd></div>
+        <div class="section__list-row"><dt>Tone</dt><dd>"Mancava poco. Domani altro giocatore."</dd></div>
+        <div class="section__list-row"><dt>Share</dt><dd>permesso anche se perso · ⚽×8 grid</dd></div>
+      </dl>
+      <div class="side-notes">
+        <div class="side-notes__lbl">Note di stato</div>
+        <ul class="side-notes__list" style="list-style:none">
+          <li class="side-notes__item"><span class="marker"></span><span><strong>NO HOT</strong>la sconfitta non è "ROSSO RABBIA" · è "ehi capita"</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>FILOTTO</strong>se perso il filotto si rompe · banner separato</span></li>
+          <li class="side-notes__item"><span class="marker"></span><span><strong>BIO</strong>CTA "Conosci Baggio" sempre accessibile</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section__phone">
+      <div class="phone">
+        <div class="phone__status">
+          <span>08:55</span>
+          <div class="phone__status-right">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M1 6.5h2v4H1zM5 4.5h2v6H5zM9 2.5h2v8H9zM13 0.5h2v10h-2z"/></svg>
+            <svg width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 4c1.5-1.8 3.7-2.8 6-2.8s4.5 1 6 2.8M3 6c1-1 2.5-1.5 4-1.5S9.5 5 10.5 6M5.5 8c.4-.4 1-.7 1.5-.7s1.1.2 1.5.7" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+            <svg width="22" height="11" viewBox="0 0 22 11"><rect x=".5" y=".5" width="18" height="10" rx="2" stroke="currentColor" fill="none"/><rect x="2" y="2" width="14" height="7" rx="1" fill="currentColor"/><rect x="20" y="3.5" width="1.5" height="4" rx=".5" fill="currentColor"/></svg>
+          </div>
+        </div>
+
+        <div class="phone__screen">
+          <div class="app-bar">
+            <button class="iconbtn" aria-label="Chiudi">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 5l14 14M19 5L5 19"/></svg>
+            </button>
+            <span class="app-bar__title" style="color:var(--cream-dim)">Niente da fare</span>
+            <button class="iconbtn" aria-label="Bookmark">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-7-4.5L5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg>
+            </button>
+          </div>
+
+          <!-- Stage -->
+          <div class="lost-stage">
+            <div class="silhouette silhouette--rev" style="width:130px;height:160px;opacity:.78">
+              <svg viewBox="0 0 140 170" fill="none">
+                <defs>
+                  <linearGradient id="lost-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#C9C4BB" stop-opacity=".9"/>
+                    <stop offset="100%" stop-color="#5A5A60" stop-opacity=".6"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="70" cy="38" r="22" fill="url(#lost-grad)"/>
+                <path d="M30 170 Q30 88 70 88 Q110 88 110 170 Z" fill="url(#lost-grad)"/>
+                <text x="70" y="135" text-anchor="middle" font-family="Geist Mono" font-weight="700" font-size="28" fill="#0E0E10" opacity=".5">10</text>
+              </svg>
+            </div>
+            <span style="position:absolute;top:10px;left:14px;font-family:'Geist Mono',monospace;font-size:10px;color:var(--hot);letter-spacing:.12em">N° <strong>143</strong> · ✗</span>
+            <span style="position:absolute;top:10px;right:14px;font-family:'Geist Mono',monospace;font-size:10px;color:var(--cream-dim);letter-spacing:.06em">04:18</span>
+          </div>
+
+          <!-- Verdict -->
+          <div class="lost-banner">
+            <div class="lost-banner__verdict">Era lui</div>
+            <h2 class="lost-banner__name">Roberto Baggio</h2>
+            <p class="lost-banner__msg">Mancava poco. Lo ricorderai per domani.</p>
+          </div>
+
+          <!-- Consolation: community %  -->
+          <div class="consolation">
+            <div class="consolation__lbl">Solo il 23% l'ha indovinato oggi</div>
+            <div class="consolation__bar">
+              <div class="consolation__bar-fill" style="width:23%"></div>
+            </div>
+            <div class="consolation__row">
+              <span class="lhs">2.954 indovinati / 12.847 giocati</span>
+              <span class="rhs">Tentativi medi: 6.8</span>
+            </div>
+          </div>
+
+          <!-- Filotto break notice -->
+          <div style="margin:14px 20px 0;padding:12px 14px;background:rgba(255,61,46,.07);border:1px solid rgba(255,61,46,.25);border-radius:var(--r-2);display:flex;align-items:center;gap:10px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--hot)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 2c1 4-2 5-2 8a2 2 0 0 0 4 0c0-1 1 1 1 3a5 5 0 0 1-10 0c0-5 7-6 7-11Z"/></svg>
+            <div style="flex:1">
+              <div style="font:500 10px/1 'Geist';letter-spacing:.12em;text-transform:uppercase;color:var(--hot);margin-bottom:2px">Filotto interrotto</div>
+              <div style="font-size:12px;color:var(--cream-dim)">29 giorni andati. Si riparte oggi.</div>
+            </div>
+            <button class="btn btn--sm" style="background:rgba(255,61,46,.1);color:var(--hot);border:1px solid rgba(255,61,46,.3)">
+              Freezer
+            </button>
+          </div>
+
+          <!-- Stats -->
+          <div class="win-stats" style="margin-top:14px">
+            <div class="win-stats__cell">
+              <span class="win-stats__val">8<span style="color:var(--text-dim);font-size:12px">/8</span></span>
+              <span class="win-stats__lbl">Tentativi</span>
+            </div>
+            <div class="win-stats__sep"></div>
+            <div class="win-stats__cell">
+              <span class="win-stats__val" style="color:var(--cream-dim)">€0</span>
+              <span class="win-stats__lbl">Caratura</span>
+            </div>
+            <div class="win-stats__sep"></div>
+            <div class="win-stats__cell">
+              <span class="win-stats__val win-stats__val--gold">0</span>
+              <span class="win-stats__lbl">Filotto</span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <div class="actions-row">
+              <button class="btn btn--secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7"/><path d="m16 6-4-4-4 4"/><path d="M12 2v14"/></svg>
+                Condividi
+              </button>
+              <button class="btn btn--primary">
+                Conosci Baggio
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- =========================================================
+     FOOTER
+     ========================================================= -->
+<footer class="footer">
+  <div class="footer__top">
+    <div class="footer__brand">Goal<em>.</em></div>
+    <div class="footer__meta">
+      <div>
+        <div class="footer__meta-label">File</div>
+        <div class="footer__meta-value">flow_daily_player.html</div>
+      </div>
+      <div>
+        <div class="footer__meta-label">Versione</div>
+        <div class="footer__meta-value">v0.9 · 19.05.2026</div>
+      </div>
+      <div>
+        <div class="footer__meta-label">Posizionamento</div>
+        <div class="footer__meta-value">Editorial Stadium</div>
+      </div>
+      <div>
+        <div class="footer__meta-label">Reference qualità</div>
+        <div class="footer__meta-value">Premium 2026 baseline</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <span>© 2026 Goal · Football, Italy, Daily.</span>
+    <span>10 / 10 stati · Daily Player flow complete</span>
+  </div>
+</footer>
+
+<script>
+/* Small enhancement: smooth scroll already enabled via CSS.
+   Lazy reveal class on sections when in viewport. */
+const sections = document.querySelectorAll('.section, .footer, .hero__meta');
+if('IntersectionObserver' in window){
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('fade-up');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.08});
+  sections.forEach(s=>io.observe(s));
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goal · Adaptive Theming · Mockup Fedeli v0.3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,700;1,9..144,900&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-dark:#0E0E10;--bg-elev-dark:#16161A;--bg-card-dark:#1C1C22;
+  --lime:#C5FF00;--lime-dim:#9ACC00;--hot:#FF3D2E;--gold:#D4A852;
+  --cream:#F4EFE6;--cream-dim:#C9C4BB;
+  --paper:#F4EFE6;--paper-elev:#ECE6DA;--paper-card:#FFFFFF;--paper-line:#D6D0C2;
+  --ink:#0E0E10;--ink-dim:#46464C;--ink-mute:#8B8B91;
+  --line:#2A2A30;--line-dim:#1F1F25;
+  --green-it:#008C45;--white-it:#F4F5F0;--red-it:#CD212A;
+  --serif:'Fraunces',serif;--sans:'Geist',sans-serif;--mono:'Geist Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg-dark);color:var(--cream);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+svg{display:block;max-width:100%}
+
+/* ============ TOPNAV ============ */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(14,14,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--line-dim);padding:14px 32px;display:flex;align-items:center;justify-content:space-between}
+.topnav__brand{font:italic 700 22px var(--serif);letter-spacing:-0.02em}
+.topnav__brand .accent{color:var(--lime)}
+.topnav__version{font:500 11px var(--mono);color:#8B8B91;padding:4px 10px;border:1px solid var(--line);border-radius:99px}
+
+/* ============ HERO ============ */
+.hero{padding:120px 32px 60px;text-align:center}
+.hero__eyebrow{font:500 13px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:var(--lime);margin-bottom:24px;display:inline-flex;gap:12px;align-items:center}
+.hero__eyebrow::before,.hero__eyebrow::after{content:'';width:24px;height:1px;background:var(--lime)}
+.hero__title{font:italic 700 clamp(48px,9vw,120px) var(--serif);line-height:0.95;letter-spacing:-0.04em;margin-bottom:24px}
+.hero__title .grad{background:linear-gradient(180deg,var(--cream) 30%,var(--lime) 80%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero__sub{font:italic 500 clamp(18px,2.5vw,26px)/1.4 var(--serif);color:#C9C4BB;max-width:720px;margin:0 auto 12px}
+.hero__expl{font:400 14px/1.6 var(--sans);color:#8B8B91;max-width:580px;margin:24px auto 0}
+
+/* ============ THEMING CALENDAR ============ */
+.calendar{padding:48px 32px;background:var(--bg-elev-dark);border-top:1px solid var(--line-dim);border-bottom:1px solid var(--line-dim)}
+.cal-container{max-width:1200px;margin:0 auto}
+.cal-title{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:var(--lime);margin-bottom:24px;text-align:center}
+.cal-row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:8px}
+.cal-day{padding:18px 8px;border-radius:8px;text-align:center;border:1px solid var(--line-dim);position:relative}
+.cal-day__label{font:600 10px var(--mono);text-transform:uppercase;letter-spacing:0.08em;color:#8B8B91;margin-bottom:6px}
+.cal-day__theme{font:italic 500 13px var(--serif);color:var(--cream)}
+.cal-day--light{background:var(--paper);border-color:var(--paper-line)}
+.cal-day--light .cal-day__label{color:#46464C}
+.cal-day--light .cal-day__theme{color:var(--ink)}
+.cal-day--dark{background:var(--bg-dark);border-color:var(--lime)}
+.cal-day--dark .cal-day__label{color:var(--lime)}
+.cal-day--dark .cal-day__theme{color:var(--cream)}
+.cal-day--gold{background:linear-gradient(135deg,var(--bg-dark) 60%,#1a1410);border-color:var(--gold)}
+.cal-day--gold .cal-day__label{color:var(--gold)}
+.cal-day--gold .cal-day__theme{color:var(--cream)}
+.cal-day--italia{background:var(--bg-dark);border-color:var(--white-it);position:relative;overflow:hidden}
+.cal-day--italia::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green-it) 0 33%,var(--white-it) 33% 66%,var(--red-it) 66%)}
+.cal-day--italia .cal-day__label{color:var(--white-it)}
+
+/* ============ SECTIONS ============ */
+section{padding:80px 32px}
+.container{max-width:1400px;margin:0 auto}
+.sec__head{margin-bottom:32px;display:flex;align-items:baseline;justify-content:space-between;gap:32px;flex-wrap:wrap;border-bottom:1px solid var(--line-dim);padding-bottom:24px}
+.sec__num{font:500 13px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:var(--lime);margin-bottom:8px}
+.sec__title{font:italic 700 clamp(36px,5vw,64px)/1 var(--serif);letter-spacing:-0.03em}
+.sec__sub{font:italic 500 17px/1.5 var(--serif);color:#C9C4BB;max-width:540px}
+
+.phone-stage{display:flex;align-items:flex-start;justify-content:center;gap:48px;flex-wrap:wrap;margin-top:48px}
+.phone-stage--two{justify-content:center}
+
+.theme-info{margin-bottom:32px;padding:24px;background:var(--bg-card-dark);border-radius:12px;border-left:3px solid var(--lime);max-width:900px}
+.theme-info__when{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:var(--lime);margin-bottom:8px}
+.theme-info__title{font:italic 700 28px var(--serif);letter-spacing:-0.02em;margin-bottom:12px}
+.theme-info__copy{font:400 15px/1.6 var(--sans);color:#C9C4BB;margin-bottom:16px}
+.theme-info__specs{display:flex;gap:24px;flex-wrap:wrap;font:500 11px var(--mono);text-transform:uppercase;letter-spacing:0.08em;color:#8B8B91}
+.theme-info__specs span{display:flex;align-items:center;gap:8px}
+.theme-info__specs .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+
+/* ============ PHONE ============ */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:16px}
+.phone-label{font:500 12px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:#8B8B91;text-align:center;display:flex;align-items:center;gap:8px}
+.phone-label .badge{font:700 9px var(--mono);padding:4px 8px;border-radius:99px}
+.phone-label .badge--light{background:var(--paper);color:var(--ink)}
+.phone-label .badge--dark{background:var(--bg-dark);color:var(--lime);border:1px solid var(--lime)}
+.phone-label .badge--gold{background:var(--bg-dark);color:var(--gold);border:1px solid var(--gold)}
+.phone-label .badge--italia{background:linear-gradient(90deg,var(--green-it) 0 33%,var(--white-it) 33% 66%,var(--red-it) 66%);color:var(--ink);padding:3px 8px}
+
+.phone{width:320px;height:660px;background:#000;border-radius:42px;border:9px solid #2A2A30;padding:9px;box-shadow:0 32px 64px rgba(0,0,0,0.6),inset 0 0 0 1px rgba(255,255,255,0.05);position:relative;overflow:hidden;flex-shrink:0}
+.phone::before{content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);width:100px;height:28px;background:#000;border-radius:99px;z-index:5}
+.screen{width:100%;height:100%;border-radius:32px;overflow:hidden;position:relative;font:400 13px/1.4 var(--sans)}
+
+.status-bar{display:flex;justify-content:space-between;padding:16px 28px 8px;font:600 13px var(--mono);position:absolute;top:0;left:0;right:0;z-index:4}
+.status-bar__dots{display:inline-flex;gap:3px;align-items:center}
+.status-bar__dots::after{content:'• • •'}
+
+.app{padding:58px 18px 80px;height:100%;display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+
+/* =====================================
+   THEME: EDITORIAL LIGHT (weekday default)
+   ===================================== */
+.theme-light .screen{background:var(--paper);color:var(--ink)}
+.theme-light .status-bar{color:var(--ink)}
+.theme-light .greet{font:italic 700 26px var(--serif);letter-spacing:-0.02em;color:var(--ink)}
+.theme-light .greet small{display:block;font:400 11px var(--sans);color:var(--ink-mute);margin-top:4px;font-style:normal}
+.theme-light .meta-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 4px;border-bottom:1px solid var(--paper-line)}
+.theme-light .meta-bar__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-mute)}
+.theme-light .meta-bar__value{font:600 14px var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
+.theme-light .meta-bar__value.gold{color:#946C20}
+.theme-light .lega-card{background:var(--paper-card);border:1px solid var(--paper-line);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between}
+.theme-light .lega-card__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-mute);margin-bottom:4px}
+.theme-light .lega-card__title{font:italic 700 18px var(--serif);color:#946C20}
+.theme-light .lega-card__sub{font:500 10px var(--mono);color:var(--ink-mute);margin-top:2px}
+.theme-light .lega-card__pos{font:700 30px var(--mono);color:var(--ink);font-variant-numeric:tabular-nums}
+.theme-light .modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.theme-light .mode{background:var(--paper-card);border:1px solid var(--paper-line);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;min-height:84px;position:relative}
+.theme-light .mode__icon{width:22px;height:22px;color:var(--ink-dim);margin-bottom:6px}
+.theme-light .mode__title{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-mute);margin-bottom:2px}
+.theme-light .mode__meta{font:italic 500 13px var(--serif);color:var(--ink);line-height:1.2}
+.theme-light .mode--accent{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.theme-light .mode--accent .mode__icon{color:var(--lime)}
+.theme-light .mode--accent .mode__title{color:#8B8B91}
+.theme-light .mode--accent .mode__meta{color:var(--paper)}
+.theme-light .mode__dot{position:absolute;top:8px;right:8px;width:7px;height:7px;background:var(--hot);border-radius:50%}
+.theme-light .bottomnav{position:absolute;bottom:0;left:0;right:0;background:var(--paper-elev);border-top:1px solid var(--paper-line);padding:10px 0 16px;display:flex;justify-content:space-around;z-index:3}
+.theme-light .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-mute);font:600 8px var(--sans);text-transform:uppercase;letter-spacing:0.06em}
+.theme-light .bn-item svg{width:18px;height:18px}
+.theme-light .bn-item--active{color:var(--ink)}
+.theme-light .bn-item--active::after{content:'';display:block;width:3px;height:3px;background:var(--ink);border-radius:50%;margin-top:1px}
+
+/* light editorial header ribbon */
+.theme-light .header-ribbon{display:flex;justify-content:space-between;align-items:baseline;padding:4px 2px 8px;border-bottom:1px solid var(--paper-line);margin-bottom:6px}
+.theme-light .header-ribbon__day{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-mute)}
+.theme-light .header-ribbon__edition{font:italic 500 11px var(--serif);color:var(--ink-dim)}
+
+/* =====================================
+   THEME: STADIUM DARK (weekend matchday)
+   ===================================== */
+.theme-dark .screen{background:var(--bg-dark);color:var(--cream)}
+.theme-dark .status-bar{color:var(--cream)}
+.theme-dark .greet{font:italic 700 26px var(--serif);letter-spacing:-0.02em;color:var(--cream)}
+.theme-dark .greet small{display:block;font:400 11px var(--sans);color:#8B8B91;margin-top:4px;font-style:normal}
+.theme-dark .meta-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 4px;border-bottom:1px solid var(--line-dim)}
+.theme-dark .meta-bar__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91}
+.theme-dark .meta-bar__value{font:600 14px var(--mono);color:var(--lime);font-variant-numeric:tabular-nums}
+.theme-dark .lega-card{background:var(--bg-card-dark);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between}
+.theme-dark .lega-card__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91;margin-bottom:4px}
+.theme-dark .lega-card__title{font:italic 700 18px var(--serif);color:var(--gold)}
+.theme-dark .lega-card__sub{font:500 10px var(--mono);color:#8B8B91;margin-top:2px}
+.theme-dark .lega-card__pos{font:700 30px var(--mono);color:var(--cream);font-variant-numeric:tabular-nums}
+.theme-dark .modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.theme-dark .mode{background:var(--bg-card-dark);border:1px solid var(--line-dim);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;min-height:84px;position:relative}
+.theme-dark .mode__icon{width:22px;height:22px;color:#C9C4BB;margin-bottom:6px}
+.theme-dark .mode__title{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:0.08em;color:#8B8B91;margin-bottom:2px}
+.theme-dark .mode__meta{font:italic 500 13px var(--serif);color:var(--cream);line-height:1.2}
+.theme-dark .mode--accent{border-color:var(--lime)}
+.theme-dark .mode--accent .mode__icon{color:var(--lime)}
+.theme-dark .mode__dot{position:absolute;top:8px;right:8px;width:7px;height:7px;background:var(--hot);border-radius:50%;animation:pulse 1.5s infinite}
+.theme-dark .mode__dot--live{background:var(--lime)}
+.theme-dark .bottomnav{position:absolute;bottom:0;left:0;right:0;background:var(--bg-elev-dark);border-top:1px solid var(--line);padding:10px 0 16px;display:flex;justify-content:space-around;z-index:3}
+.theme-dark .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:#8B8B91;font:600 8px var(--sans);text-transform:uppercase;letter-spacing:0.06em}
+.theme-dark .bn-item svg{width:18px;height:18px}
+.theme-dark .bn-item--active{color:var(--cream)}
+.theme-dark .bn-item--active::after{content:'';display:block;width:3px;height:3px;background:var(--lime);border-radius:50%;margin-top:1px}
+
+/* stadium ambient overlay (subtle) */
+.theme-dark .screen::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(197,255,0,0.04) 0%,transparent 60%);pointer-events:none;z-index:1}
+
+/* matchday banner */
+.theme-dark .matchday{background:linear-gradient(135deg,var(--bg-card-dark),var(--bg-elev-dark));border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;align-items:center;justify-content:space-between}
+.theme-dark .matchday__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--lime);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.theme-dark .matchday__label::before{content:'';width:6px;height:6px;background:var(--hot);border-radius:50%;animation:pulse 1.5s infinite}
+.theme-dark .matchday__teams{font:italic 600 14px var(--serif);color:var(--cream)}
+.theme-dark .matchday__time{font:700 13px var(--mono);color:var(--cream)}
+
+/* =====================================
+   THEME: CHAMPIONS NIGHT (dark + gold)
+   ===================================== */
+.theme-champions{position:relative}
+.theme-champions .screen{background:var(--bg-dark);color:var(--cream)}
+.theme-champions .status-bar{color:var(--cream)}
+.theme-champions .screen::before{content:'';position:absolute;inset:0;background:
+  radial-gradient(circle at 30% 0%,rgba(212,168,82,0.08) 0%,transparent 50%),
+  radial-gradient(circle at 70% 100%,rgba(212,168,82,0.05) 0%,transparent 50%);
+  pointer-events:none;z-index:1}
+/* small star pattern */
+.theme-champions .screen::after{content:'';position:absolute;inset:0;background-image:
+  radial-gradient(circle at 20% 30%, rgba(212,168,82,0.15) 0.5px, transparent 1px),
+  radial-gradient(circle at 80% 20%, rgba(212,168,82,0.15) 0.5px, transparent 1px),
+  radial-gradient(circle at 50% 70%, rgba(212,168,82,0.15) 0.5px, transparent 1px),
+  radial-gradient(circle at 90% 85%, rgba(212,168,82,0.15) 0.5px, transparent 1px);
+  background-size: 200px 200px;pointer-events:none;z-index:1}
+.theme-champions .greet{font:italic 700 26px var(--serif);letter-spacing:-0.02em;color:var(--cream)}
+.theme-champions .greet small{display:block;font:400 11px var(--sans);color:var(--gold);margin-top:4px;font-style:normal}
+.theme-champions .meta-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 4px;border-bottom:1px solid var(--line-dim)}
+.theme-champions .meta-bar__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91}
+.theme-champions .meta-bar__value{font:600 14px var(--mono);color:var(--gold);font-variant-numeric:tabular-nums}
+.theme-champions .lega-card{background:linear-gradient(135deg,var(--bg-card-dark),#1a1410);border:1px solid var(--gold);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2}
+.theme-champions .lega-card__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:4px}
+.theme-champions .lega-card__title{font:italic 700 18px var(--serif);color:var(--gold)}
+.theme-champions .lega-card__sub{font:500 10px var(--mono);color:#8B8B91;margin-top:2px}
+.theme-champions .lega-card__pos{font:700 30px var(--mono);color:var(--cream);font-variant-numeric:tabular-nums}
+.theme-champions .modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;position:relative;z-index:2}
+.theme-champions .mode{background:var(--bg-card-dark);border:1px solid var(--line-dim);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;min-height:84px;position:relative}
+.theme-champions .mode__icon{width:22px;height:22px;color:#C9C4BB;margin-bottom:6px}
+.theme-champions .mode__title{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:0.08em;color:#8B8B91;margin-bottom:2px}
+.theme-champions .mode__meta{font:italic 500 13px var(--serif);color:var(--cream);line-height:1.2}
+.theme-champions .mode--accent{border-color:var(--gold);background:linear-gradient(135deg,var(--bg-card-dark),#1a1410)}
+.theme-champions .mode--accent .mode__icon{color:var(--gold)}
+.theme-champions .mode__dot{position:absolute;top:8px;right:8px;width:7px;height:7px;background:var(--gold);border-radius:50%;animation:pulse 1.5s infinite}
+.theme-champions .bottomnav{position:absolute;bottom:0;left:0;right:0;background:var(--bg-elev-dark);border-top:1px solid var(--line);padding:10px 0 16px;display:flex;justify-content:space-around;z-index:3}
+.theme-champions .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:#8B8B91;font:600 8px var(--sans);text-transform:uppercase;letter-spacing:0.06em}
+.theme-champions .bn-item svg{width:18px;height:18px}
+.theme-champions .bn-item--active{color:var(--cream)}
+.theme-champions .bn-item--active::after{content:'';display:block;width:3px;height:3px;background:var(--gold);border-radius:50%;margin-top:1px}
+.theme-champions .matchday{background:linear-gradient(135deg,var(--bg-card-dark),#1a1410);border:1px solid var(--gold);border-radius:10px;padding:12px;position:relative;z-index:2}
+.theme-champions .matchday__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.theme-champions .matchday__label::before{content:'★';color:var(--gold);font-size:10px}
+.theme-champions .matchday__teams{font:italic 600 14px var(--serif);color:var(--cream)}
+.theme-champions .matchday__time{font:700 13px var(--mono);color:var(--gold)}
+
+/* =====================================
+   THEME: ITALIA OVERLAY (tricolore)
+   ===================================== */
+.theme-italia .screen{background:var(--bg-dark);color:var(--cream)}
+.theme-italia .status-bar{color:var(--cream);padding-top:18px}
+/* Tricolore ribbon on top */
+.theme-italia .screen::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--green-it) 0% 33%,var(--white-it) 33% 66%,var(--red-it) 66% 100%);z-index:4}
+.theme-italia .greet{font:italic 700 26px var(--serif);letter-spacing:-0.02em;color:var(--cream)}
+.theme-italia .greet small{display:block;font:400 11px var(--sans);color:var(--white-it);margin-top:4px;font-style:normal}
+.theme-italia .meta-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 4px;border-bottom:1px solid var(--line-dim)}
+.theme-italia .meta-bar__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91}
+.theme-italia .meta-bar__value{font:600 14px var(--mono);color:var(--lime);font-variant-numeric:tabular-nums}
+.theme-italia .italia-banner{background:var(--bg-card-dark);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.theme-italia .italia-banner::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--green-it) 0% 33%,var(--white-it) 33% 66%,var(--red-it) 66% 100%)}
+.theme-italia .italia-banner__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91;margin-bottom:2px;padding-left:12px}
+.theme-italia .italia-banner__teams{font:italic 700 16px var(--serif);color:var(--cream);padding-left:12px}
+.theme-italia .italia-banner__time{font:700 13px var(--mono);color:var(--cream)}
+.theme-italia .lega-card{background:var(--bg-card-dark);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between}
+.theme-italia .lega-card__label{font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91;margin-bottom:4px}
+.theme-italia .lega-card__title{font:italic 700 18px var(--serif);color:var(--gold)}
+.theme-italia .lega-card__sub{font:500 10px var(--mono);color:#8B8B91;margin-top:2px}
+.theme-italia .lega-card__pos{font:700 30px var(--mono);color:var(--cream);font-variant-numeric:tabular-nums}
+.theme-italia .modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.theme-italia .mode{background:var(--bg-card-dark);border:1px solid var(--line-dim);border-radius:10px;padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;min-height:84px;position:relative}
+.theme-italia .mode__icon{width:22px;height:22px;color:#C9C4BB;margin-bottom:6px}
+.theme-italia .mode__title{font:600 10px var(--sans);text-transform:uppercase;letter-spacing:0.08em;color:#8B8B91;margin-bottom:2px}
+.theme-italia .mode__meta{font:italic 500 13px var(--serif);color:var(--cream);line-height:1.2}
+.theme-italia .mode--accent{border-color:var(--lime)}
+.theme-italia .mode--accent .mode__icon{color:var(--lime)}
+.theme-italia .mode__dot{position:absolute;top:8px;right:8px;width:7px;height:7px;background:var(--green-it);border-radius:50%;animation:pulse 1.5s infinite}
+.theme-italia .bottomnav{position:absolute;bottom:0;left:0;right:0;background:var(--bg-elev-dark);border-top:1px solid var(--line);padding:10px 0 16px;display:flex;justify-content:space-around;z-index:3}
+.theme-italia .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:#8B8B91;font:600 8px var(--sans);text-transform:uppercase;letter-spacing:0.06em}
+.theme-italia .bn-item svg{width:18px;height:18px}
+.theme-italia .bn-item--active{color:var(--cream)}
+.theme-italia .bn-item--active::after{content:'';display:block;width:3px;height:3px;background:var(--lime);border-radius:50%;margin-top:1px}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ============ FOOTER ============ */
+footer{padding:80px 32px;border-top:1px solid var(--line);text-align:center;background:var(--bg-elev-dark)}
+footer p{font:500 12px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:#8B8B91}
+footer .accent{color:var(--lime)}
+
+/* ============ RULES SECTION ============ */
+.rules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin-top:24px}
+@media (max-width:880px){.rules-grid{grid-template-columns:1fr}}
+.rule-card{background:var(--bg-card-dark);border:1px solid var(--line-dim);border-radius:12px;padding:24px}
+.rule-card__when{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--lime);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.rule-card__when .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.rule-card__title{font:italic 700 22px var(--serif);margin-bottom:12px;letter-spacing:-0.01em}
+.rule-card__copy{font:400 14px/1.6 var(--sans);color:#C9C4BB;margin-bottom:12px}
+.rule-card__specs{font:500 10px var(--mono);text-transform:uppercase;letter-spacing:0.08em;color:#8B8B91;line-height:1.8}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav__brand">G<span class="accent">o</span>al · Adaptive</div>
+  <div class="topnav__version">v0.3 · mockup fedeli</div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero__eyebrow">Adaptive Theming · Mockup ad alta fedeltà</div>
+  <h1 class="hero__title">L'app <span class="grad">respira</span><br>col calendario.</h1>
+  <p class="hero__sub">Non dark contro light. Entrambi, in momenti diversi. Goal cambia atmosfera col calcio reale.</p>
+  <p class="hero__expl">Lunedì mattina sei in un magazine sportivo italiano. Venerdì sera lo stadio apre. Champions night ha l'oro. Italia in campo, il tricolore. Stessa app, quattro atmosfere viventi.</p>
+</section>
+
+<!-- CALENDAR PREVIEW -->
+<section class="calendar">
+  <div class="cal-container">
+    <div class="cal-title">Una settimana di Goal · esempio</div>
+    <div class="cal-row">
+      <div class="cal-day cal-day--light"><div class="cal-day__label">LUN</div><div class="cal-day__theme">Editorial</div></div>
+      <div class="cal-day cal-day--light"><div class="cal-day__label">MAR</div><div class="cal-day__theme">Editorial</div></div>
+      <div class="cal-day cal-day--gold"><div class="cal-day__label">MER · UCL</div><div class="cal-day__theme">Champions</div></div>
+      <div class="cal-day cal-day--light"><div class="cal-day__label">GIO</div><div class="cal-day__theme">Editorial</div></div>
+      <div class="cal-day cal-day--dark"><div class="cal-day__label">VEN · 18:00</div><div class="cal-day__theme">Stadium</div></div>
+      <div class="cal-day cal-day--dark"><div class="cal-day__label">SAB</div><div class="cal-day__theme">Stadium</div></div>
+      <div class="cal-day cal-day--italia"><div class="cal-day__label">DOM · ITA</div><div class="cal-day__theme">Stadium + Tricolore</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== MOCKUP 1: EDITORIAL LIGHT =========== -->
+<section>
+  <div class="container">
+    <div class="sec__head">
+      <div>
+        <div class="sec__num">01 · Editorial Light</div>
+        <h2 class="sec__title">Lunedì mattina.</h2>
+      </div>
+      <p class="sec__sub">Il calcio è ricordo della giornata di domenica. L'app è un magazine sportivo italiano premium. Bone, ink, accent restrained.</p>
+    </div>
+    <div class="theme-info">
+      <div class="theme-info__when">Quando · Lunedì 00:00 → Venerdì 17:59</div>
+      <div class="theme-info__title">"È giorno. È riposo. È editoriale."</div>
+      <div class="theme-info__copy">Background cream paper, inchiostro nero, tipografia Fraunces protagonista. Lime usato solo per "Daily Player" accent (la modalità del giorno). Niente glow, niente effetti. Pulizia da magazine.</div>
+      <div class="theme-info__specs">
+        <span><span class="dot" style="background:#F4EFE6;border:1px solid #D6D0C2"></span> BG #F4EFE6</span>
+        <span><span class="dot" style="background:#0E0E10"></span> INK #0E0E10</span>
+        <span><span class="dot" style="background:#C5FF00"></span> LIME (raro)</span>
+        <span><span class="dot" style="background:#946C20"></span> GOLD (Lega)</span>
+      </div>
+    </div>
+    <div class="phone-stage phone-stage--two">
+
+      <!-- Phone 1.A: Hub editorial light -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen theme-light">
+            <div class="status-bar"><span>9:41</span><span class="status-bar__dots"></span></div>
+            <div class="app">
+              <div class="header-ribbon">
+                <span class="header-ribbon__day">LUN · 19 MAGGIO</span>
+                <span class="header-ribbon__edition">Edizione mattino</span>
+              </div>
+              <div class="greet">Buongiorno, Marco.<small>Filotto · 28 giorni</small></div>
+              <div class="meta-bar">
+                <span class="meta-bar__label">Caratura</span>
+                <span class="meta-bar__value">€34.2M</span>
+              </div>
+              <div class="lega-card">
+                <div>
+                  <div class="lega-card__label">Lega Settimanale</div>
+                  <div class="lega-card__title">Serie A</div>
+                  <div class="lega-card__sub">Reset · ricomincia oggi</div>
+                </div>
+                <div class="lega-card__pos">—</div>
+              </div>
+              <div class="modes">
+                <div class="mode mode--accent">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/></svg>
+                  <div>
+                    <div class="mode__title">Daily Player</div>
+                    <div class="mode__meta">Nuovo · oggi</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6"/><rect x="9" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="3" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6" fill="currentColor"/><rect x="15" y="9" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><rect x="9" y="15" width="6" height="6"/><rect x="15" y="15" width="6" height="6"/></svg>
+                  <div>
+                    <div class="mode__title">Grid</div>
+                    <div class="mode__meta">Disponibile</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg>
+                  <div>
+                    <div class="mode__title">Duello</div>
+                    <div class="mode__meta">3 sfide pendenti</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg>
+                  <div>
+                    <div class="mode__title">Carriera</div>
+                    <div class="mode__meta">Serie A · S4</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9.5"/><path d="m15.5 8.5-3 8-1.5-2-2-1.5 6.5-4.5Z" fill="currentColor"/></svg>
+                  <div>
+                    <div class="mode__title">Esplora</div>
+                    <div class="mode__meta">Storia '90</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/></svg>
+                  <div>
+                    <div class="mode__title">Pronostici</div>
+                    <div class="mode__meta">Nessuno oggi</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bottomnav">
+              <div class="bn-item bn-item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/></svg><span>Home</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="7" width="6" height="14"/><rect x="3" y="12" width="6" height="9"/><rect x="15" y="10" width="6" height="11"/></svg><span>Lega</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg><span>Duello</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg><span>Carr.</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Profilo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label"><span class="badge badge--light">LIGHT</span> Lunedì 9:41 · Hub editorial</div>
+      </div>
+
+      <!-- Phone 1.B: Daily Player editorial light -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen theme-light">
+            <div class="status-bar"><span>9:43</span><span class="status-bar__dots"></span></div>
+            <div class="app">
+              <div class="header-ribbon">
+                <span class="header-ribbon__day">DAILY PLAYER</span>
+                <span class="header-ribbon__edition">19.05 · Tentativi 4/8</span>
+              </div>
+              <h2 style="font:italic 700 28px var(--serif);color:var(--ink);letter-spacing:-0.02em;margin-bottom:4px">Chi è?</h2>
+              <p style="font:400 13px var(--sans);color:var(--ink-mute)">Quattro indizi rivelati. Indovina.</p>
+              <div style="display:flex;justify-content:center;margin:16px 0">
+                <div style="width:130px;height:130px;border-radius:50%;background:#0E0E10;border:2px solid #D6D0C2;display:flex;align-items:center;justify-content:center;color:#F4EFE6;font:italic 900 64px var(--serif)">?</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                <div style="background:#FFFFFF;border:1px solid #D6D0C2;border-radius:8px;padding:8px 10px">
+                  <div style="font:500 8px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91">Lega</div>
+                  <div style="font:italic 500 12px var(--serif);color:var(--ink);margin-top:2px">Serie A</div>
+                </div>
+                <div style="background:#FFFFFF;border:1px solid #D6D0C2;border-radius:8px;padding:8px 10px">
+                  <div style="font:500 8px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91">Età</div>
+                  <div style="font:italic 500 12px var(--serif);color:var(--ink);margin-top:2px">28</div>
+                </div>
+                <div style="background:#FFFFFF;border:1px solid #D6D0C2;border-radius:8px;padding:8px 10px">
+                  <div style="font:500 8px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91">Ruolo</div>
+                  <div style="font:italic 500 12px var(--serif);color:var(--ink);margin-top:2px">Trequartista</div>
+                </div>
+                <div style="background:#FFFFFF;border:1px solid #D6D0C2;border-radius:8px;padding:8px 10px">
+                  <div style="font:500 8px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91">Trofei</div>
+                  <div style="font:italic 500 12px var(--serif);color:var(--ink);margin-top:2px">3 Scudetti</div>
+                </div>
+              </div>
+              <div style="margin-top:auto">
+                <div style="display:flex;gap:3px;justify-content:center;margin-bottom:10px">
+                  <span style="width:18px;height:5px;border-radius:99px;background:#CD212A;opacity:0.4"></span>
+                  <span style="width:18px;height:5px;border-radius:99px;background:#CD212A;opacity:0.4"></span>
+                  <span style="width:18px;height:5px;border-radius:99px;background:#CD212A;opacity:0.4"></span>
+                  <span style="width:18px;height:5px;border-radius:99px;background:#CD212A;opacity:0.4"></span>
+                  <span style="width:18px;height:5px;border-radius:99px;background:#C5FF00"></span>
+                  <span style="width:18px;height:5px;border-radius:99px;background:#ECE6DA"></span>
+                  <span style="width:18px;height:5px;border-radius:99px;background:#ECE6DA"></span>
+                  <span style="width:18px;height:5px;border-radius:99px;background:#ECE6DA"></span>
+                </div>
+                <input style="width:100%;background:#FFFFFF;border:1px solid #D6D0C2;border-radius:10px;padding:14px;font:italic 500 14px var(--serif);color:var(--ink-mute);outline:none" placeholder="Indovina il giocatore..." readonly>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label"><span class="badge badge--light">LIGHT</span> Daily Player · editorial</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========== MOCKUP 2: STADIUM DARK =========== -->
+<section style="background:linear-gradient(180deg,var(--bg-dark) 0%,#0a0a0c 100%)">
+  <div class="container">
+    <div class="sec__head">
+      <div>
+        <div class="sec__num">02 · Stadium Dark</div>
+        <h2 class="sec__title">Venerdì 18:00.</h2>
+      </div>
+      <p class="sec__sub">La giornata di Serie A apre. Stadium dark, lime acida, ambient sottilissimo. Da venerdì sera a domenica notte.</p>
+    </div>
+    <div class="theme-info" style="border-left-color:var(--lime)">
+      <div class="theme-info__when">Quando · Venerdì 18:00 → Domenica 23:00</div>
+      <div class="theme-info__title">"Stadio aperto. Si gioca."</div>
+      <div class="theme-info__copy">Background off-black, accent lime vibrante, glow sottile sul gradient top. Pronostici Live diventano protagonisti. Il "matchday banner" appare in hub mostrando partita imminente o in corso.</div>
+      <div class="theme-info__specs">
+        <span><span class="dot" style="background:#0E0E10;border:1px solid #2A2A30"></span> BG #0E0E10</span>
+        <span><span class="dot" style="background:#F4EFE6"></span> CREAM #F4EFE6</span>
+        <span><span class="dot" style="background:#C5FF00"></span> LIME (vibrante)</span>
+        <span><span class="dot" style="background:#D4A852"></span> GOLD (Lega)</span>
+      </div>
+    </div>
+    <div class="phone-stage phone-stage--two">
+
+      <!-- Phone 2.A: Hub stadium dark -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen theme-dark">
+            <div class="status-bar"><span>18:02</span><span class="status-bar__dots"></span></div>
+            <div class="app">
+              <div class="greet">Marco, stadio aperto.<small>Filotto · 28 giorni</small></div>
+              <div class="matchday">
+                <div>
+                  <div class="matchday__label">Tra poco</div>
+                  <div class="matchday__teams">Atalanta – Roma</div>
+                </div>
+                <div class="matchday__time">20:45</div>
+              </div>
+              <div class="meta-bar">
+                <span class="meta-bar__label">Caratura</span>
+                <span class="meta-bar__value">€34.2M</span>
+              </div>
+              <div class="lega-card">
+                <div>
+                  <div class="lega-card__label">Lega Settimanale</div>
+                  <div class="lega-card__title">Serie A</div>
+                  <div class="lega-card__sub">2 giorni alla chiusura</div>
+                </div>
+                <div class="lega-card__pos">3°</div>
+              </div>
+              <div class="modes">
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/></svg>
+                  <div>
+                    <div class="mode__title">Daily Player</div>
+                    <div class="mode__meta">Fatto · 6/8</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6"/><rect x="9" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="3" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6" fill="currentColor"/><rect x="15" y="9" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><rect x="9" y="15" width="6" height="6"/><rect x="15" y="15" width="6" height="6"/></svg>
+                  <div>
+                    <div class="mode__title">Grid</div>
+                    <div class="mode__meta">Fatta · 8/9</div>
+                  </div>
+                </div>
+                <div class="mode mode--accent">
+                  <span class="mode__dot mode__dot--live"></span>
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/></svg>
+                  <div>
+                    <div class="mode__title">Pronostici Live</div>
+                    <div class="mode__meta">3 match stasera</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <span class="mode__dot"></span>
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg>
+                  <div>
+                    <div class="mode__title">Duello</div>
+                    <div class="mode__meta">Lorenzo sfida</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg>
+                  <div>
+                    <div class="mode__title">Carriera</div>
+                    <div class="mode__meta">Serie A · S4</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9.5"/><path d="m15.5 8.5-3 8-1.5-2-2-1.5 6.5-4.5Z" fill="currentColor"/></svg>
+                  <div>
+                    <div class="mode__title">Esplora</div>
+                    <div class="mode__meta">Storia '90</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bottomnav">
+              <div class="bn-item bn-item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/></svg><span>Home</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="7" width="6" height="14"/><rect x="3" y="12" width="6" height="9"/><rect x="15" y="10" width="6" height="11"/></svg><span>Lega</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg><span>Duello</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg><span>Carr.</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Profilo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label"><span class="badge badge--dark">DARK</span> Venerdì 18:02 · Stadium aperto</div>
+      </div>
+
+      <!-- Phone 2.B: Pronostici Live dark -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen theme-dark">
+            <div class="status-bar"><span>20:47</span><span class="status-bar__dots"></span></div>
+            <div class="app">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <div class="greet" style="font-size:22px">Pronostici Live</div>
+                <span style="font:600 9px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:var(--hot);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;background:var(--hot);border-radius:50%;animation:pulse 1.5s infinite"></span>LIVE</span>
+              </div>
+              <div style="background:var(--bg-card-dark);border:1px solid var(--lime);border-radius:12px;padding:14px;margin-top:4px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                  <div style="font:italic 700 15px var(--serif)">Atalanta – Roma</div>
+                  <div style="font:700 18px var(--mono);color:var(--cream)">1 – 0</div>
+                </div>
+                <div style="font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91">23' · 1° tempo</div>
+                <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line-dim)">
+                  <div style="font:500 10px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--lime);margin-bottom:8px">Prossimo gol — chi?</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+                    <button style="background:var(--bg-elev-dark);border:1px solid var(--line);color:var(--cream);padding:8px;border-radius:6px;font:600 11px var(--sans);cursor:pointer">Atalanta · 1.8x</button>
+                    <button style="background:var(--lime);border:1px solid var(--lime);color:var(--bg-dark);padding:8px;border-radius:6px;font:600 11px var(--sans);cursor:pointer">Roma · 2.2x ✓</button>
+                  </div>
+                </div>
+              </div>
+              <div style="background:var(--bg-card-dark);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:8px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                  <div style="font:italic 700 15px var(--serif)">Milan – Lazio</div>
+                  <div style="font:700 13px var(--mono);color:#8B8B91">20:45</div>
+                </div>
+                <div style="font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:#8B8B91">Pronostici aperti · 3 min al fischio</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:12px">
+                  <button style="background:var(--bg-elev-dark);border:1px solid var(--line);color:var(--cream);padding:8px;border-radius:6px;font:600 11px var(--sans)">1 · 2.4x</button>
+                  <button style="background:var(--bg-elev-dark);border:1px solid var(--line);color:var(--cream);padding:8px;border-radius:6px;font:600 11px var(--sans)">X · 3.1x</button>
+                  <button style="background:var(--bg-elev-dark);border:1px solid var(--line);color:var(--cream);padding:8px;border-radius:6px;font:600 11px var(--sans)">2 · 2.8x</button>
+                </div>
+              </div>
+              <div style="background:var(--bg-card-dark);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:8px;opacity:0.6">
+                <div style="display:flex;justify-content:space-between">
+                  <div style="font:italic 700 15px var(--serif)">Inter – Juve</div>
+                  <div style="font:700 13px var(--mono);color:#8B8B91">Domani 20:45</div>
+                </div>
+              </div>
+              <div style="margin-top:auto;padding:12px;background:var(--bg-card-dark);border-radius:10px;border-left:3px solid var(--lime)">
+                <div style="font:500 10px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--lime);margin-bottom:4px">+€7M · oggi</div>
+                <div style="font:italic 500 13px var(--serif);color:var(--cream-dim)">5 pronostici azzeccati su 7</div>
+              </div>
+            </div>
+            <div class="bottomnav">
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/></svg><span>Home</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="7" width="6" height="14"/><rect x="3" y="12" width="6" height="9"/><rect x="15" y="10" width="6" height="11"/></svg><span>Lega</span></div>
+              <div class="bn-item bn-item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/></svg><span>Live</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg><span>Carr.</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Profilo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label"><span class="badge badge--dark">DARK</span> Sabato 20:47 · Pronostici Live</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========== MOCKUP 3: CHAMPIONS NIGHT =========== -->
+<section style="background:linear-gradient(180deg,#0a0a0c 0%,#1a1410 100%)">
+  <div class="container">
+    <div class="sec__head">
+      <div>
+        <div class="sec__num">03 · Champions Night</div>
+        <h2 class="sec__title">Mercoledì 20:30.</h2>
+      </div>
+      <p class="sec__sub">La Champions League ha la sua atmosfera. Dark + gold extra, micro-stelle pattern, anthem feel. Solo le sere di mid-week europeo.</p>
+    </div>
+    <div class="theme-info" style="border-left-color:var(--gold)">
+      <div class="theme-info__when">Quando · Martedì/Mercoledì 18:00 → 24:00 · settimane Champions</div>
+      <div class="theme-info__title">"È mercoledì. È Europa."</div>
+      <div class="theme-info__copy">Stadium dark si trasforma. Gold sostituisce lime come accento dominante. Star pattern molto sottile sul background. Il banner matchday usa "anthem" come label. Trofeo Champions appare nel lega card.</div>
+      <div class="theme-info__specs">
+        <span><span class="dot" style="background:#0E0E10;border:1px solid #2A2A30"></span> BG #0E0E10</span>
+        <span><span class="dot" style="background:#D4A852"></span> GOLD (dominante)</span>
+        <span><span class="dot" style="background:#F4EFE6"></span> CREAM</span>
+        <span>★ Star pattern · 0.15 opacity</span>
+      </div>
+    </div>
+    <div class="phone-stage phone-stage--two">
+
+      <!-- Phone 3.A: Hub champions -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen theme-champions">
+            <div class="status-bar"><span>20:32</span><span class="status-bar__dots"></span></div>
+            <div class="app" style="position:relative;z-index:2">
+              <div class="greet">Marco, è Europa.<small style="color:#D4A852">Filotto · 28 giorni · Champions night</small></div>
+              <div class="matchday">
+                <div>
+                  <div class="matchday__label">Anthem · tra 13 min</div>
+                  <div class="matchday__teams">Inter – PSG</div>
+                </div>
+                <div class="matchday__time">20:45</div>
+              </div>
+              <div class="meta-bar">
+                <span class="meta-bar__label">Caratura</span>
+                <span class="meta-bar__value">€34.2M</span>
+              </div>
+              <div class="lega-card">
+                <div>
+                  <div class="lega-card__label">★ Lega Champions</div>
+                  <div class="lega-card__title">Champions League</div>
+                  <div class="lega-card__sub">Top tier · evento mercoledì</div>
+                </div>
+                <div class="lega-card__pos">5°</div>
+              </div>
+              <div class="modes">
+                <div class="mode mode--accent">
+                  <span class="mode__dot"></span>
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/></svg>
+                  <div>
+                    <div class="mode__title">Pronostici Live</div>
+                    <div class="mode__meta">8 match stanotte</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/></svg>
+                  <div>
+                    <div class="mode__title">Daily Player</div>
+                    <div class="mode__meta">Tema: Champions</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6"/><rect x="9" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="3" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6" fill="currentColor"/><rect x="15" y="9" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><rect x="9" y="15" width="6" height="6"/><rect x="15" y="15" width="6" height="6"/></svg>
+                  <div>
+                    <div class="mode__title">Grid</div>
+                    <div class="mode__meta">Tema: Champions</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg>
+                  <div>
+                    <div class="mode__title">Duello</div>
+                    <div class="mode__meta">Lorenzo +2</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg>
+                  <div>
+                    <div class="mode__title">Carriera</div>
+                    <div class="mode__meta">Champions S4</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9.5"/><path d="m15.5 8.5-3 8-1.5-2-2-1.5 6.5-4.5Z" fill="currentColor"/></svg>
+                  <div>
+                    <div class="mode__title">Esplora</div>
+                    <div class="mode__meta">Storia UCL</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bottomnav">
+              <div class="bn-item bn-item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/></svg><span>Home</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="7" width="6" height="14"/><rect x="3" y="12" width="6" height="9"/><rect x="15" y="10" width="6" height="11"/></svg><span>Lega</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/></svg><span>Live</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg><span>Carr.</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Profilo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label"><span class="badge badge--gold">GOLD</span> Mercoledì 20:32 · Champions night</div>
+      </div>
+
+      <!-- Phone 3.B: Duello live in Champions -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen theme-champions">
+            <div class="status-bar"><span>20:58</span><span class="status-bar__dots"></span></div>
+            <div class="app" style="position:relative;z-index:2">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+                  <div style="width:38px;height:38px;border-radius:50%;background:#003C7E;display:grid;place-items:center;font:700 13px var(--sans);color:#fff;border:2px solid var(--gold)">MR</div>
+                  <div style="font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.08em;color:var(--cream)">Marco</div>
+                  <div style="font:700 28px var(--mono);color:var(--gold);font-variant-numeric:tabular-nums">31</div>
+                </div>
+                <div style="font:italic 700 16px var(--serif);color:#8B8B91">vs</div>
+                <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1">
+                  <div style="width:38px;height:38px;border-radius:50%;background:#7E0202;display:grid;place-items:center;font:700 13px var(--sans);color:#fff;border:2px solid #8B8B91">LO</div>
+                  <div style="font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.08em;color:var(--cream)">Lorenzo</div>
+                  <div style="font:700 28px var(--mono);color:#C9C4BB;font-variant-numeric:tabular-nums">22</div>
+                </div>
+              </div>
+              <div style="text-align:center;font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-top:8px">★ Round 4 di 5 · Champions storia</div>
+              <div style="display:flex;justify-content:center;margin:12px 0">
+                <svg viewBox="0 0 100 100" style="width:90px;height:90px">
+                  <circle cx="50" cy="50" r="42" stroke="#2A2A30" stroke-width="6" fill="none"/>
+                  <circle cx="50" cy="50" r="42" stroke="#D4A852" stroke-width="6" fill="none" stroke-dasharray="264" stroke-dashoffset="120" transform="rotate(-90 50 50)" stroke-linecap="round"/>
+                  <text x="50" y="58" text-anchor="middle" font-family="Geist Mono" font-weight="700" font-size="30" fill="#F4EFE6">5</text>
+                </svg>
+              </div>
+              <div style="text-align:center;font:italic 500 15px var(--serif);color:var(--cream);padding:0 14px">In che anno il Milan ha vinto la sua prima Champions League?</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:14px">
+                <button style="background:var(--bg-card-dark);border:1px solid var(--line);color:var(--cream);padding:14px 8px;border-radius:8px;font:600 14px var(--sans)">1963</button>
+                <button style="background:var(--bg-card-dark);border:1px solid var(--gold);color:var(--gold);padding:14px 8px;border-radius:8px;font:600 14px var(--sans)">1969</button>
+                <button style="background:var(--bg-card-dark);border:1px solid var(--line);color:var(--cream);padding:14px 8px;border-radius:8px;font:600 14px var(--sans)">1958</button>
+                <button style="background:var(--bg-card-dark);border:1px solid var(--line);color:var(--cream);padding:14px 8px;border-radius:8px;font:600 14px var(--sans)">1974</button>
+              </div>
+              <div style="text-align:center;font:500 9px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-top:8px">+8 bonus velocità in 4s</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label"><span class="badge badge--gold">GOLD</span> Mercoledì 20:58 · Duello UCL theme</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========== MOCKUP 4: ITALIA TRICOLORE =========== -->
+<section style="background:linear-gradient(180deg,#1a1410 0%,var(--bg-dark) 100%)">
+  <div class="container">
+    <div class="sec__head">
+      <div>
+        <div class="sec__num">04 · Italia in campo</div>
+        <h2 class="sec__title">Domenica · Italia – Francia.</h2>
+      </div>
+      <p class="sec__sub">Quando gioca la Nazionale, il tricolore appare come segno editoriale sobrio. Riga sottile in alto. Banner dedicato. Nessun cringe — solo identità.</p>
+    </div>
+    <div class="theme-info" style="border-left-color:var(--green-it)">
+      <div class="theme-info__when">Quando · ogni partita della Nazionale Italia, da 4h prima del fischio fino a 2h dopo</div>
+      <div class="theme-info__title">"Stasera gioca l'Italia."</div>
+      <div class="theme-info__copy">L'app applica un overlay tricolore sopra il theme corrente (light o dark). Una riga sottile in alto. Banner Italia dedicato in hub. Bordo verticale tricolore nelle card. Nessun riempimento bandiera-effetto — solo accenti istituzionali.</div>
+      <div class="theme-info__specs">
+        <span><span class="dot" style="background:#008C45"></span> VERDE #008C45</span>
+        <span><span class="dot" style="background:#F4F5F0"></span> BIANCO #F4F5F0</span>
+        <span><span class="dot" style="background:#CD212A"></span> ROSSO #CD212A</span>
+        <span>Overlay sopra base theme</span>
+      </div>
+    </div>
+    <div class="phone-stage phone-stage--two">
+
+      <!-- Phone 4.A: Hub Italia tricolore -->
+      <div class="phone-wrap">
+        <div class="phone">
+          <div class="screen theme-italia">
+            <div class="status-bar"><span>17:48</span><span class="status-bar__dots"></span></div>
+            <div class="app">
+              <div class="greet">Marco, stasera l'Italia.<small style="color:#F4F5F0">Filotto · 28 giorni</small></div>
+              <div class="italia-banner">
+                <div>
+                  <div class="italia-banner__label">Tra 3 ore · Nazions League</div>
+                  <div class="italia-banner__teams">Italia – Francia</div>
+                </div>
+                <div class="italia-banner__time">20:45</div>
+              </div>
+              <div class="meta-bar">
+                <span class="meta-bar__label">Caratura</span>
+                <span class="meta-bar__value">€34.2M</span>
+              </div>
+              <div class="lega-card">
+                <div>
+                  <div class="lega-card__label">Lega Settimanale</div>
+                  <div class="lega-card__title">Serie A</div>
+                  <div class="lega-card__sub">Domenica · chiusura tra 6h</div>
+                </div>
+                <div class="lega-card__pos">3°</div>
+              </div>
+              <div class="modes">
+                <div class="mode">
+                  <span class="mode__dot"></span>
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/></svg>
+                  <div>
+                    <div class="mode__title">Pronostici Italia</div>
+                    <div class="mode__meta">Tra 3 ore</div>
+                  </div>
+                </div>
+                <div class="mode mode--accent">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/></svg>
+                  <div>
+                    <div class="mode__title">Daily Player</div>
+                    <div class="mode__meta">Tema: Azzurri</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="6" height="6"/><rect x="9" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="3" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6" fill="currentColor"/><rect x="15" y="9" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><rect x="9" y="15" width="6" height="6"/><rect x="15" y="15" width="6" height="6"/></svg>
+                  <div>
+                    <div class="mode__title">Grid</div>
+                    <div class="mode__meta">Italia stagioni</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12 L7 8 L7 11 L17 11 L17 8 L21 12 L17 16 L17 13 L7 13 L7 16 Z"/></svg>
+                  <div>
+                    <div class="mode__title">Duello</div>
+                    <div class="mode__meta">Categoria: Naz.</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg>
+                  <div>
+                    <div class="mode__title">Carriera</div>
+                    <div class="mode__meta">Convocato!</div>
+                  </div>
+                </div>
+                <div class="mode">
+                  <svg class="mode__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9.5"/><path d="m15.5 8.5-3 8-1.5-2-2-1.5 6.5-4.5Z" fill="currentColor"/></svg>
+                  <div>
+                    <div class="mode__title">Esplora</div>
+                    <div class="mode__meta">Mondiali '82</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bottomnav">
+              <div class="bn-item bn-item--active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1v-9Z"/></svg><span>Home</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="9" y="7" width="6" height="14"/><rect x="3" y="12" width="6" height="9"/><rect x="15" y="10" width="6" height="11"/></svg><span>Lega</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="2.5" fill="currentColor"/><circle cx="12" cy="12" r="6.5"/></svg><span>Live</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/></svg><span>Carr.</span></div>
+              <div class="bn-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Profilo</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone-label"><span class="badge badge--italia">ITA</span> Domenica 17:48 · Italia in campo</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========== REGOLE ADAPTIVE =========== -->
+<section>
+  <div class="container">
+    <div class="sec__head">
+      <div>
+        <div class="sec__num">05 · Le regole</div>
+        <h2 class="sec__title">Quattro stati. Mai improvvisati.</h2>
+      </div>
+      <p class="sec__sub">L'adaptive theming non è random. È una matrice deterministica che risponde al calendario calcistico reale.</p>
+    </div>
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-card__when"><span class="dot" style="background:#F4EFE6;border:1px solid #D6D0C2"></span>LIGHT EDITORIAL</div>
+        <h3 class="rule-card__title">Lun · Mar · Mer non-UCL · Gio · Ven mattina</h3>
+        <p class="rule-card__copy">Quando il calcio è "indietro" (post-weekend) o "in attesa" (pre-weekend). L'app è un magazine premium che racconta. Calma, leggibilità, restraint.</p>
+        <div class="rule-card__specs">
+          BG #F4EFE6 (paper) · INK #0E0E10<br>
+          ACCENT lime solo per Daily del giorno<br>
+          GOLD per Lega (resta)<br>
+          NO matchday banner, NO live overlay
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card__when"><span class="dot" style="background:#C5FF00"></span>STADIUM DARK</div>
+        <h3 class="rule-card__title">Ven 18:00 → Dom 23:00</h3>
+        <p class="rule-card__copy">Da quando aprono gli stadi venerdì sera fino alla notte della domenica. Stadium dark, lime acceso. Pronostici live e matchday banner protagonisti.</p>
+        <div class="rule-card__specs">
+          BG #0E0E10 · CREAM #F4EFE6<br>
+          LIME accent dominante · GOLD per Lega<br>
+          Subtle gradient top (stadium light)<br>
+          Matchday banner attivo
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card__when"><span class="dot" style="background:#D4A852"></span>CHAMPIONS NIGHT</div>
+        <h3 class="rule-card__title">Mar/Mer 18:00 → 24:00 settimane UCL</h3>
+        <p class="rule-card__copy">Solo quando ci sono le partite Champions. Atmosfera diversa anche dallo Stadium Dark. Gold sostituisce lime come accento primario. Star pattern micro.</p>
+        <div class="rule-card__specs">
+          BG #0E0E10 · GOLD dominante · CREAM<br>
+          Star pattern overlay 0.15 opacity<br>
+          Gradient gold radial top-right<br>
+          Daily/Grid tema Champions
+        </div>
+      </div>
+      <div class="rule-card">
+        <div class="rule-card__when"><span class="dot" style="background:linear-gradient(90deg,#008C45 0 33%,#F4F5F0 33% 66%,#CD212A 66%)"></span>ITALIA OVERLAY</div>
+        <h3 class="rule-card__title">Da 4h prima Italia in campo fino a 2h dopo</h3>
+        <p class="rule-card__copy">Overlay sopra qualsiasi base (Light o Dark). Riga tricolore sottile in alto, banner Italia dedicato. Sobrio, istituzionale, mai cringe.</p>
+        <div class="rule-card__specs">
+          Riga 3px tricolore top<br>
+          Bordo verticale tricolore in banner<br>
+          Modalità tema "Azzurri"<br>
+          Resta base color (no flag fill)
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:32px;padding:24px;background:var(--bg-card-dark);border-radius:12px;border-left:3px solid var(--gold)">
+      <div style="font:500 11px var(--mono);text-transform:uppercase;letter-spacing:0.12em;color:var(--gold);margin-bottom:12px">Casi compositi</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font:400 14px/1.6 var(--sans);color:#C9C4BB">
+        <div>
+          <strong style="color:var(--cream)">UCL + Italia</strong> = Champions Night + tricolore top<br>
+          <small style="color:#8B8B91">(es. mercoledì UCL con Italia che gioca dopo)</small>
+        </div>
+        <div>
+          <strong style="color:var(--cream)">Stadium + Italia</strong> = Dark + tricolore overlay<br>
+          <small style="color:#8B8B91">(es. domenica Italia gioca)</small>
+        </div>
+        <div>
+          <strong style="color:var(--cream)">Light + Italia</strong> = Light + tricolore overlay<br>
+          <small style="color:#8B8B91">(es. martedì amichevole pomeriggio)</small>
+        </div>
+        <div>
+          <strong style="color:var(--cream)">Calciomercato Gennaio</strong> = ticker overlay<br>
+          <small style="color:#8B8B91">(transfer news scroll discreto, qualsiasi base)</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========== FOOTER =========== -->
+<footer>
+  <p>Goal · Adaptive Theming Mockups · <span class="accent">v0.3</span> · L'app respira col calendario</p>
+</footer>
+
+</body>
+</html>

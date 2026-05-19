@@ -1,0 +1,1609 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0F1419">
+<title>Goal · App prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0F1419;--bg-1:#161C24;--bg-2:#1E2530;--bg-3:#2A3340;
+  --ink:#fff;--ink-2:#C5CCD8;--ink-3:#8B96A8;--ink-4:#5A6478;
+  --lime:#C5FF00;--lime-d:#9FCC00;--coral:#FF6B6B;--gold:#FFD93D;
+  --purple:#9B72F2;--blue:#4ECDC4;--fire:#FF6B35;
+  --r-c:#94A3B8;--r-r:#4ECDC4;--r-e:#9B72F2;--r-l:#FFD93D;--r-m:#C5FF00;
+}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{background:#1A1F26;color:#fff;font:500 16px 'Onest',sans-serif;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;touch-action:manipulation}
+
+/* ===== PAGE CHROME ===== */
+.page-bar{padding:12px 18px;background:#0F1419;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0;z-index:100}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px;letter-spacing:-0.02em;flex-shrink:0}
+.brand__logo{width:30px;height:30px;background:linear-gradient(135deg,var(--lime),var(--lime-d));border-radius:8px;display:grid;place-items:center;color:var(--bg);font:900 16px 'Onest';box-shadow:0 4px 10px rgba(197,255,0,0.3),inset 0 1px 0 rgba(255,255,255,0.4)}
+.brand__label{display:inline}
+.nav-controls{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.nav-controls select{background:#1E2530;color:#fff;border:1px solid rgba(255,255,255,0.1);padding:7px 10px;border-radius:8px;font:600 12px 'Onest';cursor:pointer;outline:none;max-width:180px}
+.nav-controls button{background:rgba(197,255,0,0.1);color:var(--lime);border:1px solid rgba(197,255,0,0.3);padding:7px 12px;border-radius:8px;font:700 11px 'Onest';text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;white-space:nowrap}
+.current-screen{font:700 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.06em;display:none}
+.current-screen span{color:var(--lime)}
+
+/* ===== STAGE ===== */
+.stage{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;background:radial-gradient(circle at center,#1A1F26,#0F1419)}
+
+/* ===== PHONE ===== */
+.phone{width:380px;height:780px;background:#000;border-radius:46px;border:10px solid #1A1F26;padding:10px;box-shadow:0 40px 80px rgba(0,0,0,0.6),inset 0 0 0 1px rgba(255,255,255,0.08);position:relative;flex-shrink:0}
+.phone::before{content:'';position:absolute;top:18px;left:50%;transform:translateX(-50%);width:110px;height:30px;background:#000;border-radius:99px;z-index:50}
+.screen-stack{width:100%;height:100%;background:var(--bg);border-radius:36px;overflow:hidden;position:relative}
+.screen{position:absolute;inset:0;display:none;flex-direction:column;color:#fff;font-size:14px}
+.screen.active{display:flex;animation:fadeIn 250ms ease-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== MOBILE — phone fills screen ===== */
+@media (max-width:680px){
+  .page-bar{padding:10px 12px}
+  .brand__label{display:none}
+  .nav-controls select{max-width:130px;font-size:11px;padding:6px 8px}
+  .nav-controls button{padding:6px 10px;font-size:10px}
+  .stage{padding:0;align-items:flex-start}
+  .phone{width:100%;max-width:none;height:100%;border-radius:0;border:0;padding:0;box-shadow:none}
+  .phone::before{display:none}
+  .screen-stack{border-radius:0}
+  .statusbar{padding-top:max(14px,env(safe-area-inset-top));padding-left:max(26px,env(safe-area-inset-left));padding-right:max(26px,env(safe-area-inset-right))}
+  .bottomnav{padding-bottom:max(18px,env(safe-area-inset-bottom))}
+  .body{padding-top:54px}
+}
+@media (max-height:680px) and (min-width:681px){
+  .phone{height:calc(100vh - 80px);max-height:780px}
+}
+
+/* ===== STATUS BAR ===== */
+.statusbar{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:16px 30px 0;font:700 13px 'JetBrains Mono';z-index:10;pointer-events:none}
+.statusbar__dots::after{content:'•••'}
+
+/* ===== BOTTOM NAV ===== */
+.bottomnav{position:absolute;bottom:0;left:0;right:0;display:flex;justify-content:space-around;padding:10px 6px 18px;background:rgba(15,20,25,0.95);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,0.06);border-radius:28px 28px 0 0;z-index:20}
+.nv{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink-3);cursor:pointer;background:none;border:none;padding:6px;font-family:'Onest'}
+.nv svg{width:22px;height:22px}
+.nv span{font-weight:700;font-size:9px;text-transform:uppercase;letter-spacing:0.04em}
+.nv--active{color:var(--lime)}
+.nv--play svg{width:38px;height:38px;padding:8px;background:linear-gradient(180deg,var(--lime),var(--lime-d));border-radius:50%;color:var(--bg);box-shadow:0 4px 14px rgba(197,255,0,0.4);margin-top:-16px}
+
+/* ===== TOP HEADER (in-game) ===== */
+.appbar{position:absolute;top:0;left:0;right:0;padding:54px 18px 12px;display:flex;align-items:center;justify-content:space-between;z-index:5;gap:8px}
+.appbar__back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.08);display:grid;place-items:center;color:#fff;cursor:pointer;border:none;flex-shrink:0;backdrop-filter:blur(10px)}
+.appbar__back svg{width:18px;height:18px}
+.appbar__title{flex:1;font:700 14px 'Onest';letter-spacing:-0.01em;text-align:center}
+.appbar__action{min-width:34px;height:34px;border-radius:99px;background:rgba(255,255,255,0.08);display:grid;place-items:center;color:#fff;cursor:pointer;border:none;padding:0 10px;font:700 12px 'Onest';font-family:'Onest';backdrop-filter:blur(10px)}
+.appbar__action svg{width:18px;height:18px}
+
+/* ===== SCROLL AREA ===== */
+.body{flex:1;overflow-y:auto;padding:62px 16px 84px;-webkit-overflow-scrolling:touch}
+.body--nofoot{padding-bottom:18px}
+.body--nohead{padding-top:54px}
+
+/* ===== COMMON UTILITY ===== */
+.eyebrow{font:700 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em}
+.eyebrow b{color:var(--lime)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:15px;font-family:'Onest';font-weight:800;font-size:14px;border-radius:14px;border:none;cursor:pointer;width:100%;letter-spacing:-0.005em}
+.btn--primary{background:linear-gradient(180deg,#D7FF3D 0%,var(--lime) 50%,var(--lime-d) 100%);color:var(--bg);box-shadow:0 4px 0 #7A9F00,inset 0 1px 0 rgba(255,255,255,0.3)}
+.btn--primary:active{transform:translateY(3px);box-shadow:0 1px 0 #7A9F00,inset 0 1px 0 rgba(255,255,255,0.1)}
+.btn--gold{background:linear-gradient(180deg,#FFE76D,var(--gold),#E8B821);color:var(--bg);box-shadow:0 4px 0 #B89318,inset 0 1px 0 rgba(255,255,255,0.3)}
+.btn--gold:active{transform:translateY(3px);box-shadow:0 1px 0 #B89318}
+.btn--secondary{background:rgba(255,255,255,0.06);color:var(--ink);border:1px solid rgba(255,255,255,0.1);font-weight:600;font-size:13px;padding:13px}
+.btn--ghost{background:transparent;color:var(--ink-3);font-weight:600;font-size:12px;padding:10px}
+
+/* ============ SPLASH ============ */
+#splash{align-items:center;justify-content:center;background:radial-gradient(circle at center,rgba(197,255,0,0.15) 0%,var(--bg) 60%);cursor:pointer}
+.splash-logo{width:96px;height:96px;background:linear-gradient(135deg,var(--lime),var(--lime-d));border-radius:28px;display:grid;place-items:center;color:var(--bg);font:900 56px 'Onest';box-shadow:0 16px 40px rgba(197,255,0,0.5),inset 0 2px 0 rgba(255,255,255,0.4);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.splash-title{margin-top:32px;font:900 40px 'Onest';letter-spacing:-0.04em}
+.splash-tag{margin-top:8px;font:600 12px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.16em}
+
+/* ============ WELCOME ============ */
+#welcome{position:relative}
+#welcome::before{content:'';position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&q=80') center/cover}
+#welcome::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,20,25,0.3) 0%,rgba(15,20,25,0.7) 40%,rgba(15,20,25,0.98) 85%)}
+.welcome-c{position:relative;z-index:2;padding:54px 28px 28px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;gap:12px}
+.welcome-logo{width:60px;height:60px;background:linear-gradient(135deg,var(--lime),var(--lime-d));border-radius:18px;display:grid;place-items:center;color:var(--bg);font:900 32px 'Onest';box-shadow:0 8px 24px rgba(197,255,0,0.4);margin-bottom:8px}
+.welcome-eb{font:700 10px 'JetBrains Mono';color:var(--lime);text-transform:uppercase;letter-spacing:0.16em}
+.welcome-t{font:900 38px/1 'Onest';letter-spacing:-0.035em}
+.welcome-t em{font-style:normal;color:var(--lime)}
+.welcome-s{font-size:13px;color:var(--ink-2);line-height:1.55;margin-bottom:8px;max-width:280px}
+
+/* ============ TEAM SELECT ============ */
+.ts-h{padding-top:6px}
+.ts-eb{display:flex;justify-content:space-between;font:700 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+.ts-eb b{color:var(--lime)}
+.ts-t{font:900 26px 'Onest';letter-spacing:-0.02em;line-height:1.05;margin-bottom:4px}
+.ts-s{font-size:12px;color:var(--ink-3);margin-bottom:14px}
+.ts-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.team{background:var(--bg-1);border:1.5px solid rgba(255,255,255,0.05);border-radius:13px;padding:8px 5px;text-align:center;cursor:pointer;transition:all 200ms;position:relative}
+.team:active{transform:scale(0.95)}
+.team--on{border-color:var(--lime);background:linear-gradient(180deg,rgba(197,255,0,0.12),rgba(197,255,0,0.04));box-shadow:0 0 16px rgba(197,255,0,0.2)}
+.team--on::after{content:'✓';position:absolute;top:4px;right:5px;width:14px;height:14px;background:var(--lime);color:var(--bg);border-radius:50%;font-size:9px;font-weight:900;display:grid;place-items:center}
+.team__c{width:32px;height:32px;border-radius:50%;margin:0 auto 4px;display:grid;place-items:center;font:900 11px 'Onest';color:#fff;box-shadow:0 2px 6px rgba(0,0,0,0.3)}
+.team__n{font:700 9px 'Onest';color:var(--ink-2);text-transform:uppercase;letter-spacing:0.04em;line-height:1.1}
+.tc-juve{background:repeating-linear-gradient(90deg,#000 0 4px,#fff 4px 8px);color:#000;text-shadow:0 1px 2px rgba(255,255,255,0.8)}
+.tc-milan{background:linear-gradient(135deg,#A4040C,#000)}
+.tc-inter{background:linear-gradient(135deg,#0066A3,#000)}
+.tc-roma{background:linear-gradient(135deg,#8E1F2F,#F0BC42)}
+.tc-lazio{background:linear-gradient(135deg,#87D8F7,#0E5292)}
+.tc-napoli{background:linear-gradient(135deg,#12A0D7,#003D80)}
+.tc-fiore{background:linear-gradient(135deg,#5B1F8C,#2E0E4A)}
+.tc-atalanta{background:linear-gradient(135deg,#1F62B6,#000)}
+.tc-toro{background:linear-gradient(135deg,#7A1F2A,#3A0D14)}
+.tc-bologna{background:linear-gradient(135deg,#A0182D,#0E2954)}
+.tc-genoa{background:linear-gradient(135deg,#A8222C,#0E2954)}
+.tc-samp{background:linear-gradient(135deg,#1163AF,#A8222C)}
+.tc-cagliari{background:linear-gradient(135deg,#A2182A,#0E2954)}
+.tc-lecce{background:linear-gradient(135deg,#FBC02D,#A02020);color:#000}
+.tc-empoli{background:linear-gradient(135deg,#1163AF,#0A3D6E)}
+.tc-udinese{background:linear-gradient(135deg,#000,#5A5A5A)}
+.tc-verona{background:linear-gradient(135deg,#FBC02D,#0E2954);color:#000}
+.tc-monza{background:linear-gradient(135deg,#A8182A,#fff);color:#fff}
+.tc-como{background:linear-gradient(135deg,#0066A3,#fff)}
+.tc-parma{background:linear-gradient(135deg,#FBC02D,#0E2954);color:#000}
+
+/* ============ NAME CREATE ============ */
+.name-art{display:grid;place-items:center;margin:24px 0}
+.name-ball{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--lime),var(--lime-d));display:grid;place-items:center;color:var(--bg);font:900 64px 'Onest';box-shadow:0 16px 40px rgba(197,255,0,0.4),inset 0 4px 0 rgba(255,255,255,0.3),inset 0 -4px 0 rgba(0,0,0,0.2);position:relative}
+.name-ball::after{content:'';position:absolute;inset:8px;border-radius:50%;border:2px dashed rgba(0,0,0,0.2)}
+.input-l{font:700 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px}
+.input{width:100%;background:var(--bg-1);border:2px solid var(--lime);border-radius:14px;padding:16px;font:600 18px 'Onest';color:#fff;outline:none;box-shadow:0 0 0 3px rgba(197,255,0,0.1)}
+.input::placeholder{color:var(--ink-4)}
+.name-hint{font-size:11px;color:var(--ink-3);margin-top:8px}
+
+/* ============ NOTIFICATIONS ============ */
+.notif-art{display:flex;justify-content:center;margin:8px 0 16px}
+.notif-bell{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--coral),#E04848);display:grid;place-items:center;box-shadow:0 16px 40px rgba(255,107,107,0.5)}
+.notif-bell svg{width:60px;height:60px;color:#fff;animation:wobble 2s ease-in-out infinite}
+@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.notif-options{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.notif-opt{background:var(--bg-1);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.notif-opt__icon{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;color:#fff}
+.notif-opt__icon svg{width:18px;height:18px}
+.notif-opt--daily .notif-opt__icon{background:linear-gradient(135deg,var(--lime),var(--lime-d));color:var(--bg)}
+.notif-opt--duel .notif-opt__icon{background:linear-gradient(135deg,var(--purple),#7C3AED)}
+.notif-opt--live .notif-opt__icon{background:linear-gradient(135deg,var(--coral),#DC2626)}
+.notif-opt__t{flex:1}
+.notif-opt__t b{display:block;font-weight:700;font-size:13px;letter-spacing:-0.01em}
+.notif-opt__t small{display:block;font-size:11px;color:var(--ink-3);margin-top:2px;font-weight:500}
+.toggle{width:38px;height:22px;background:var(--bg-3);border-radius:99px;position:relative;cursor:pointer;flex-shrink:0;border:1px solid rgba(255,255,255,0.08);transition:all 200ms}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform 200ms}
+.toggle--on{background:var(--lime);border-color:var(--lime)}
+.toggle--on::after{transform:translateX(16px);background:var(--bg)}
+
+/* ============ HUB ============ */
+.hub-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.hub-avatar{display:flex;align-items:center;gap:10px;cursor:pointer}
+.hub-pic{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--lime),var(--lime-d));display:grid;place-items:center;color:var(--bg);font:900 16px 'Onest';box-shadow:0 4px 12px rgba(197,255,0,0.3);position:relative;flex-shrink:0}
+.hub-pic::after{content:'12';position:absolute;bottom:-3px;right:-4px;min-width:20px;height:20px;padding:0 5px;background:var(--gold);color:var(--bg);border-radius:99px;display:grid;place-items:center;font:800 11px 'JetBrains Mono';border:2px solid var(--bg)}
+.hub-n{font-weight:800;font-size:14px;letter-spacing:-0.01em}
+.hub-n small{display:block;font:600 10px 'Onest';color:var(--ink-3);margin-top:1px;text-transform:uppercase;letter-spacing:0.04em}
+.cur-row{display:flex;gap:5px}
+.cur-i{display:inline-flex;align-items:center;gap:4px;padding:4px 9px 4px 4px;background:rgba(0,0,0,0.4);border-radius:99px;font:700 11px 'JetBrains Mono';border:1px solid rgba(255,255,255,0.06)}
+.cur-i__b{width:16px;height:16px;border-radius:50%;display:grid;place-items:center}
+.cur-i--g .cur-i__b{background:var(--gold)}
+.cur-i--l .cur-i__b{background:var(--lime)}
+.streak{background:radial-gradient(ellipse at top left,#3D2210 0%,#1A0F08 100%);border:1px solid rgba(255,107,53,0.3);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden;margin-bottom:12px;cursor:pointer}
+.streak::before{content:'';position:absolute;top:-30%;right:-20%;width:60%;height:160%;background:radial-gradient(ellipse,rgba(255,107,53,0.4),transparent 60%);animation:flicker 2.8s ease-in-out infinite}
+@keyframes flicker{0%,100%{opacity:0.5;transform:translate(0,0)}50%{opacity:0.9;transform:translate(-2px,2px)}}
+.streak svg{width:36px;height:44px;flex-shrink:0;position:relative;filter:drop-shadow(0 0 10px rgba(255,107,53,0.7))}
+.streak__t{flex:1;position:relative}
+.streak__t b{display:block;font:800 18px 'Onest';letter-spacing:-0.02em;line-height:1}
+.streak__t small{font-size:11px;color:#FF8C42;font-weight:600;margin-top:2px;display:block}
+.streak__cta{padding:8px 14px;background:linear-gradient(180deg,#FF8C42,var(--fire));color:#fff;border-radius:10px;font:800 11px 'Onest';box-shadow:0 2px 0 #C04A1F;text-transform:uppercase;letter-spacing:0.04em;position:relative;border:none;cursor:pointer;flex-shrink:0}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mc{border-radius:14px;padding:12px;position:relative;overflow:hidden;min-height:98px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;border:none;text-align:left;color:#fff;font-family:'Onest'}
+.mc:active{transform:scale(0.97)}
+.mc__icon{width:24px;height:24px;margin-bottom:4px}
+.mc__icon svg{width:100%;height:100%}
+.mc__t{font:800 13px 'Onest';line-height:1}
+.mc__s{font-size:10px;font-weight:600;opacity:0.78;margin-top:2px}
+.mc__b{position:absolute;top:8px;right:8px;background:var(--bg);color:var(--ink);padding:2px 7px;border-radius:99px;font:900 9px 'Onest';text-transform:uppercase;letter-spacing:0.04em}
+.mc--daily{background:linear-gradient(135deg,var(--lime-d),var(--lime));color:var(--bg);box-shadow:0 6px 16px rgba(197,255,0,0.25);grid-column:span 2;min-height:118px;position:relative}
+.mc--daily::before{content:'';position:absolute;top:-15%;right:-15%;width:60%;height:130%;border-radius:50%;background:url('https://images.unsplash.com/photo-1551958219-acbc608c6377?w=300&q=80') center/cover;filter:blur(8px) saturate(1.2);opacity:0.3;mix-blend-mode:luminosity}
+.mc--daily .mc__t{font-size:22px;letter-spacing:-0.025em;margin-top:32px;position:relative}
+.mc--daily .mc__s{font-size:11px;font-weight:700;position:relative}
+.mc--duel{background:linear-gradient(135deg,var(--purple),#7C3AED)}
+.mc--grid{background:linear-gradient(135deg,var(--blue),#14B8A6);color:var(--bg)}
+.mc--live{background:linear-gradient(135deg,var(--coral),#DC2626);position:relative}
+.mc--live::after{content:'';position:absolute;top:10px;right:10px;width:8px;height:8px;background:#fff;border-radius:50%;animation:pulse-dot 1.2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.5)}}
+.mc--carr{background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--bg)}
+.mc--esp{background:linear-gradient(135deg,var(--bg-3),var(--bg-2));border:1px solid rgba(255,255,255,0.08)}
+.duel-avs{display:flex}
+.duel-avs__a{width:22px;height:22px;border-radius:50%;border:2px solid #fff;display:grid;place-items:center;font:900 9px 'Onest';margin-left:-6px}
+.duel-avs__a:first-child{margin-left:0}
+.grid-vis{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;width:38px;height:38px;margin-bottom:6px}
+.grid-vis span{background:var(--bg);border-radius:2px;opacity:0.85}
+.grid-vis span.e{opacity:0.2}
+.carr-path{display:flex;align-items:center;gap:3px;margin-bottom:6px}
+.carr-step{width:8px;height:8px;border-radius:50%;background:var(--bg);opacity:0.3}
+.carr-step.done{opacity:1}
+.carr-step.curr{width:12px;height:12px;box-shadow:0 0 0 2px var(--gold),0 0 0 3px var(--bg)}
+.carr-ln{flex:1;height:2px;background:var(--bg);opacity:0.3;border-radius:2px}
+.carr-ln.done{opacity:1}
+
+/* ============ DAILY INTRO ============ */
+.s4-mast{display:flex;justify-content:space-between;font:600 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:8px}
+.s4-mast b{color:var(--lime)}
+.s4-t{font:900 24px 'Onest';letter-spacing:-0.025em;line-height:1.05}
+.s4-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px}
+.s4-photo{position:relative;width:100%;aspect-ratio:1;border-radius:20px;overflow:hidden;margin:10px 0;background:#000;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.s4-photo img{width:100%;height:100%;object-fit:cover;filter:blur(28px) saturate(1.3) brightness(0.7);transform:scale(1.15)}
+.s4-photo::after{content:'?';position:absolute;inset:0;display:grid;place-items:center;font:900 130px 'Onest';color:rgba(255,255,255,0.85);text-shadow:0 4px 20px rgba(0,0,0,0.6);line-height:1}
+.s4-photo__community{position:absolute;top:10px;left:12px;font:700 9px 'JetBrains Mono';color:#fff;text-transform:uppercase;letter-spacing:0.08em;background:rgba(0,0,0,0.5);padding:3px 8px;border-radius:99px;backdrop-filter:blur(10px);z-index:2}
+.s4-photo__att{position:absolute;bottom:10px;right:12px;display:flex;gap:3px;z-index:2}
+.s4-photo__att span{width:14px;height:4px;background:rgba(255,255,255,0.3);border-radius:99px}
+.s4-photo__att span.u{background:var(--fire)}
+.s4-photo__att span.c{background:var(--lime)}
+.s4-clues{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:auto}
+.s4-cl{background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px 10px}
+.s4-cl__l{font:600 9px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3)}
+.s4-cl__v{font-weight:700;font-size:13px;margin-top:2px;display:flex;align-items:center;gap:5px}
+.s4-cl__v img{height:11px;border-radius:1px}
+
+/* ============ DAILY WON ============ */
+#daily-won::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(255,217,61,0.18),transparent 60%);pointer-events:none}
+.won-conf{position:absolute;inset:60px 0 50% 0;pointer-events:none;z-index:2}
+.won-conf span{position:absolute;width:6px;height:10px;border-radius:2px}
+.won-mast{display:flex;justify-content:space-between;font:600 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;position:relative;z-index:3}
+.won-mast b{color:var(--gold)}
+.won-photo-wrap{position:relative;margin:8px auto 0;width:fit-content;z-index:3}
+.won-photo{width:140px;height:140px;border-radius:50%;overflow:hidden;border:5px solid var(--gold);box-shadow:0 0 40px rgba(255,217,61,0.6),inset 0 0 0 2px rgba(0,0,0,0.4);position:relative}
+.won-photo img{width:100%;height:100%;object-fit:cover}
+.won-photo::after{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,transparent 30%,rgba(255,255,255,0.15) 50%,transparent 70%);pointer-events:none}
+.won-stamp{position:absolute;top:-2px;right:-12px;background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--bg);padding:5px 11px;border-radius:99px;font:900 9px 'Onest';text-transform:uppercase;letter-spacing:0.08em;border:2px solid var(--bg);z-index:4;box-shadow:0 4px 10px rgba(0,0,0,0.4)}
+.won-flag{position:absolute;bottom:4px;left:4px;width:26px;height:18px;border-radius:3px;overflow:hidden;border:2px solid var(--bg);box-shadow:0 2px 6px rgba(0,0,0,0.4);z-index:4}
+.won-flag img{width:100%;height:100%;object-fit:cover}
+.won-name{text-align:center;font:900 26px 'Onest';letter-spacing:-0.03em;margin-top:14px;line-height:1;position:relative;z-index:3}
+.won-bio{text-align:center;font-size:12px;color:var(--ink-3);margin-top:4px;font-weight:600;position:relative;z-index:3}
+.won-bio b{color:var(--gold);font-weight:800}
+.won-rewards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px;position:relative;z-index:3}
+.rw-tile{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 6px;text-align:center}
+.rw-tile__v{font:800 17px 'JetBrains Mono';line-height:1}
+.rw-tile__v.l{color:var(--lime)}
+.rw-tile__v.g{color:var(--gold)}
+.rw-tile__v.f{color:var(--fire)}
+.rw-tile__l{font:700 9px 'Onest';text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-top:3px}
+.won-action{display:grid;grid-template-columns:1fr 1.6fr;gap:6px;margin-top:auto;position:relative;z-index:3}
+
+/* ============ DAILY CALENDAR ============ */
+.cal-mast{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:12px}
+.cal-mast b{font:800 14px 'Onest'}
+.cal-mast small{display:block;font:700 9px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-top:1px}
+.cal-stats{display:flex;gap:5px;margin-bottom:12px}
+.cal-stat{flex:1;text-align:center;padding:8px 4px;background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:10px}
+.cal-stat__v{font:800 18px 'JetBrains Mono';line-height:1}
+.cal-stat__v.l{color:var(--lime)}
+.cal-stat__v.f{color:var(--fire)}
+.cal-stat__l{font:700 8px 'Onest';text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-top:3px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:14px}
+.cal-d{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 11px 'JetBrains Mono';position:relative}
+.cal-d--won{background:linear-gradient(135deg,var(--lime),var(--lime-d));color:var(--bg);box-shadow:0 2px 8px rgba(197,255,0,0.2)}
+.cal-d--lost{background:var(--bg-1);border:1px solid rgba(255,107,107,0.3);color:var(--coral)}
+.cal-d--skip{background:var(--bg-1);border:1px dashed rgba(255,255,255,0.08);color:var(--ink-4)}
+.cal-d--today{background:var(--bg);border:2px solid var(--gold);color:var(--gold);box-shadow:0 0 12px rgba(255,217,61,0.4)}
+.cal-d--future{background:transparent;color:var(--ink-4);border:1px dashed rgba(255,255,255,0.06)}
+.cal-d__t{font-size:8px;color:rgba(0,0,0,0.5);text-transform:uppercase;letter-spacing:0.04em;font-weight:700}
+.cal-d--lost .cal-d__t,.cal-d--skip .cal-d__t,.cal-d--future .cal-d__t{color:inherit;opacity:0.6}
+.cal-legend{display:flex;gap:10px;justify-content:center;font:700 9px 'Onest';text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3)}
+.cal-legend span{display:flex;align-items:center;gap:4px}
+.cal-legend span::before{content:'';width:8px;height:8px;border-radius:2px}
+.cal-legend .ind-w::before{background:var(--lime)}
+.cal-legend .ind-l::before{background:transparent;border:1px solid var(--coral)}
+.cal-legend .ind-s::before{background:transparent;border:1px dashed rgba(255,255,255,0.2)}
+
+/* ============ GRID GAME ============ */
+.gg-mast{display:flex;justify-content:space-between;align-items:baseline;font:600 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.gg-mast b{color:var(--lime)}
+.gg-t{font:900 22px 'Onest';letter-spacing:-0.025em;line-height:1.05}
+.gg-sub{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px;margin-bottom:8px}
+.gg-board{display:grid;grid-template-columns:78px 1fr 1fr 1fr;gap:4px;margin:8px 0}
+.gg-board__col-h{background:linear-gradient(180deg,var(--bg-2),var(--bg-1));border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px;font:700 9px 'Onest';text-align:center;line-height:1.2;display:flex;align-items:center;justify-content:center;min-height:48px}
+.gg-board__row-h{background:linear-gradient(180deg,var(--bg-2),var(--bg-1));border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px;font:700 9px 'Onest';text-align:center;line-height:1.2;display:flex;align-items:center;justify-content:center}
+.gg-cell{background:var(--bg-1);border:1px dashed rgba(255,255,255,0.08);border-radius:8px;display:flex;align-items:center;justify-content:center;min-height:64px;cursor:pointer;position:relative;overflow:hidden}
+.gg-cell:active{transform:scale(0.95)}
+.gg-cell--filled{background:linear-gradient(180deg,#7C3AED,#5B21B6);border:2px solid var(--purple)}
+.gg-cell--filled-rare{background:linear-gradient(180deg,#FFD93D,#F59E0B);color:#0F1419}
+.gg-cell__player{font:700 9px 'Onest';text-align:center;line-height:1.1;padding:2px}
+.gg-cell__rarity{position:absolute;top:2px;right:3px;font:800 7px 'JetBrains Mono';color:rgba(255,255,255,0.7)}
+.gg-cell--filled-rare .gg-cell__rarity{color:rgba(0,0,0,0.5)}
+.gg-corner{background:transparent}
+.gg-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+.gg-stat{background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px;text-align:center}
+.gg-stat__v{font:800 16px 'JetBrains Mono';line-height:1}
+.gg-stat__v.l{color:var(--lime)}
+.gg-stat__l{font:700 8px 'Onest';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.06em;margin-top:3px}
+
+/* ============ DUEL MATCHMAKING ============ */
+.mm-c{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px}
+.mm-radar{width:180px;height:180px;position:relative;margin-bottom:32px}
+.mm-radar__ring{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(197,255,0,0.2);animation:radarPulse 2s ease-out infinite}
+.mm-radar__ring:nth-child(2){animation-delay:0.6s}
+.mm-radar__ring:nth-child(3){animation-delay:1.2s}
+@keyframes radarPulse{0%{transform:scale(0.6);opacity:1}100%{transform:scale(1.2);opacity:0}}
+.mm-radar__core{position:absolute;inset:50% 50%;width:60px;height:60px;margin:-30px 0 0 -30px;background:linear-gradient(135deg,var(--lime),var(--lime-d));border-radius:50%;display:grid;place-items:center;font:900 22px 'Onest';color:var(--bg);box-shadow:0 8px 24px rgba(197,255,0,0.5)}
+.mm-t{font:900 26px 'Onest';letter-spacing:-0.025em;text-align:center;margin-bottom:8px}
+.mm-s{font-size:13px;color:var(--ink-3);text-align:center;margin-bottom:32px;max-width:260px}
+.mm-stats{display:flex;gap:10px;font:700 11px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:auto}
+.mm-stats b{color:var(--lime)}
+
+/* ============ DUEL ROUND ============ */
+.du-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));border-radius:16px;padding:12px;border:1px solid rgba(255,255,255,0.06);margin-bottom:8px}
+.du-p{text-align:center}
+.du-p__av{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font:900 17px 'Onest';position:relative}
+.du-p--me .du-p__av{background:linear-gradient(135deg,var(--lime),var(--lime-d));color:var(--bg);box-shadow:0 4px 12px rgba(197,255,0,0.3)}
+.du-p--opp .du-p__av{background:linear-gradient(135deg,var(--coral),#DC2626);color:#fff}
+.du-p__n{font-weight:800;font-size:11px;letter-spacing:-0.01em}
+.du-p__s{font:900 24px 'JetBrains Mono';margin-top:2px;line-height:1}
+.du-p--me .du-p__s{color:var(--lime)}
+.du-vs__x{font-weight:900;font-size:14px;color:var(--ink-3)}
+.du-round{text-align:center;font:700 11px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.du-round b{color:var(--lime)}
+.du-timer{display:flex;justify-content:center;margin-bottom:8px}
+.du-timer__r{width:90px;height:90px;position:relative}
+.du-timer__r svg{transform:rotate(-90deg);width:100%;height:100%}
+.du-timer__n{position:absolute;inset:0;display:grid;place-items:center;font:900 30px 'JetBrains Mono';color:var(--lime)}
+.du-q{background:linear-gradient(180deg,var(--bg-1),var(--bg-2));border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px;text-align:center;font-weight:700;font-size:14px;line-height:1.4;margin-bottom:8px}
+.du-q b{color:var(--lime)}
+.du-ar{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.du-a{background:var(--bg-2);border:1px solid rgba(255,255,255,0.06);border-radius:11px;padding:14px 8px;text-align:center;font-weight:800;font-size:14px;color:#fff;cursor:pointer;transition:all 200ms;font-family:'Onest'}
+.du-a:active{transform:scale(0.97)}
+.du-a--ok{background:linear-gradient(180deg,var(--lime),var(--lime-d));color:var(--bg);border-color:var(--lime);box-shadow:0 0 16px rgba(197,255,0,0.4)}
+.du-bonus{text-align:center;font:700 10px 'Onest';text-transform:uppercase;letter-spacing:0.06em;color:var(--lime);padding:7px;background:rgba(197,255,0,0.08);border-radius:8px;margin-top:auto}
+
+/* ============ DUEL WON ============ */
+#duel-won::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top,rgba(197,255,0,0.2),transparent 60%);pointer-events:none}
+.dw-conf{position:absolute;inset:60px 0 50% 0;pointer-events:none;z-index:2}
+.dw-conf span{position:absolute;width:6px;height:10px;border-radius:2px}
+.dw-c{position:relative;z-index:3;padding:54px 16px 18px;height:100%;display:flex;flex-direction:column;gap:8px}
+.dw-eb{text-align:center;font:700 11px 'JetBrains Mono';color:var(--lime);text-transform:uppercase;letter-spacing:0.16em;margin-bottom:4px}
+.dw-t{text-align:center;font:900 38px 'Onest';letter-spacing:-0.035em;line-height:1}
+.dw-s{text-align:center;font:600 13px 'Onest';color:var(--ink-2);margin-top:6px}
+.dw-vs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));border:2px solid var(--lime);border-radius:16px;padding:14px;margin-top:14px;box-shadow:0 0 24px rgba(197,255,0,0.2)}
+.dw-rounds{display:flex;gap:5px;justify-content:center;margin-top:12px}
+.dw-round{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font:900 14px 'Onest';font-family:'JetBrains Mono';background:var(--bg-1);border:2px solid rgba(255,255,255,0.06);color:var(--ink-3)}
+.dw-round--w{background:rgba(197,255,0,0.2);border-color:var(--lime);color:var(--lime)}
+.dw-round--l{background:rgba(255,107,107,0.15);border-color:var(--coral);color:var(--coral)}
+.dw-rewards{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px}
+
+/* ============ LEGA PROMOTION ============ */
+#lega-promotion{background:radial-gradient(ellipse at top,rgba(255,217,61,0.3),var(--bg) 60%);overflow:hidden}
+.prom-c{padding:80px 24px 24px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative;z-index:3}
+.prom-conf{position:absolute;inset:0;pointer-events:none;z-index:2}
+.prom-conf span{position:absolute;width:8px;height:12px;border-radius:2px;animation:fall 3s linear infinite}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0)}100%{transform:translateY(800px) rotate(720deg)}}
+.prom-rays{position:absolute;inset:0;background:conic-gradient(from 0deg at 50% 30%,rgba(255,217,61,0.15) 0deg,transparent 10deg,rgba(255,217,61,0.15) 20deg,transparent 30deg,rgba(255,217,61,0.15) 40deg,transparent 50deg,rgba(255,217,61,0.15) 60deg,transparent 70deg);animation:spin 30s linear infinite;pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prom-eb{font:700 11px 'JetBrains Mono';color:var(--gold);text-transform:uppercase;letter-spacing:0.16em;text-align:center}
+.prom-t{font:900 56px 'Onest';letter-spacing:-0.04em;line-height:0.95;text-align:center}
+.prom-t span{display:block;background:linear-gradient(135deg,var(--gold),#F59E0B);-webkit-background-clip:text;background-clip:text;color:transparent}
+.prom-trophy{margin:16px 0;width:120px;height:120px}
+.prom-tier-from{display:flex;align-items:center;gap:14px;font:700 13px 'Onest';color:var(--ink-2)}
+.prom-tier-from .arr{color:var(--gold);font-size:20px}
+.prom-tier-from b{padding:6px 14px;border-radius:99px;border:1px solid rgba(255,255,255,0.15);color:var(--ink-2)}
+.prom-tier-from .new{background:linear-gradient(135deg,#FFE76D,var(--gold));color:var(--bg);border:none;font-weight:900;text-transform:uppercase;letter-spacing:0.06em;box-shadow:0 4px 14px rgba(255,217,61,0.5)}
+.prom-stats-r{display:flex;gap:24px;font:700 12px 'Onest';color:var(--ink-3);margin-top:8px}
+.prom-stats-r b{display:block;font:900 22px 'JetBrains Mono';color:#fff;text-align:center;margin-bottom:2px}
+
+/* ============ PROFILE / COLLECTION ============ */
+.pr-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.pr-pic{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--lime),var(--lime-d));display:grid;place-items:center;font:900 20px 'Onest';color:var(--bg);box-shadow:0 4px 14px rgba(197,255,0,0.3);position:relative;flex-shrink:0}
+.pr-pic small{position:absolute;bottom:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;background:var(--gold);color:var(--bg);border-radius:99px;display:grid;place-items:center;font:800 11px 'JetBrains Mono';border:2px solid var(--bg)}
+.pr-n b{display:block;font:900 16px 'Onest';letter-spacing:-0.02em}
+.pr-n span{font-size:10px;color:var(--ink-3);font-weight:600;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-top:2px}
+.pr-n span b{display:inline;color:var(--lime);font-weight:800;letter-spacing:normal}
+.pr-stats{display:flex;gap:5px;margin-bottom:12px}
+.pr-stat{flex:1;text-align:center;padding:7px 4px;background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:10px}
+.pr-stat__v{font:800 15px 'JetBrains Mono';line-height:1}
+.pr-stat__v.l{color:var(--lime)}
+.pr-stat__v.g{color:var(--gold)}
+.pr-stat__v.f{color:var(--fire)}
+.pr-stat__l{font:700 8px 'Onest';text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-3);margin-top:3px}
+.pr-tabs{display:flex;gap:3px;padding:3px;background:var(--bg-1);border-radius:10px;margin-bottom:10px;font:700 10px 'Onest'}
+.pr-tab{flex:1;padding:7px;text-align:center;border-radius:7px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.04em;cursor:pointer;border:none;background:none;font-family:'Onest'}
+.pr-tab--on{background:var(--lime);color:var(--bg)}
+.pr-coll{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pc{height:138px;border-radius:11px;position:relative;overflow:hidden;border:2px solid var(--r-c);box-shadow:0 4px 12px rgba(0,0,0,0.4);cursor:pointer}
+.pc:active{transform:scale(0.95)}
+.pc__bg{position:absolute;inset:0;background-size:cover;background-position:center top}
+.pc__ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,0.4) 60%,rgba(0,0,0,0.95) 100%)}
+.pc__r{position:absolute;top:5px;right:5px;padding:2px 6px;border-radius:99px;font:900 8px 'Onest';text-transform:uppercase;letter-spacing:0.06em;z-index:3}
+.pc__f{position:absolute;top:5px;left:5px;width:18px;height:13px;border-radius:2px;overflow:hidden;border:1px solid rgba(0,0,0,0.4);background:#333;z-index:3}
+.pc__f img{width:100%;height:100%;object-fit:cover;display:block}
+.pc__pos{position:absolute;bottom:24px;left:5px;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);color:#fff;padding:2px 6px;border-radius:4px;font:800 8px 'Onest';text-transform:uppercase;letter-spacing:0.04em;z-index:3}
+.pc__n{position:absolute;bottom:5px;left:5px;right:5px;font:800 10px 'Onest';line-height:1.1;letter-spacing:-0.01em;z-index:3;color:#fff}
+.pc--c{border-color:var(--r-c)}.pc--c .pc__r{background:var(--r-c);color:var(--bg)}.pc--c .pc__bg{background-color:#475569}
+.pc--r{border-color:var(--r-r);box-shadow:0 4px 14px rgba(78,205,196,0.3)}.pc--r .pc__r{background:var(--r-r);color:var(--bg)}.pc--r .pc__bg{background-color:#0F766E}
+.pc--e{border-color:var(--r-e);box-shadow:0 4px 16px rgba(155,114,242,0.4)}.pc--e .pc__r{background:var(--r-e);color:#fff}.pc--e .pc__bg{background-color:#7C3AED}.pc--e .pc__ov{background:linear-gradient(180deg,rgba(155,114,242,0.15),transparent 30%,rgba(0,0,0,0.5) 60%,rgba(0,0,0,0.95))}
+.pc--l{border-color:var(--r-l);box-shadow:0 4px 20px rgba(255,217,61,0.5)}.pc--l .pc__r{background:linear-gradient(135deg,#FFE76D,var(--r-l));color:var(--bg)}.pc--l .pc__bg{background-color:#92400E}.pc--l .pc__ov{background:linear-gradient(180deg,rgba(255,217,61,0.18),transparent 35%,rgba(0,0,0,0.5) 60%,rgba(0,0,0,0.95))}
+.pc--l::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 30%,rgba(255,217,61,0.18) 48%,transparent 60%);pointer-events:none;animation:shine 3.5s ease-in-out infinite}
+@keyframes shine{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+.pc--m{border-color:var(--r-m);box-shadow:0 4px 24px rgba(197,255,0,0.55);animation:mGlow 3s ease-in-out infinite}.pc--m .pc__r{background:linear-gradient(135deg,#D7FF3D,var(--r-m));color:var(--bg)}.pc--m .pc__bg{background-color:#65A30D}.pc--m .pc__ov{background:linear-gradient(180deg,rgba(197,255,0,0.2),transparent 30%,rgba(0,0,0,0.5) 60%,rgba(0,0,0,0.95))}
+@keyframes mGlow{0%,100%{box-shadow:0 4px 24px rgba(197,255,0,0.5)}50%{box-shadow:0 4px 32px rgba(197,255,0,0.75)}}
+.pc--m::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 35%,rgba(197,255,0,0.22) 50%,transparent 65%);pointer-events:none;animation:shine 2.5s ease-in-out infinite}
+.pc--lock{border:2px dashed rgba(255,255,255,0.1);background:var(--bg-1)}
+.pc--lock__i{position:absolute;inset:0;display:grid;place-items:center;color:var(--ink-4)}
+.pc--lock__i svg{width:22px;height:22px}
+.pc--lock__n{position:absolute;bottom:5px;left:5px;right:5px;font:800 10px 'JetBrains Mono';color:var(--ink-4);text-align:center}
+
+/* ============ LEGA ============ */
+.lg-mast{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:10px}
+.lg-mast b{font:800 14px 'Onest';letter-spacing:-0.01em}
+.lg-mast small{display:block;font:700 9px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-top:1px}
+.lg-tier{padding:5px 11px;background:linear-gradient(135deg,#FFE76D,var(--gold));color:var(--bg);font:900 10px 'Onest';text-transform:uppercase;letter-spacing:0.06em;border-radius:99px;box-shadow:0 2px 8px rgba(255,217,61,0.4)}
+.lg-me{background:linear-gradient(135deg,rgba(197,255,0,0.14),rgba(197,255,0,0.06));border:1px solid rgba(197,255,0,0.35);border-radius:13px;padding:10px 12px;display:flex;align-items:center;gap:10px;position:relative;overflow:hidden;margin-bottom:10px}
+.lg-me::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lime)}
+.lg-me__r{font:900 22px 'JetBrains Mono';color:var(--lime);min-width:30px;text-align:right}
+.lg-me__av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--lime),var(--lime-d));display:grid;place-items:center;font:900 12px 'Onest';color:var(--bg)}
+.lg-me__n{flex:1;font-weight:800;font-size:13px;letter-spacing:-0.01em}
+.lg-me__n small{display:block;font:700 9px 'Onest';color:var(--ink-3);margin-top:1px;text-transform:uppercase;letter-spacing:0.04em}
+.lg-me__n small b{color:var(--lime)}
+.lg-me__p{font:800 15px 'JetBrains Mono';color:var(--lime)}
+.lg-list{display:flex;flex-direction:column;gap:3px}
+.lg-row{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:10px;cursor:pointer}
+.lg-row:active{transform:scale(0.98)}
+.lg-row--top{background:linear-gradient(90deg,rgba(255,217,61,0.1),transparent)}
+.lg-row--prom{background:rgba(197,255,0,0.04)}
+.lg-row--demo{background:rgba(255,107,107,0.04)}
+.lg-row__r{font:800 14px 'JetBrains Mono';color:var(--ink-3);min-width:22px;text-align:right}
+.lg-row__r.gold{color:var(--gold);font-size:15px}
+.lg-row__r.silver{color:#C0C0C0;font-size:15px}
+.lg-row__av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 10px 'Onest';color:#fff;flex-shrink:0}
+.lg-row__n{flex:1;font-weight:700;font-size:11px;letter-spacing:-0.01em}
+.lg-row__n small{display:block;font-size:9px;color:var(--ink-4);font-weight:600;margin-top:1px}
+.lg-row__p{font:800 11px 'JetBrains Mono';color:var(--ink-2)}
+.lg-div{display:flex;align-items:center;gap:8px;margin:5px 0;font:700 9px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.08em;color:var(--lime)}
+.lg-div::before,.lg-div::after{content:'';flex:1;height:1px;background:rgba(197,255,0,0.25)}
+.lg-div--demo{color:var(--coral)}
+.lg-div--demo::before,.lg-div--demo::after{background:rgba(255,107,107,0.25)}
+
+/* ============ CARRIERA HOME ============ */
+.cr-hero{background:linear-gradient(180deg,var(--bg-2),var(--bg-1));border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.cr-hero::before{content:'';position:absolute;top:-30%;right:-20%;width:50%;height:160%;background:radial-gradient(ellipse,rgba(255,217,61,0.15),transparent 60%);pointer-events:none}
+.cr-hero-h{display:flex;align-items:center;gap:12px;position:relative}
+.cr-hero__pic{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F59E0B);display:grid;place-items:center;font:900 22px 'Onest';color:var(--bg);box-shadow:0 4px 14px rgba(255,217,61,0.4)}
+.cr-hero__n{flex:1}
+.cr-hero__n b{display:block;font:900 18px 'Onest';letter-spacing:-0.02em}
+.cr-hero__n small{display:block;font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px}
+.cr-hero__val{font:900 16px 'JetBrains Mono';color:var(--gold)}
+.cr-path-c{margin-top:12px;position:relative}
+.cr-path-l{font:700 9px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3);margin-bottom:8px}
+.cr-steps{display:flex;align-items:center;gap:3px}
+.cr-steps__s{flex:1;min-width:32px;height:32px;border-radius:50%;background:var(--bg-2);border:1.5px solid rgba(255,255,255,0.08);display:grid;place-items:center;font:700 8px 'Onest';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.04em;text-align:center;line-height:1.1}
+.cr-steps__s.done{background:linear-gradient(135deg,var(--lime),var(--lime-d));color:var(--bg);border-color:var(--lime)}
+.cr-steps__s.curr{background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--bg);border-color:var(--gold);transform:scale(1.15);box-shadow:0 4px 12px rgba(255,217,61,0.4)}
+.cr-milestone{background:linear-gradient(135deg,rgba(197,255,0,0.08),rgba(197,255,0,0.02));border:1px solid rgba(197,255,0,0.2);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer}
+.cr-milestone__t{font:700 9px 'JetBrains Mono';color:var(--lime);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.cr-milestone__d{font:800 14px 'Onest';letter-spacing:-0.01em}
+.cr-milestone__s{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:2px}
+.cr-section__t{font:700 10px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3);margin:14px 0 8px 4px}
+.cr-list{display:flex;flex-direction:column;gap:6px}
+.cr-item{background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.cr-item__icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--gold),#F59E0B);display:grid;place-items:center;color:var(--bg);flex-shrink:0}
+.cr-item__icon svg{width:18px;height:18px}
+.cr-item__t b{display:block;font:700 13px 'Onest';letter-spacing:-0.01em}
+.cr-item__t small{display:block;font-size:11px;color:var(--ink-3);font-weight:600;margin-top:1px}
+
+/* ============ CARRIERA DECISION ============ */
+.cd-c{padding:54px 16px 18px;height:100%;display:flex;flex-direction:column;gap:0}
+.cd-mast{display:flex;justify-content:space-between;font:600 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px}
+.cd-mast b{color:var(--gold)}
+.cd-scene{flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:14px 0}
+.cd-art{display:flex;justify-content:center;margin-bottom:8px}
+.cd-art__img{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,#A4040C 0%,#000 100%);display:grid;place-items:center;font:900 56px 'Onest';color:#fff;box-shadow:0 16px 40px rgba(164,4,12,0.4)}
+.cd-q{text-align:center;font:italic 600 18px 'Onest';color:var(--ink-2);line-height:1.4;max-width:280px;margin:0 auto;quotes:'"' '"'}
+.cd-q::before{content:open-quote;color:var(--gold);font-size:24px;line-height:0}
+.cd-q::after{content:close-quote;color:var(--gold);font-size:24px;line-height:0}
+.cd-options{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.cd-opt{background:var(--bg-1);border:1.5px solid rgba(255,255,255,0.08);border-radius:14px;padding:14px;cursor:pointer;text-align:left;color:#fff;font-family:'Onest'}
+.cd-opt:active{transform:scale(0.98)}
+.cd-opt--primary{background:linear-gradient(180deg,#D7FF3D 0%,var(--lime) 50%,var(--lime-d) 100%);color:var(--bg);border-color:var(--lime);box-shadow:0 4px 0 #7A9F00}
+.cd-opt b{display:block;font-weight:800;font-size:14px;letter-spacing:-0.01em}
+.cd-opt small{display:block;font-size:11px;font-weight:600;margin-top:2px;opacity:0.8}
+
+/* ============ PRONOSTICI LIST ============ */
+.pn-mast{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:10px}
+.pn-mast b{font:800 14px 'Onest'}
+.pn-tabs{display:flex;gap:3px;padding:3px;background:var(--bg-1);border-radius:10px;margin-bottom:10px;font:700 10px 'Onest'}
+.pn-tab{flex:1;padding:7px;text-align:center;border-radius:7px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.04em;cursor:pointer;border:none;background:none;font-family:'Onest'}
+.pn-tab--on{background:var(--lime);color:var(--bg)}
+.pn-list{display:flex;flex-direction:column;gap:8px}
+.pn-match{background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:12px;cursor:pointer;position:relative}
+.pn-match:active{transform:scale(0.98)}
+.pn-match--live{background:linear-gradient(135deg,rgba(255,107,107,0.1),rgba(255,107,107,0.03));border-color:rgba(255,107,107,0.3)}
+.pn-match__h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pn-match__league{font:700 9px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-3)}
+.pn-match__league .live{color:var(--coral);display:inline-flex;align-items:center;gap:4px}
+.pn-match__league .live::before{content:'';width:6px;height:6px;background:var(--coral);border-radius:50%;animation:pulse-dot 1.2s infinite}
+.pn-match__time{font:700 10px 'JetBrains Mono';color:var(--ink-3)}
+.pn-match__teams{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.pn-team{display:flex;align-items:center;gap:8px;flex:1}
+.pn-team__c{width:24px;height:24px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;font:900 9px 'Onest';color:#fff}
+.pn-team__n{font-weight:800;font-size:13px;letter-spacing:-0.01em}
+.pn-team--away{flex-direction:row-reverse;text-align:right}
+.pn-match__score{font:900 22px 'JetBrains Mono';color:#fff;text-align:center;line-height:1}
+.pn-match__min{font:700 9px 'JetBrains Mono';color:var(--coral);text-align:center;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em}
+.pn-match__cta{display:flex;justify-content:space-between;align-items:center;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)}
+.pn-match__cta__l{font:700 11px 'Onest';color:var(--lime)}
+.pn-match__cta__r{font:700 10px 'JetBrains Mono';color:var(--ink-3)}
+
+/* ============ PRONOSTICI PREDICT ============ */
+.pp-mast{padding:12px;background:linear-gradient(135deg,var(--bg-1),var(--bg-2));border-radius:14px;border:1px solid rgba(255,107,107,0.3);margin-bottom:10px}
+.pp-mast__h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pp-mast__league{font:700 9px 'JetBrains Mono';color:var(--coral);text-transform:uppercase;letter-spacing:0.08em;display:flex;align-items:center;gap:4px}
+.pp-mast__league::before{content:'';width:6px;height:6px;background:var(--coral);border-radius:50%;animation:pulse-dot 1.2s infinite}
+.pp-mast__min{font:800 10px 'JetBrains Mono';color:var(--coral)}
+.pp-mast__teams{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pp-mast__t-l,.pp-mast__t-r{display:flex;align-items:center;gap:8px;flex:1}
+.pp-mast__t-r{flex-direction:row-reverse;text-align:right}
+.pp-mast__t__c{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font:900 12px 'Onest';color:#fff;flex-shrink:0}
+.pp-mast__t__n{font:800 14px 'Onest';letter-spacing:-0.01em}
+.pp-mast__score{font:900 28px 'JetBrains Mono';color:#fff}
+.pp-section__t{font:700 9px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3);margin:10px 0 6px 4px}
+.pp-opts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pp-opt{background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px 6px;cursor:pointer;text-align:center;font-family:'Onest';color:#fff;display:flex;flex-direction:column;gap:2px}
+.pp-opt:active{transform:scale(0.95)}
+.pp-opt--on{background:linear-gradient(180deg,var(--lime),var(--lime-d));color:var(--bg);border-color:var(--lime);box-shadow:0 0 12px rgba(197,255,0,0.3)}
+.pp-opt__l{font:700 9px 'Onest';opacity:0.6;text-transform:uppercase;letter-spacing:0.06em}
+.pp-opt__v{font:800 14px 'Onest';margin-top:1px}
+.pp-opt__odd{font:700 10px 'JetBrains Mono';opacity:0.6;margin-top:1px}
+.pp-bet{margin-top:auto;padding:12px;background:linear-gradient(135deg,rgba(197,255,0,0.1),rgba(197,255,0,0.04));border:1px solid rgba(197,255,0,0.3);border-radius:12px;display:flex;justify-content:space-between;align-items:center}
+.pp-bet__l{font:700 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em}
+.pp-bet__l b{display:block;font:900 16px 'Onest';color:#fff;margin-top:2px}
+.pp-bet__v{font:900 22px 'JetBrains Mono';color:var(--lime)}
+
+/* ============ ESPLORA CATEGORIES ============ */
+.es-h{margin-bottom:12px}
+.es-eb{font:700 10px 'JetBrains Mono';color:var(--lime);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.es-t{font:900 24px 'Onest';letter-spacing:-0.025em;line-height:1}
+.es-s{font-size:11px;color:var(--ink-3);font-weight:600;margin-top:4px}
+.es-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.es-cat{border-radius:14px;padding:14px 12px;position:relative;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;min-height:120px;color:#fff;border:none;font-family:'Onest';text-align:left}
+.es-cat:active{transform:scale(0.97)}
+.es-cat--storia{background:linear-gradient(135deg,#5B1F8C,#2E0E4A)}
+.es-cat--mercato{background:linear-gradient(135deg,var(--lime-d),var(--lime));color:var(--bg)}
+.es-cat--stadi{background:linear-gradient(135deg,#0E5292,#0066A3)}
+.es-cat--allenatori{background:linear-gradient(135deg,#A0182D,#0E2954)}
+.es-cat--ucl{background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--bg)}
+.es-cat--nazionali{background:linear-gradient(135deg,#00853F,#fff,#CE2B37);color:#fff;text-shadow:0 1px 3px rgba(0,0,0,0.6)}
+.es-cat--retro{background:linear-gradient(135deg,#3D2210,#1A0F08);border:1px solid rgba(255,217,61,0.3)}
+.es-cat--femminile{background:linear-gradient(135deg,#9B72F2,#7C3AED)}
+.es-cat__icon{width:32px;height:32px;margin-bottom:4px;opacity:0.85}
+.es-cat__icon svg{width:100%;height:100%}
+.es-cat__lock{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.5);color:var(--gold);padding:3px 8px;border-radius:99px;font:900 8px 'Onest';text-transform:uppercase;letter-spacing:0.06em;backdrop-filter:blur(4px)}
+.es-cat__t{font:800 14px 'Onest';letter-spacing:-0.01em;line-height:1.1}
+.es-cat__s{font-size:10px;font-weight:600;opacity:0.78;margin-top:3px}
+
+/* ============ ESPLORA QUIZ ============ */
+.eq-mast{display:flex;justify-content:space-between;font:600 10px 'JetBrains Mono';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.eq-mast b{color:var(--lime)}
+.eq-progress{display:flex;gap:3px;margin-bottom:14px}
+.eq-progress span{flex:1;height:4px;background:var(--bg-2);border-radius:99px}
+.eq-progress span.done{background:var(--lime)}
+.eq-progress span.curr{background:linear-gradient(90deg,var(--lime) 60%,var(--bg-2) 60%)}
+.eq-q-num{font:700 10px 'JetBrains Mono';color:var(--lime);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px}
+.eq-q{font:800 18px 'Onest';line-height:1.3;letter-spacing:-0.015em;margin-bottom:14px}
+.eq-options{display:flex;flex-direction:column;gap:6px;margin-bottom:auto}
+.eq-opt{background:var(--bg-1);border:1.5px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;text-align:left;color:#fff;font-family:'Onest'}
+.eq-opt:active{transform:scale(0.98)}
+.eq-opt__letter{width:26px;height:26px;border-radius:50%;background:var(--bg-3);display:grid;place-items:center;font:900 11px 'JetBrains Mono';flex-shrink:0;color:var(--ink-2)}
+.eq-opt__t{font-weight:700;font-size:13px;flex:1}
+.eq-opt--right{background:linear-gradient(180deg,rgba(197,255,0,0.18),rgba(197,255,0,0.06));border-color:var(--lime)}
+.eq-opt--right .eq-opt__letter{background:var(--lime);color:var(--bg)}
+.eq-opt--wrong{background:linear-gradient(180deg,rgba(255,107,107,0.12),rgba(255,107,107,0.04));border-color:var(--coral)}
+
+/* ============ SETTINGS ============ */
+.set-section{margin-bottom:18px}
+.set-section__t{font:700 10px 'JetBrains Mono';text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3);margin-bottom:8px;padding-left:4px}
+.set-list{background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:12px;overflow:hidden}
+.set-row{display:flex;align-items:center;padding:14px;gap:12px;border-bottom:1px solid rgba(255,255,255,0.04);cursor:pointer}
+.set-row:last-child{border-bottom:none}
+.set-row__icon{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;color:#fff}
+.set-row__icon svg{width:16px;height:16px}
+.set-row__t{flex:1;font:700 13px 'Onest'}
+.set-row__t small{display:block;font-size:11px;color:var(--ink-3);font-weight:500;margin-top:1px}
+.set-row__c{font:700 11px 'Onest';color:var(--ink-3);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:4px}
+.set-row__c svg{width:14px;height:14px;color:var(--ink-4)}
+
+/* ============ PREMIUM ============ */
+#premium{background:radial-gradient(circle at top,rgba(255,217,61,0.15),var(--bg) 60%)}
+.prem-c{padding:54px 24px 24px;height:100%;display:flex;flex-direction:column;gap:14px}
+.prem-crown{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,#FFE76D,var(--gold));display:grid;place-items:center;margin:0 auto;box-shadow:0 16px 40px rgba(255,217,61,0.4);color:var(--bg)}
+.prem-crown svg{width:42px;height:42px}
+.prem-t{font:900 32px 'Onest';letter-spacing:-0.03em;text-align:center;line-height:1}
+.prem-t span{background:linear-gradient(135deg,var(--gold),#F59E0B);-webkit-background-clip:text;background-clip:text;color:transparent}
+.prem-s{font-size:14px;color:var(--ink-2);text-align:center;line-height:1.5;max-width:280px;margin:0 auto 4px}
+.prem-list{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.prem-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-1);border:1px solid rgba(255,255,255,0.06);border-radius:12px}
+.prem-item__c{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#F59E0B);display:grid;place-items:center;color:var(--bg);flex-shrink:0}
+.prem-item__c svg{width:14px;height:14px}
+.prem-item__t{font:700 13px 'Onest';flex:1}
+.prem-item__t small{display:block;font-size:11px;color:var(--ink-3);font-weight:500;margin-top:1px}
+.prem-price{margin-top:auto;display:flex;flex-direction:column;gap:8px}
+.prem-price__num{text-align:center;font:900 22px 'JetBrains Mono';color:var(--gold);line-height:1}
+.prem-price__num small{font-size:13px;color:var(--ink-3);font-weight:600}
+.prem-price__cancel{text-align:center;font-size:11px;color:var(--ink-3);font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="page-bar">
+  <div class="brand">
+    <div class="brand__logo">G</div>
+    <span class="brand__label">Goal · App prototype</span>
+  </div>
+  <div class="nav-controls">
+    <select id="jump" onchange="goto(this.value)">
+      <option value="splash">1 · Splash</option>
+      <option value="welcome">2 · Welcome</option>
+      <option value="team-select">3 · Squadra</option>
+      <option value="name-create">4 · Nome</option>
+      <option value="notif">5 · Notifiche</option>
+      <option value="hub">6 · Hub</option>
+      <option value="daily-intro">7 · Daily intro</option>
+      <option value="daily-won">8 · Daily win</option>
+      <option value="daily-calendar">9 · Daily calendar</option>
+      <option value="grid-game">10 · Grid</option>
+      <option value="duel-matchmaking">11 · Duello matchmaking</option>
+      <option value="duel-round">12 · Duello round</option>
+      <option value="duel-won">13 · Duello win</option>
+      <option value="profile">14 · Profilo</option>
+      <option value="lega">15 · Lega</option>
+      <option value="lega-promotion">16 · Promozione</option>
+      <option value="carriera">17 · Carriera</option>
+      <option value="carriera-decision">18 · Carriera decisione</option>
+      <option value="pronostici">19 · Pronostici lista</option>
+      <option value="pronostici-predict">20 · Pronostici predict</option>
+      <option value="esplora">21 · Esplora</option>
+      <option value="esplora-quiz">22 · Esplora quiz</option>
+      <option value="settings">23 · Settings</option>
+      <option value="premium">24 · Premium</option>
+    </select>
+    <button onclick="goto('splash')">↺</button>
+  </div>
+</div>
+
+<div class="stage">
+  <div class="phone">
+    <div class="screen-stack">
+
+      <div class="statusbar"><span id="clock">9:41</span><span class="statusbar__dots"></span></div>
+
+      <!-- ============ SPLASH ============ -->
+      <div class="screen active" id="splash" onclick="goto('welcome')">
+        <div class="splash-logo">G</div>
+        <h1 class="splash-title">Goal</h1>
+        <div class="splash-tag">Football · Italia · Daily</div>
+      </div>
+
+      <!-- ============ WELCOME ============ -->
+      <div class="screen" id="welcome">
+        <div class="welcome-c">
+          <div class="welcome-logo">G</div>
+          <div class="welcome-eb">Calcio italiano · ogni giorno</div>
+          <h1 class="welcome-t">Si gioca.<br>Anche <em>oggi</em>.</h1>
+          <p class="welcome-s">L'app di sfide quotidiane sul calcio. Mille beta tester prima del lancio di settembre.</p>
+          <button class="btn btn--primary" onclick="goto('team-select')">Entra in waitlist</button>
+          <button class="btn btn--secondary" onclick="goto('hub')">Ho già un account</button>
+        </div>
+      </div>
+
+      <!-- ============ TEAM SELECT ============ -->
+      <div class="screen" id="team-select">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('welcome')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title"></div>
+          <button class="appbar__action" onclick="goto('name-create')">Salta</button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:10px">
+          <div class="ts-h">
+            <div class="ts-eb"><span>Onboarding · <b>02 / 04</b></span></div>
+            <h2 class="ts-t">Chi tifi?</h2>
+            <p class="ts-s">La cambi anche dopo, tranquillo.</p>
+          </div>
+          <div class="ts-grid">
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-juve">J</div><div class="team__n">Juve</div></div>
+            <div class="team team--on" onclick="selectTeam(this)"><div class="team__c tc-milan">M</div><div class="team__n">Milan</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-inter">I</div><div class="team__n">Inter</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-roma">R</div><div class="team__n">Roma</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-lazio">L</div><div class="team__n">Lazio</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-napoli">N</div><div class="team__n">Napoli</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-fiore">F</div><div class="team__n">Fiore</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-atalanta">A</div><div class="team__n">Atal.</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-toro">T</div><div class="team__n">Toro</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-bologna">B</div><div class="team__n">Bologna</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-genoa">G</div><div class="team__n">Genoa</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-samp">S</div><div class="team__n">Samp</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-cagliari">C</div><div class="team__n">Cagliari</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-lecce">L</div><div class="team__n">Lecce</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-empoli">E</div><div class="team__n">Empoli</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-udinese">U</div><div class="team__n">Udin.</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-verona">V</div><div class="team__n">Verona</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-monza">M</div><div class="team__n">Monza</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-como">C</div><div class="team__n">Como</div></div>
+            <div class="team" onclick="selectTeam(this)"><div class="team__c tc-parma">P</div><div class="team__n">Parma</div></div>
+          </div>
+          <button class="btn btn--primary" onclick="goto('name-create')" style="margin-top:auto">Avanti</button>
+        </div>
+      </div>
+
+      <!-- ============ NAME CREATE ============ -->
+      <div class="screen" id="name-create">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('team-select')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title"></div>
+          <button class="appbar__action" onclick="goto('notif')">Salta</button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <div class="ts-eb"><span>Onboarding · <b>03 / 04</b></span></div>
+            <h2 class="ts-t">Il tuo calciatore.</h2>
+            <p class="ts-s">Anche di fantasia. Sarà la tua identità nelle Leghe.</p>
+          </div>
+          <div class="name-art">
+            <div class="name-ball">⚽</div>
+          </div>
+          <div>
+            <div class="input-l">Nome</div>
+            <input class="input" value="Marco Rossi">
+            <div class="name-hint">Suggerito · puoi cambiarlo</div>
+          </div>
+          <button class="btn btn--primary" onclick="goto('notif')" style="margin-top:auto">Avanti</button>
+        </div>
+      </div>
+
+      <!-- ============ NOTIFICATIONS ============ -->
+      <div class="screen" id="notif">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('name-create')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title"></div>
+          <button class="appbar__action" onclick="goto('hub')">Dopo</button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:12px">
+          <div>
+            <div class="ts-eb"><span>Onboarding · <b>04 / 04</b></span></div>
+            <h2 class="ts-t">Notifiche.</h2>
+            <p class="ts-s">Poche, mai inutili. Le promettiamo.</p>
+          </div>
+          <div class="notif-art">
+            <div class="notif-bell">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/></svg>
+            </div>
+          </div>
+          <div class="notif-options">
+            <div class="notif-opt notif-opt--daily" onclick="this.querySelector('.toggle').classList.toggle('toggle--on')">
+              <div class="notif-opt__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg></div>
+              <div class="notif-opt__t"><b>Reminder daily</b><small>Al tuo orario abituale</small></div>
+              <div class="toggle toggle--on"></div>
+            </div>
+            <div class="notif-opt notif-opt--duel" onclick="this.querySelector('.toggle').classList.toggle('toggle--on')">
+              <div class="notif-opt__icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 12L7 8V11H17V8L21 12L17 16V13H7V16Z"/></svg></div>
+              <div class="notif-opt__t"><b>Sfide ricevute</b><small>Quando un amico ti sfida</small></div>
+              <div class="toggle toggle--on"></div>
+            </div>
+            <div class="notif-opt notif-opt--live" onclick="this.querySelector('.toggle').classList.toggle('toggle--on')">
+              <div class="notif-opt__icon"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+              <div class="notif-opt__t"><b>Eventi grossi</b><small>Champions · Italia · Derby</small></div>
+              <div class="toggle"></div>
+            </div>
+          </div>
+          <button class="btn btn--primary" onclick="goto('hub')" style="margin-top:auto">Attiva e continua</button>
+        </div>
+      </div>
+
+      <!-- ============ HUB ============ -->
+      <div class="screen" id="hub">
+        <div class="body" style="display:flex;flex-direction:column;gap:0">
+          <div class="hub-head">
+            <div class="hub-avatar" onclick="goto('profile')">
+              <div class="hub-pic">MR</div>
+              <div class="hub-n">Buongiorno, Marco<small>Caratura €34M</small></div>
+            </div>
+            <div class="cur-row">
+              <div class="cur-i cur-i--g"><div class="cur-i__b"><svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="3.5" fill="none" stroke="#0F1419" stroke-width="1"/><text x="5" y="7" text-anchor="middle" font-weight="900" font-size="5" fill="#0F1419">€</text></svg></div>340</div>
+              <div class="cur-i cur-i--l"><div class="cur-i__b"><svg width="10" height="10" viewBox="0 0 16 16"><path d="M 8 2 L 9 6 L 13 6.5 L 10 9 L 11 13 L 8 11 L 5 13 L 6 9 L 3 6.5 L 7 6 Z" fill="#0F1419"/></svg></div>12</div>
+            </div>
+          </div>
+          <div class="streak" onclick="goto('daily-intro')">
+            <svg viewBox="0 0 80 100"><defs><linearGradient id="fl1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD93D"/><stop offset="0.5" stop-color="#FF8C42"/><stop offset="1" stop-color="#FF6B35"/></linearGradient></defs><path d="M 40 5 Q 60 30 55 55 Q 70 50 70 75 Q 70 95 40 95 Q 10 95 10 75 Q 10 50 25 55 Q 20 30 40 5 Z" fill="url(#fl1)"/><ellipse cx="40" cy="78" rx="12" ry="10" fill="#fff" opacity="0.5"/></svg>
+            <div class="streak__t"><b>28 giorni di filotto</b><small>Mancano 12 ore</small></div>
+            <button class="streak__cta">Salva</button>
+          </div>
+          <div class="modes">
+            <button class="mc mc--daily" onclick="goto('daily-intro')">
+              <span class="mc__b">Oggi</span>
+              <div></div>
+              <div>
+                <div class="mc__t">Trequartista,<br>anni '90.</div>
+                <div class="mc__s">Otto indizi · 12.847 stanno provando</div>
+              </div>
+            </button>
+            <button class="mc mc--duel" onclick="goto('duel-matchmaking')">
+              <span class="mc__b" style="background:#fff;color:#7C3AED">3</span>
+              <div class="duel-avs">
+                <div class="duel-avs__a" style="background:linear-gradient(135deg,#C5FF00,#9FCC00);color:#0F1419">LO</div>
+                <div class="duel-avs__a" style="background:linear-gradient(135deg,#FF6B6B,#DC2626)">SG</div>
+                <div class="duel-avs__a" style="background:linear-gradient(135deg,#4ECDC4,#14B8A6);color:#0F1419">AC</div>
+              </div>
+              <div>
+                <div class="mc__t">Duello</div>
+                <div class="mc__s">Lorenzo ti aspetta</div>
+              </div>
+            </button>
+            <button class="mc mc--grid" onclick="goto('grid-game')">
+              <div class="grid-vis"><span></span><span></span><span></span><span></span><span></span><span class="e"></span><span></span><span class="e"></span><span class="e"></span></div>
+              <div>
+                <div class="mc__t">Grid</div>
+                <div class="mc__s">7 su 9 oggi</div>
+              </div>
+            </button>
+            <button class="mc mc--live" onclick="goto('pronostici')">
+              <div></div>
+              <div class="mc__t" style="font-size:12px">Inter–Milan</div>
+              <div>
+                <div style="font:900 20px 'JetBrains Mono';margin-top:4px">1–1</div>
+                <div class="mc__s">67' · pronostici aperti</div>
+              </div>
+            </button>
+            <button class="mc mc--carr" onclick="goto('carriera')">
+              <div class="carr-path"><div class="carr-step done"></div><div class="carr-ln done"></div><div class="carr-step done"></div><div class="carr-ln done"></div><div class="carr-step curr"></div><div class="carr-ln"></div><div class="carr-step"></div></div>
+              <div>
+                <div class="mc__t">Carriera</div>
+                <div class="mc__s">In Serie A · stag. 4</div>
+              </div>
+            </button>
+            <button class="mc mc--esp" onclick="goto('esplora')">
+              <svg style="width:24px;height:24px;color:var(--ink-2);margin-bottom:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M16 8L13 16L11 14L9 12L16 8Z" fill="currentColor"/></svg>
+              <div>
+                <div class="mc__t">Esplora</div>
+                <div class="mc__s">Anni '90 in Serie A</div>
+              </div>
+            </button>
+          </div>
+        </div>
+        <div class="bottomnav">
+          <button class="nv nv--active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L3 11h2v9h5v-6h4v6h5v-9h2L12 3Z"/></svg><span>Home</span></button>
+          <button class="nv" onclick="goto('lega')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 21h10v-3H7v3ZM6 4v8a6 6 0 0 0 12 0V4H6Z"/></svg><span>Lega</span></button>
+          <button class="nv nv--play" onclick="goto('daily-intro')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></button>
+          <button class="nv" onclick="goto('profile')"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0v1H4v-1Z"/></svg><span>Profilo</span></button>
+          <button class="nv" onclick="goto('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M5 5l2 2M17 17l2 2M2 12h3M19 12h3M5 19l2-2M17 7l2-2"/></svg><span>Settings</span></button>
+        </div>
+      </div>
+
+      <!-- ============ DAILY INTRO ============ -->
+      <div class="screen" id="daily-intro">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Daily Player</div>
+          <button class="appbar__action" onclick="goto('daily-calendar')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="s4-mast"><span>Daily · <b>19.05.2026</b></span><span>#143</span></div>
+          <h2 class="s4-t">Trequartista, anni '90.</h2>
+          <p class="s4-sub">Quattro indizi rivelati su otto</p>
+          <div class="s4-photo">
+            <img src="https://images.unsplash.com/photo-1622519407650-3df9883f76a5?w=400&q=80" alt="">
+            <div class="s4-photo__community">12.847 oggi</div>
+            <div class="s4-photo__att"><span class="u"></span><span class="u"></span><span class="u"></span><span class="u"></span><span class="c"></span><span></span><span></span><span></span></div>
+          </div>
+          <div class="s4-clues">
+            <div class="s4-cl"><div class="s4-cl__l">Lega</div><div class="s4-cl__v">Serie A</div></div>
+            <div class="s4-cl"><div class="s4-cl__l">Nazione</div><div class="s4-cl__v"><img src="https://flagcdn.com/w40/it.png">Italia</div></div>
+            <div class="s4-cl"><div class="s4-cl__l">Ruolo</div><div class="s4-cl__v">Trequartista</div></div>
+            <div class="s4-cl"><div class="s4-cl__l">Trofei</div><div class="s4-cl__v">2 Scudetti</div></div>
+          </div>
+          <button class="btn btn--primary" style="margin-top:12px" onclick="goto('daily-won')">Indovina · te ne restano 4</button>
+        </div>
+      </div>
+
+      <!-- ============ DAILY WON ============ -->
+      <div class="screen" id="daily-won">
+        <div class="won-conf">
+          <span style="left:10%;top:10%;background:#C5FF00;transform:rotate(15deg)"></span>
+          <span style="left:25%;top:25%;background:#FFD93D;transform:rotate(-30deg)"></span>
+          <span style="left:65%;top:14%;background:#9B72F2;transform:rotate(20deg)"></span>
+          <span style="left:82%;top:32%;background:#FF6B6B;transform:rotate(45deg)"></span>
+          <span style="left:45%;top:6%;background:#4ECDC4;transform:rotate(-15deg)"></span>
+          <span style="left:88%;top:9%;background:#FFD93D;transform:rotate(0deg)"></span>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0;position:relative;z-index:3">
+          <div class="won-mast"><span>Indovinato · <b>5 su 8</b></span><span>Top 18%</span></div>
+          <div class="won-photo-wrap">
+            <div class="won-photo">
+              <span class="won-stamp">Legendary</span>
+              <div class="won-flag"><img src="https://flagcdn.com/w80/it.png" alt="Italia"></div>
+              <img src="https://images.unsplash.com/photo-1622519407650-3df9883f76a5?w=400&q=80" alt="">
+            </div>
+          </div>
+          <h2 class="won-name">Roberto Baggio</h2>
+          <p class="won-bio">Il Divin Codino · <b>Pallone d'Oro 1993</b></p>
+          <div class="won-rewards">
+            <div class="rw-tile"><div class="rw-tile__v l">+€5M</div><div class="rw-tile__l">Caratura</div></div>
+            <div class="rw-tile"><div class="rw-tile__v g">+25</div><div class="rw-tile__l">XP</div></div>
+            <div class="rw-tile"><div class="rw-tile__v f">29</div><div class="rw-tile__l">Filotto</div></div>
+          </div>
+          <div class="won-action">
+            <button class="btn btn--secondary">↗</button>
+            <button class="btn btn--primary" onclick="goto('daily-calendar')">Continua</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ DAILY CALENDAR ============ -->
+      <div class="screen" id="daily-calendar">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Storico Daily</div>
+          <button class="appbar__action"></button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="cal-mast">
+            <div><b>Maggio 2026</b><small>30 giorni · trenta puzzle</small></div>
+          </div>
+          <div class="cal-stats">
+            <div class="cal-stat"><div class="cal-stat__v l">22</div><div class="cal-stat__l">Indovinati</div></div>
+            <div class="cal-stat"><div class="cal-stat__v">73%</div><div class="cal-stat__l">Successo</div></div>
+            <div class="cal-stat"><div class="cal-stat__v f">28</div><div class="cal-stat__l">Filotto</div></div>
+          </div>
+          <div class="cal-grid">
+            <div class="cal-d cal-d--won">1<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--won">2<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--won">3<div class="cal-d__t">G</div></div>
+            <div class="cal-d cal-d--lost">4<div class="cal-d__t">V</div></div>
+            <div class="cal-d cal-d--won">5<div class="cal-d__t">S</div></div>
+            <div class="cal-d cal-d--won">6<div class="cal-d__t">D</div></div>
+            <div class="cal-d cal-d--won">7<div class="cal-d__t">L</div></div>
+            <div class="cal-d cal-d--won">8<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--lost">9<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--skip">10<div class="cal-d__t">G</div></div>
+            <div class="cal-d cal-d--won">11<div class="cal-d__t">V</div></div>
+            <div class="cal-d cal-d--won">12<div class="cal-d__t">S</div></div>
+            <div class="cal-d cal-d--won">13<div class="cal-d__t">D</div></div>
+            <div class="cal-d cal-d--won">14<div class="cal-d__t">L</div></div>
+            <div class="cal-d cal-d--won">15<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--won">16<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--won">17<div class="cal-d__t">G</div></div>
+            <div class="cal-d cal-d--won">18<div class="cal-d__t">V</div></div>
+            <div class="cal-d cal-d--today">19<div class="cal-d__t">S</div></div>
+            <div class="cal-d cal-d--future">20<div class="cal-d__t">D</div></div>
+            <div class="cal-d cal-d--future">21<div class="cal-d__t">L</div></div>
+            <div class="cal-d cal-d--future">22<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--future">23<div class="cal-d__t">M</div></div>
+            <div class="cal-d cal-d--future">24<div class="cal-d__t">G</div></div>
+            <div class="cal-d cal-d--future">25<div class="cal-d__t">V</div></div>
+          </div>
+          <div class="cal-legend">
+            <span class="ind-w">Indovinato</span>
+            <span class="ind-l">Sbagliato</span>
+            <span class="ind-s">Saltato</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ GRID GAME ============ -->
+      <div class="screen" id="grid-game">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Grid del giorno</div>
+          <button class="appbar__action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="gg-mast"><span>Grid · <b>19.05</b></span><span>04:23</span></div>
+          <h2 class="gg-t">7 caselle su 9.</h2>
+          <p class="gg-sub">Mancano due. La rarità media ti porta in top 24%.</p>
+          <div class="gg-board">
+            <div class="gg-corner"></div>
+            <div class="gg-board__col-h">Serie A · Scudetto</div>
+            <div class="gg-board__col-h">Pallone d'Oro</div>
+            <div class="gg-board__col-h">Mondiali '94</div>
+            <div class="gg-board__row-h">Italia</div>
+            <div class="gg-cell gg-cell--filled-rare"><div class="gg-cell__rarity">8%</div><div class="gg-cell__player">Baggio</div></div>
+            <div class="gg-cell gg-cell--filled"><div class="gg-cell__rarity">22%</div><div class="gg-cell__player">Baggio</div></div>
+            <div class="gg-cell gg-cell--filled"><div class="gg-cell__rarity">31%</div><div class="gg-cell__player">Baggio</div></div>
+            <div class="gg-board__row-h">Juventus</div>
+            <div class="gg-cell gg-cell--filled"><div class="gg-cell__rarity">18%</div><div class="gg-cell__player">Del Piero</div></div>
+            <div class="gg-cell gg-cell--filled"><div class="gg-cell__rarity">14%</div><div class="gg-cell__player">Zidane</div></div>
+            <div class="gg-cell"></div>
+            <div class="gg-board__row-h">Milan</div>
+            <div class="gg-cell gg-cell--filled"><div class="gg-cell__rarity">26%</div><div class="gg-cell__player">Sheva</div></div>
+            <div class="gg-cell gg-cell--filled"><div class="gg-cell__rarity">15%</div><div class="gg-cell__player">Kakà</div></div>
+            <div class="gg-cell"></div>
+          </div>
+          <div class="gg-stats">
+            <div class="gg-stat"><div class="gg-stat__v l">7/9</div><div class="gg-stat__l">Caselle</div></div>
+            <div class="gg-stat"><div class="gg-stat__v">19%</div><div class="gg-stat__l">Rarità</div></div>
+            <div class="gg-stat"><div class="gg-stat__v">+€7M</div><div class="gg-stat__l">Premio</div></div>
+          </div>
+          <button class="btn btn--primary" style="margin-top:8px" onclick="goto('hub')">Cerca giocatore</button>
+        </div>
+      </div>
+
+      <!-- ============ DUEL MATCHMAKING ============ -->
+      <div class="screen" id="duel-matchmaking">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Duello</div>
+          <button class="appbar__action"></button>
+        </div>
+        <div class="mm-c" style="padding-top:80px">
+          <div class="mm-radar">
+            <div class="mm-radar__ring"></div>
+            <div class="mm-radar__ring"></div>
+            <div class="mm-radar__ring"></div>
+            <div class="mm-radar__core">MR</div>
+          </div>
+          <h2 class="mm-t">Cerco l'avversario...</h2>
+          <p class="mm-s">Qualcuno alla tua altezza: caratura ±€8M, livello ±2.</p>
+          <div class="mm-stats">
+            <span>Lega <b>Serie A</b></span>
+            <span>Ranking <b>#284</b></span>
+          </div>
+          <button class="btn btn--primary" onclick="goto('duel-round')" style="width:100%;max-width:280px">Trovato · Lorenzo (€29M)</button>
+        </div>
+      </div>
+
+      <!-- ============ DUEL ROUND ============ -->
+      <div class="screen" id="duel-round">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          <div class="appbar__title">Round 4 di 5</div>
+          <button class="appbar__action" style="background:rgba(255,107,107,0.15);color:var(--coral);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;padding:0 12px">Live</button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="du-vs">
+            <div class="du-p du-p--me"><div class="du-p__av">MR</div><div class="du-p__n">Marco</div><div class="du-p__s">31</div></div>
+            <div class="du-vs__x">vs</div>
+            <div class="du-p du-p--opp"><div class="du-p__av">LO</div><div class="du-p__n">Lorenzo</div><div class="du-p__s">22</div></div>
+          </div>
+          <div class="du-round">Categoria · <b>Storia</b></div>
+          <div class="du-timer">
+            <div class="du-timer__r">
+              <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"/><circle cx="50" cy="50" r="42" stroke="#C5FF00" stroke-width="8" fill="none" stroke-dasharray="264" stroke-dashoffset="120" stroke-linecap="round"/></svg>
+              <div class="du-timer__n">7</div>
+            </div>
+          </div>
+          <div class="du-q">Il Milan ha vinto la sua <b>prima</b> Coppa dei Campioni a Wembley. Anno?</div>
+          <div class="du-ar">
+            <button class="du-a">1958</button>
+            <button class="du-a du-a--ok" onclick="goto('duel-won')">1963</button>
+            <button class="du-a">1969</button>
+            <button class="du-a">1974</button>
+          </div>
+          <div class="du-bonus">Bonus se rispondi entro tre secondi · +8</div>
+        </div>
+      </div>
+
+      <!-- ============ DUEL WON ============ -->
+      <div class="screen" id="duel-won">
+        <div class="dw-conf">
+          <span style="left:10%;top:10%;background:#C5FF00;transform:rotate(15deg)"></span>
+          <span style="left:25%;top:25%;background:#FFD93D;transform:rotate(-30deg)"></span>
+          <span style="left:65%;top:14%;background:#9B72F2;transform:rotate(20deg)"></span>
+          <span style="left:82%;top:32%;background:#FF6B6B;transform:rotate(45deg)"></span>
+        </div>
+        <div class="dw-c">
+          <div class="dw-eb">Vinto</div>
+          <div class="dw-t">3 a 2.</div>
+          <div class="dw-s">Lorenzo non l'ha presa bene</div>
+          <div class="dw-vs">
+            <div class="du-p du-p--me"><div class="du-p__av">MR</div><div class="du-p__n">Marco</div><div class="du-p__s">39</div></div>
+            <div class="du-vs__x">vs</div>
+            <div class="du-p du-p--opp"><div class="du-p__av">LO</div><div class="du-p__n">Lorenzo</div><div class="du-p__s" style="color:var(--coral)">27</div></div>
+          </div>
+          <div class="dw-rounds">
+            <div class="dw-round dw-round--w">1</div>
+            <div class="dw-round dw-round--l">2</div>
+            <div class="dw-round dw-round--w">3</div>
+            <div class="dw-round dw-round--w">4</div>
+            <div class="dw-round dw-round--w">5</div>
+          </div>
+          <div class="dw-rewards">
+            <div class="rw-tile"><div class="rw-tile__v l">+€8M</div><div class="rw-tile__l">Caratura</div></div>
+            <div class="rw-tile"><div class="rw-tile__v g">+40</div><div class="rw-tile__l">XP</div></div>
+            <div class="rw-tile"><div class="rw-tile__v">+18</div><div class="rw-tile__l">Glicko</div></div>
+          </div>
+          <div class="won-action" style="margin-top:14px">
+            <button class="btn btn--secondary" onclick="goto('hub')">Home</button>
+            <button class="btn btn--primary" onclick="goto('duel-matchmaking')">Rivincita</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PROFILE / COLLECTION ============ -->
+      <div class="screen" id="profile">
+        <div class="body" style="display:flex;flex-direction:column;gap:0">
+          <div class="pr-head">
+            <div class="pr-pic">MR<small>12</small></div>
+            <div class="pr-n"><b>Marco Rossi</b><span>Caratura <b>€34M</b> · Milan</span></div>
+          </div>
+          <div class="pr-stats">
+            <div class="pr-stat"><div class="pr-stat__v l">28</div><div class="pr-stat__l">Filotto</div></div>
+            <div class="pr-stat"><div class="pr-stat__v g">14</div><div class="pr-stat__l">Trofei</div></div>
+            <div class="pr-stat"><div class="pr-stat__v">47</div><div class="pr-stat__l">Carte</div></div>
+            <div class="pr-stat"><div class="pr-stat__v">3°</div><div class="pr-stat__l">Lega</div></div>
+          </div>
+          <div class="pr-tabs">
+            <button class="pr-tab pr-tab--on">Collezione</button>
+            <button class="pr-tab">Bacheca</button>
+            <button class="pr-tab">Stats</button>
+          </div>
+          <div class="pr-coll">
+            <div class="pc pc--l">
+              <div class="pc__bg" style="background-image:url('https://images.unsplash.com/photo-1622519407650-3df9883f76a5?w=300&q=80')"></div>
+              <div class="pc__ov"></div><div class="pc__r">LGD</div><div class="pc__f"><img src="https://flagcdn.com/w40/it.png"></div><div class="pc__pos">TRQ</div><div class="pc__n">R. Baggio</div>
+            </div>
+            <div class="pc pc--e">
+              <div class="pc__bg" style="background-image:url('https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=300&q=80')"></div>
+              <div class="pc__ov"></div><div class="pc__r">EPI</div><div class="pc__f"><img src="https://flagcdn.com/w40/it.png"></div><div class="pc__pos">REG</div><div class="pc__n">A. Pirlo</div>
+            </div>
+            <div class="pc pc--e">
+              <div class="pc__bg" style="background-image:url('https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=300&q=80')"></div>
+              <div class="pc__ov"></div><div class="pc__r">EPI</div><div class="pc__f"><img src="https://flagcdn.com/w40/it.png"></div><div class="pc__pos">ATT</div><div class="pc__n">F. Totti</div>
+            </div>
+            <div class="pc pc--r">
+              <div class="pc__bg" style="background-image:url('https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=300&q=80')"></div>
+              <div class="pc__ov"></div><div class="pc__r">RAR</div><div class="pc__f"><img src="https://flagcdn.com/w40/it.png"></div><div class="pc__pos">DIF</div><div class="pc__n">P. Maldini</div>
+            </div>
+            <div class="pc pc--m">
+              <div class="pc__bg" style="background-image:url('https://images.unsplash.com/photo-1492288991661-058aa541ff43?w=300&q=80')"></div>
+              <div class="pc__ov"></div><div class="pc__r">MYT</div><div class="pc__f"><img src="https://flagcdn.com/w40/ar.png"></div><div class="pc__pos">FNT</div><div class="pc__n">D. Maradona</div>
+            </div>
+            <div class="pc pc--l">
+              <div class="pc__bg" style="background-image:url('https://images.unsplash.com/photo-1542204165-65bf26472b9b?w=300&q=80')"></div>
+              <div class="pc__ov"></div><div class="pc__r">LGD</div><div class="pc__f"><img src="https://flagcdn.com/w40/it.png"></div><div class="pc__pos">POR</div><div class="pc__n">G. Buffon</div>
+            </div>
+            <div class="pc pc--lock"><div class="pc--lock__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 1 1 6 0v3"/></svg></div><div class="pc--lock__n">???</div></div>
+            <div class="pc pc--lock"><div class="pc--lock__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 1 1 6 0v3"/></svg></div><div class="pc--lock__n">???</div></div>
+            <div class="pc pc--lock"><div class="pc--lock__i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="11" width="12" height="9" rx="2"/><path d="M9 11V8a3 3 0 1 1 6 0v3"/></svg></div><div class="pc--lock__n">???</div></div>
+          </div>
+        </div>
+        <div class="bottomnav">
+          <button class="nv" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L3 11h2v9h5v-6h4v6h5v-9h2L12 3Z"/></svg><span>Home</span></button>
+          <button class="nv" onclick="goto('lega')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 21h10v-3H7v3ZM6 4v8a6 6 0 0 0 12 0V4H6Z"/></svg><span>Lega</span></button>
+          <button class="nv nv--play" onclick="goto('daily-intro')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></button>
+          <button class="nv nv--active"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0v1H4v-1Z"/></svg><span>Profilo</span></button>
+          <button class="nv" onclick="goto('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><span>Settings</span></button>
+        </div>
+      </div>
+
+      <!-- ============ LEGA ============ -->
+      <div class="screen" id="lega">
+        <div class="body" style="display:flex;flex-direction:column;gap:0">
+          <div class="lg-mast"><div><b>Lega Settimanale</b><small>Domenica chiude</small></div><span class="lg-tier">Serie A</span></div>
+          <div class="lg-me" onclick="goto('lega-promotion')">
+            <div class="lg-me__r">3°</div><div class="lg-me__av">MR</div><div class="lg-me__n">Marco Rossi<small>Tu · <b>−74</b> alla promozione</small></div><div class="lg-me__p">847</div>
+          </div>
+          <div class="lg-list">
+            <div class="lg-row lg-row--top"><div class="lg-row__r gold">1°</div><div class="lg-row__av" style="background:linear-gradient(135deg,#FFD93D,#F59E0B);color:#0F1419">FB</div><div class="lg-row__n">Federico B.<small>Promosso in Champions</small></div><div class="lg-row__p">1.124</div></div>
+            <div class="lg-row lg-row--top"><div class="lg-row__r silver">2°</div><div class="lg-row__av" style="background:linear-gradient(135deg,#9B72F2,#7C3AED)">SG</div><div class="lg-row__n">Simone G.<small>Promosso</small></div><div class="lg-row__p">962</div></div>
+            <div class="lg-div">↑ promozione · sette dentro</div>
+            <div class="lg-row lg-row--prom"><div class="lg-row__r">4°</div><div class="lg-row__av" style="background:linear-gradient(135deg,#4ECDC4,#14B8A6);color:#0F1419">LF</div><div class="lg-row__n">Luca F.<small>Bordo · −74 da te</small></div><div class="lg-row__p">773</div></div>
+            <div class="lg-row lg-row--prom"><div class="lg-row__r">5°</div><div class="lg-row__av" style="background:linear-gradient(135deg,#FF6B6B,#DC2626)">AC</div><div class="lg-row__n">Andrea C.</div><div class="lg-row__p">743</div></div>
+            <div class="lg-row lg-row--prom"><div class="lg-row__r">6°</div><div class="lg-row__av" style="background:linear-gradient(135deg,#FF8C42,#FF6B35)">MD</div><div class="lg-row__n">Matteo D.</div><div class="lg-row__p">689</div></div>
+            <div class="lg-row lg-row--prom"><div class="lg-row__r">7°</div><div class="lg-row__av" style="background:linear-gradient(135deg,#C5FF00,#9FCC00);color:#0F1419">PE</div><div class="lg-row__n">Pietro E.<small>Ultimo posto utile</small></div><div class="lg-row__p">612</div></div>
+            <div class="lg-div lg-div--demo">↓ retrocede · cinque fuori</div>
+            <div class="lg-row lg-row--demo"><div class="lg-row__r">26°</div><div class="lg-row__av" style="background:#5A6478">GR</div><div class="lg-row__n">Giulio R.</div><div class="lg-row__p">187</div></div>
+            <div class="lg-row lg-row--demo"><div class="lg-row__r">27°</div><div class="lg-row__av" style="background:#5A6478">FT</div><div class="lg-row__n">Fabio T.</div><div class="lg-row__p">142</div></div>
+          </div>
+        </div>
+        <div class="bottomnav">
+          <button class="nv" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L3 11h2v9h5v-6h4v6h5v-9h2L12 3Z"/></svg><span>Home</span></button>
+          <button class="nv nv--active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 21h10v-3H7v3ZM6 4v8a6 6 0 0 0 12 0V4H6Z"/></svg><span>Lega</span></button>
+          <button class="nv nv--play" onclick="goto('daily-intro')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7Z"/></svg></button>
+          <button class="nv" onclick="goto('profile')"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0v1H4v-1Z"/></svg><span>Profilo</span></button>
+          <button class="nv" onclick="goto('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><span>Settings</span></button>
+        </div>
+      </div>
+
+      <!-- ============ LEGA PROMOTION ============ -->
+      <div class="screen" id="lega-promotion">
+        <div class="prom-rays"></div>
+        <div class="prom-conf">
+          <span style="left:10%;background:#C5FF00;animation-delay:0s"></span>
+          <span style="left:25%;background:#FFD93D;animation-delay:0.3s"></span>
+          <span style="left:42%;background:#9B72F2;animation-delay:0.6s"></span>
+          <span style="left:60%;background:#FF6B6B;animation-delay:1s"></span>
+          <span style="left:75%;background:#4ECDC4;animation-delay:0.5s"></span>
+          <span style="left:88%;background:#FFD93D;animation-delay:0.8s"></span>
+        </div>
+        <div class="prom-c">
+          <div class="prom-eb">Settimana chiusa</div>
+          <h1 class="prom-t">Promosso<span>Champions.</span></h1>
+          <svg class="prom-trophy" viewBox="0 0 100 100">
+            <defs><linearGradient id="tg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE76D"/><stop offset="1" stop-color="#E8B821"/></linearGradient></defs>
+            <path d="M28 18h44L68 55c0 12-8 18-18 18s-18-6-18-18Z" fill="url(#tg1)" stroke="#fff" stroke-width="1"/>
+            <path d="M28 22H18c-2 0-4 2-4 4 0 6 6 12 14 12" fill="none" stroke="url(#tg1)" stroke-width="4" stroke-linecap="round"/>
+            <path d="M72 22h10c2 0 4 2 4 4 0 6-6 12-14 12" fill="none" stroke="url(#tg1)" stroke-width="4" stroke-linecap="round"/>
+            <path d="M50 73v8" stroke="url(#tg1)" stroke-width="6"/>
+            <rect x="38" y="80" width="24" height="8" fill="url(#tg1)"/>
+            <rect x="30" y="86" width="40" height="6" rx="2" fill="url(#tg1)"/>
+            <path d="M50 24l4 8 9 1-6 6 1 9-8-4-8 4 1-9-6-6 9-1z" fill="#fff" opacity="0.7"/>
+          </svg>
+          <div class="prom-tier-from">
+            <b>Serie A</b><span class="arr">→</span><b class="new">Champions</b>
+          </div>
+          <div class="prom-stats-r">
+            <div><b>3°</b>posizione finale</div>
+            <div><b>847</b>punti totali</div>
+          </div>
+          <button class="btn btn--gold" style="margin-top:14px;max-width:300px" onclick="goto('hub')">Continua</button>
+        </div>
+      </div>
+
+      <!-- ============ CARRIERA HOME ============ -->
+      <div class="screen" id="carriera">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Carriera</div>
+          <button class="appbar__action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="cr-hero">
+            <div class="cr-hero-h">
+              <div class="cr-hero__pic">MR</div>
+              <div class="cr-hero__n"><b>Marco Rossi</b><small>Stagione 4 · 24 anni</small></div>
+              <div class="cr-hero__val">€34M</div>
+            </div>
+            <div class="cr-path-c">
+              <div class="cr-path-l">Il percorso</div>
+              <div class="cr-steps">
+                <div class="cr-steps__s done">U15</div>
+                <div class="cr-steps__s done">U17</div>
+                <div class="cr-steps__s done">Prim.</div>
+                <div class="cr-steps__s done">B</div>
+                <div class="cr-steps__s curr">A</div>
+                <div class="cr-steps__s">UCL</div>
+                <div class="cr-steps__s">Naz.</div>
+                <div class="cr-steps__s">★</div>
+              </div>
+            </div>
+          </div>
+          <div class="cr-milestone" onclick="goto('carriera-decision')">
+            <div class="cr-milestone__t">Decisione · 19.05.2026</div>
+            <div class="cr-milestone__d">Il Milan ti vuole.</div>
+            <div class="cr-milestone__s">Accetti o resti al Sassuolo? Tocca per scegliere</div>
+          </div>
+          <div class="cr-section__t">Bacheca · stagione 4</div>
+          <div class="cr-list">
+            <div class="cr-item">
+              <div class="cr-item__icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 3h10v4c0 3-2.3 5.5-5 5.5S7 10 7 7V3Z"/><path d="M9 21h6"/></svg></div>
+              <div class="cr-item__t"><b>Esordio in Serie A</b><small>17.08.2025 · Sassuolo–Roma 2–1</small></div>
+            </div>
+            <div class="cr-item">
+              <div class="cr-item__icon" style="background:linear-gradient(135deg,var(--lime),var(--lime-d))"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/><path d="M8 12l2 3 6-7" stroke="#0F1419" stroke-width="2.5" fill="none"/></svg></div>
+              <div class="cr-item__t"><b>Primo gol</b><small>03.09.2025 · contro Empoli</small></div>
+            </div>
+            <div class="cr-item">
+              <div class="cr-item__icon" style="background:linear-gradient(135deg,var(--purple),#7C3AED)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg></div>
+              <div class="cr-item__t"><b>Capocannoniere stagionale</b><small>27.05.2026 · 18 gol</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ CARRIERA DECISION ============ -->
+      <div class="screen" id="carriera-decision">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('carriera')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Decisione</div>
+          <button class="appbar__action"></button>
+        </div>
+        <div class="cd-c">
+          <div class="cd-mast"><span>Carriera · <b>stagione 4</b></span><span>Mercato</span></div>
+          <div class="cd-scene">
+            <div class="cd-art">
+              <div class="cd-art__img">M</div>
+            </div>
+            <p class="cd-q">Il Milan ti vuole. €15M cash al Sassuolo, contratto di 5 anni, numero 10. Ma giochi solo in Champions, non in Serie A.</p>
+          </div>
+          <div class="cd-options">
+            <button class="cd-opt cd-opt--primary" onclick="goto('carriera')">
+              <b>Accetto · vado al Milan</b>
+              <small>Rischio panchina ma maglia top + UCL</small>
+            </button>
+            <button class="cd-opt" onclick="goto('carriera')">
+              <b>Resto al Sassuolo</b>
+              <small>Titolare sicuro · cresco un altro anno</small>
+            </button>
+            <button class="cd-opt" onclick="goto('carriera')">
+              <b>Chiedo di pensarci</b>
+              <small>Rispondo al ritorno dalle vacanze</small>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PRONOSTICI LIST ============ -->
+      <div class="screen" id="pronostici">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Pronostici Live</div>
+          <button class="appbar__action"></button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="pn-mast"><div><b>Stasera</b><small>5 partite · €23M in palio</small></div></div>
+          <div class="pn-tabs">
+            <button class="pn-tab pn-tab--on">In corso</button>
+            <button class="pn-tab">Prossime</button>
+            <button class="pn-tab">Risultati</button>
+          </div>
+          <div class="pn-list">
+            <div class="pn-match pn-match--live" onclick="goto('pronostici-predict')">
+              <div class="pn-match__h">
+                <div class="pn-match__league"><span class="live">Live</span> · Serie A</div>
+                <div class="pn-match__time">67'</div>
+              </div>
+              <div class="pn-match__teams">
+                <div class="pn-team"><div class="pn-team__c tc-inter">I</div><div class="pn-team__n">Inter</div></div>
+                <div><div class="pn-match__score">1–1</div><div class="pn-match__min">2°t</div></div>
+                <div class="pn-team pn-team--away"><div class="pn-team__c tc-milan">M</div><div class="pn-team__n">Milan</div></div>
+              </div>
+              <div class="pn-match__cta">
+                <span class="pn-match__cta__l">Pronostica · chi segna il prossimo →</span>
+                <span class="pn-match__cta__r">+€3M</span>
+              </div>
+            </div>
+            <div class="pn-match">
+              <div class="pn-match__h">
+                <div class="pn-match__league">Serie A · 20:45</div>
+                <div class="pn-match__time">−24min</div>
+              </div>
+              <div class="pn-match__teams">
+                <div class="pn-team"><div class="pn-team__c tc-roma">R</div><div class="pn-team__n">Roma</div></div>
+                <div style="font:700 11px 'JetBrains Mono';color:var(--ink-3)">vs</div>
+                <div class="pn-team pn-team--away"><div class="pn-team__c tc-lazio">L</div><div class="pn-team__n">Lazio</div></div>
+              </div>
+              <div class="pn-match__cta">
+                <span class="pn-match__cta__l">Apri pronostici · 4 tipologie</span>
+                <span class="pn-match__cta__r">+€5M</span>
+              </div>
+            </div>
+            <div class="pn-match">
+              <div class="pn-match__h">
+                <div class="pn-match__league">Champions · 21:00</div>
+                <div class="pn-match__time">−40min</div>
+              </div>
+              <div class="pn-match__teams">
+                <div class="pn-team"><div class="pn-team__c tc-napoli">N</div><div class="pn-team__n">Napoli</div></div>
+                <div style="font:700 11px 'JetBrains Mono';color:var(--ink-3)">vs</div>
+                <div class="pn-team pn-team--away"><div class="pn-team__c" style="background:linear-gradient(135deg,#0066A3,#003D80)">A</div><div class="pn-team__n">Arsenal</div></div>
+              </div>
+              <div class="pn-match__cta">
+                <span class="pn-match__cta__l">Apri pronostici</span>
+                <span class="pn-match__cta__r">+€7M</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PRONOSTICI PREDICT ============ -->
+      <div class="screen" id="pronostici-predict">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('pronostici')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Pronostico live</div>
+          <button class="appbar__action" style="background:rgba(255,107,107,0.15);color:var(--coral);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;padding:0 12px">Live 67'</button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="pp-mast">
+            <div class="pp-mast__h">
+              <div class="pp-mast__league">Live · Serie A</div>
+              <div class="pp-mast__min">67' · 2°t</div>
+            </div>
+            <div class="pp-mast__teams">
+              <div class="pp-mast__t-l"><div class="pp-mast__t__c tc-inter">I</div><div class="pp-mast__t__n">Inter</div></div>
+              <div class="pp-mast__score">1–1</div>
+              <div class="pp-mast__t-r"><div class="pp-mast__t__c tc-milan">M</div><div class="pp-mast__t__n">Milan</div></div>
+            </div>
+          </div>
+          <div class="pp-section__t">Chi segna il prossimo gol?</div>
+          <div class="pp-opts">
+            <button class="pp-opt"><div class="pp-opt__l">Inter</div><div class="pp-opt__v">1</div><div class="pp-opt__odd">3.20</div></button>
+            <button class="pp-opt"><div class="pp-opt__l">Nessuno</div><div class="pp-opt__v">X</div><div class="pp-opt__odd">2.40</div></button>
+            <button class="pp-opt pp-opt--on"><div class="pp-opt__l">Milan</div><div class="pp-opt__v">2</div><div class="pp-opt__odd">2.85</div></button>
+          </div>
+          <div class="pp-section__t">Primo cartellino dopo l'80'</div>
+          <div class="pp-opts">
+            <button class="pp-opt"><div class="pp-opt__l">Inter</div><div class="pp-opt__v">1</div><div class="pp-opt__odd">2.10</div></button>
+            <button class="pp-opt"><div class="pp-opt__l">Nessuno</div><div class="pp-opt__v">X</div><div class="pp-opt__odd">3.50</div></button>
+            <button class="pp-opt"><div class="pp-opt__l">Milan</div><div class="pp-opt__v">2</div><div class="pp-opt__odd">2.40</div></button>
+          </div>
+          <div class="pp-bet">
+            <div class="pp-bet__l">Pronostico attivo<b>Milan segna prossimo</b></div>
+            <div class="pp-bet__v">+€3M</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ ESPLORA CATEGORIES ============ -->
+      <div class="screen" id="esplora">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Esplora</div>
+          <button class="appbar__action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3-3"/></svg></button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="es-h">
+            <div class="es-eb">Quiz tematici</div>
+            <h2 class="es-t">Otto strade.</h2>
+            <p class="es-s">Niente classifiche · niente pressione · giochi quanto vuoi</p>
+          </div>
+          <div class="es-grid">
+            <button class="es-cat es-cat--storia" onclick="goto('esplora-quiz')">
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="9"/></svg>
+              <div><div class="es-cat__t">Storia italiana</div><div class="es-cat__s">200 domande · dal 1929</div></div>
+            </button>
+            <button class="es-cat es-cat--mercato">
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+              <div><div class="es-cat__t">Mercato</div><div class="es-cat__s">Trasferimenti recenti</div></div>
+            </button>
+            <button class="es-cat es-cat--stadi">
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18l3-6h12l3 6M5 12V8a7 7 0 0 1 14 0v4"/></svg>
+              <div><div class="es-cat__t">Stadi</div><div class="es-cat__s">San Siro · Bernabéu · Wembley</div></div>
+            </button>
+            <button class="es-cat es-cat--allenatori">
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+              <div><div class="es-cat__t">Allenatori</div><div class="es-cat__s">Schemi · palmares</div></div>
+            </button>
+            <button class="es-cat es-cat--ucl">
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+              <div><div class="es-cat__t">Coppe Europee</div><div class="es-cat__s">UCL · UEL · Conference</div></div>
+            </button>
+            <button class="es-cat es-cat--nazionali">
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5v17M4 5l10-3 6 4-10 3z"/></svg>
+              <div><div class="es-cat__t">Nazionali</div><div class="es-cat__s">Italia + top 8 mondo</div></div>
+            </button>
+            <button class="es-cat es-cat--retro">
+              <span class="es-cat__lock">★ Premium</span>
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+              <div><div class="es-cat__t">Anni '70-'90</div><div class="es-cat__s">Deep dive nostalgia</div></div>
+            </button>
+            <button class="es-cat es-cat--femminile">
+              <span class="es-cat__lock">★ Premium</span>
+              <svg class="es-cat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="9" r="6"/><path d="M12 15v6M9 19h6"/></svg>
+              <div><div class="es-cat__t">Calcio femminile</div><div class="es-cat__s">Serie A · Mondiali · Euro</div></div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ ESPLORA QUIZ ============ -->
+      <div class="screen" id="esplora-quiz">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('esplora')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          <div class="appbar__title">Storia italiana</div>
+          <button class="appbar__action" style="font-size:11px">5/10</button>
+        </div>
+        <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0">
+          <div class="eq-mast"><span>Quiz · <b>storia italiana</b></span><span>04:12</span></div>
+          <div class="eq-progress">
+            <span class="done"></span><span class="done"></span><span class="done"></span><span class="done"></span><span class="curr"></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="eq-q-num">Domanda 5 di 10</div>
+          <h3 class="eq-q">In che anno Marco Tardelli ha segnato il celebre gol in finale Mondiale contro la Germania?</h3>
+          <div class="eq-options">
+            <button class="eq-opt"><div class="eq-opt__letter">A</div><div class="eq-opt__t">1978</div></button>
+            <button class="eq-opt eq-opt--right"><div class="eq-opt__letter">B</div><div class="eq-opt__t">1982</div></button>
+            <button class="eq-opt"><div class="eq-opt__letter">C</div><div class="eq-opt__t">1986</div></button>
+            <button class="eq-opt"><div class="eq-opt__letter">D</div><div class="eq-opt__t">1990</div></button>
+          </div>
+          <button class="btn btn--primary" onclick="goto('esplora')" style="margin-top:auto">Avanti</button>
+        </div>
+      </div>
+
+      <!-- ============ SETTINGS ============ -->
+      <div class="screen" id="settings">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('hub')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+          <div class="appbar__title">Impostazioni</div>
+          <button class="appbar__action"></button>
+        </div>
+        <div class="body" style="display:flex;flex-direction:column;gap:0">
+          <div class="set-section">
+            <div class="set-section__t">Account</div>
+            <div class="set-list">
+              <div class="set-row" onclick="goto('profile')">
+                <div class="set-row__icon" style="background:linear-gradient(135deg,var(--lime),var(--lime-d));color:var(--bg)"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0v1H4v-1Z"/></svg></div>
+                <div class="set-row__t">Profilo<small>Marco Rossi · Milan</small></div>
+                <div class="set-row__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div>
+              </div>
+              <div class="set-row set-row--premium" onclick="goto('premium')">
+                <div class="set-row__icon" style="background:linear-gradient(135deg,var(--gold),#F59E0B);color:var(--bg)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6l3 14h12l3-14-6 4-3-6-3 6z"/></svg></div>
+                <div class="set-row__t">Goal Premium<small>Sblocca categorie esclusive</small></div>
+                <div class="set-row__c" style="color:var(--gold)">Prova</div>
+              </div>
+            </div>
+          </div>
+          <div class="set-section">
+            <div class="set-section__t">Preferenze</div>
+            <div class="set-list">
+              <div class="set-row">
+                <div class="set-row__icon" style="background:rgba(155,114,242,0.2);color:var(--purple)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/></svg></div>
+                <div class="set-row__t">Notifiche<small>Tre attive</small></div>
+                <div class="set-row__c"><div class="toggle toggle--on"></div></div>
+              </div>
+              <div class="set-row">
+                <div class="set-row__icon" style="background:rgba(78,205,196,0.2);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="2"/><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/></svg></div>
+                <div class="set-row__t">Vibrazione<small>Feedback haptic in-game</small></div>
+                <div class="set-row__c"><div class="toggle toggle--on"></div></div>
+              </div>
+              <div class="set-row">
+                <div class="set-row__icon" style="background:rgba(255,107,107,0.2);color:var(--coral)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5Z"/></svg></div>
+                <div class="set-row__t">Suono<small>30% volume</small></div>
+                <div class="set-row__c"><div class="toggle toggle--on"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="set-section">
+            <div class="set-section__t">Supporto</div>
+            <div class="set-list">
+              <div class="set-row"><div class="set-row__icon" style="background:rgba(255,255,255,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 9a3 3 0 1 1 6 0c0 2-3 2-3 4"/><circle cx="12" cy="17" r="0.5" fill="currentColor"/></svg></div><div class="set-row__t">Aiuto</div><div class="set-row__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div></div>
+              <div class="set-row"><div class="set-row__icon" style="background:rgba(255,255,255,0.1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></div><div class="set-row__t">Privacy</div><div class="set-row__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ PREMIUM ============ -->
+      <div class="screen" id="premium">
+        <div class="appbar">
+          <button class="appbar__back" onclick="goto('settings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+          <div class="appbar__title"></div>
+          <button class="appbar__action"></button>
+        </div>
+        <div class="prem-c">
+          <div class="prem-crown"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 6l3 14h12l3-14-6 4-3-6-3 6z"/></svg></div>
+          <h1 class="prem-t">Goal <span>Premium</span></h1>
+          <p class="prem-s">Per chi al calcio non si stanca mai.</p>
+          <div class="prem-list">
+            <div class="prem-item"><div class="prem-item__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 13l5 5L20 7"/></svg></div><div class="prem-item__t">Niente pubblicità<small>Mai più</small></div></div>
+            <div class="prem-item"><div class="prem-item__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 13l5 5L20 7"/></svg></div><div class="prem-item__t">8 categorie esclusive<small>Serie B/C · femminile · anni '70 deep</small></div></div>
+            <div class="prem-item"><div class="prem-item__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 13l5 5L20 7"/></svg></div><div class="prem-item__t">10 Cambi al giorno<small>Invece di 5</small></div></div>
+            <div class="prem-item"><div class="prem-item__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 13l5 5L20 7"/></svg></div><div class="prem-item__t">Custom Grid<small>Crea le tue griglie</small></div></div>
+            <div class="prem-item"><div class="prem-item__c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 13l5 5L20 7"/></svg></div><div class="prem-item__t">Statistiche complete<small>Heatmap per categoria</small></div></div>
+          </div>
+          <div class="prem-price">
+            <div class="prem-price__num">€4.99<small> / mese</small></div>
+            <button class="btn btn--gold">Prova 7 giorni gratis</button>
+            <div class="prem-price__cancel">Annulli quando vuoi. Senza domande.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const screens = document.querySelectorAll('.screen');
+const select = document.getElementById('jump');
+
+function goto(id){
+  screens.forEach(s=>s.classList.remove('active'));
+  const t = document.getElementById(id);
+  if(!t) return;
+  t.classList.add('active');
+  t.scrollTo({top:0,behavior:'instant'});
+  select.value = id;
+}
+
+function selectTeam(el){
+  document.querySelectorAll('.team').forEach(t=>t.classList.remove('team--on'));
+  el.classList.add('team--on');
+}
+
+setTimeout(()=>{ if(document.getElementById('splash').classList.contains('active')) goto('welcome'); }, 2400);
+
+function tick(){ const n=new Date(); document.getElementById('clock').textContent=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`; }
+tick(); setInterval(tick,30000);
+</script>
+</body>
+</html>

@@ -1,0 +1,1737 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Goal · Design System v1.0 — canonical reference</title>
+<meta name="description" content="Goal Design System v1.0. Token, tipografia, componenti, pattern. Premium 2026 reference.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,700;1,9..144,900&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   GOAL · DESIGN SYSTEM TOKENS
+   Reference: Linear, Stripe, Raycast, Apple Music, The Athletic
+   Anti-references: shadcn defaults, purple gradients, glassmorphism, drop-shadow heavy
+   ============================================================ */
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  /* --- COLOR · 3-variable architecture (Linear-inspired) --- */
+  --base: #0E0E10;                              /* canvas */
+  --base-1: #131316;                            /* elevation 1 */
+  --base-2: #18181C;                            /* elevation 2 — card */
+  --base-3: #1F1F24;                            /* elevation 3 — card hover */
+  --base-overlay: #08080A;                      /* modal backdrop */
+
+  --ink: #F4EFE6;                               /* primary text · "Porcelain warm" */
+  --ink-2: #B6B5AE;                             /* secondary text · warm gray */
+  --ink-3: #7C7B75;                             /* tertiary · metadata */
+  --ink-4: #4E4D49;                             /* disabled · hint */
+
+  --line: rgba(244, 239, 230, 0.06);            /* hairline default */
+  --line-2: rgba(244, 239, 230, 0.10);          /* hairline focus */
+  --line-3: rgba(244, 239, 230, 0.18);          /* hairline bright */
+
+  --accent: #C5FF00;                            /* lime — sport stadium ribbon */
+  --accent-dim: #9FCC00;
+  --accent-soft: rgba(197, 255, 0, 0.12);       /* accent surface */
+  --accent-glow: rgba(197, 255, 0, 0.20);
+
+  --gold: #D4A852;                              /* Lega / trofei / status premium */
+  --gold-dim: #A28038;
+  --gold-soft: rgba(212, 168, 82, 0.10);
+
+  --hot: #FF3D2E;                               /* danger / live */
+  --hot-soft: rgba(255, 61, 46, 0.12);
+
+  /* --- TYPOGRAPHY --- */
+  --display: 'Fraunces', 'New York', Georgia, serif;
+  --sans: 'Geist', system-ui, -apple-system, sans-serif;
+  --mono: 'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Scaled tracking (Stripe inspiration: -1.4px @ 56px → -0.2px @ 20px) */
+  --tracking-hero: -0.045em;                    /* 96–140px */
+  --tracking-display: -0.035em;                 /* 48–72px */
+  --tracking-title: -0.022em;                   /* 24–32px */
+  --tracking-body: -0.005em;                    /* 14–18px */
+  --tracking-caps: 0.12em;                      /* uppercase microcopy */
+
+  /* --- SPACING · 4/8 grid + golden multipliers --- */
+  --s-0: 0;
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+  --s-9: 96px; --s-10: 128px; --s-11: 192px;
+
+  /* --- RADIUS --- */
+  --r-0: 0;
+  --r-1: 4px;     /* badge, input internals */
+  --r-2: 6px;     /* pill button (Stripe-tight) */
+  --r-3: 8px;     /* button, card small */
+  --r-4: 12px;    /* card medium */
+  --r-5: 16px;    /* card large */
+  --r-6: 24px;    /* modal */
+  --r-full: 999px;
+
+  /* --- SHADOW · hairline-first, drop secondary --- */
+  --shadow-inset: inset 0 1px 0 rgba(255,255,255,0.04);
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-card: 0 1px 0 rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+  --shadow-card-hover: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06);
+  --shadow-modal: 0 16px 48px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-glow-lime: 0 0 0 1px var(--accent-glow), 0 8px 24px var(--accent-glow);
+
+  /* --- MOTION --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+html { scroll-behavior: smooth; }
+body {
+  background: var(--base);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.55;
+  letter-spacing: var(--tracking-body);
+  font-feature-settings: 'ss01' on, 'cv01' on, 'cv11' on;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Grain texture overlay — 8-12% opacity */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity: 0.035; mix-blend-mode: overlay;
+}
+
+a { color: inherit; text-decoration: none; }
+svg { display: block; max-width: 100%; }
+button { font-family: inherit; cursor: pointer; }
+
+/* Numerics: tabular ovunque */
+.num, .num * {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' on, 'zero' on;
+}
+
+/* ============================================================
+   TOP NAV
+   ============================================================ */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  padding: 16px 32px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(14, 14, 16, 0.72);
+  backdrop-filter: blur(20px) saturate(140%);
+  border-bottom: 1px solid var(--line);
+}
+.topnav__brand {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: 22px; letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 6px;
+}
+.topnav__brand .dot {
+  width: 5px; height: 5px; background: var(--accent);
+  border-radius: var(--r-full);
+}
+.topnav__meta {
+  display: flex; gap: 8px; align-items: center;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+.topnav__ver {
+  padding: 4px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-full);
+  background: rgba(197,255,0,0.04);
+  color: var(--accent);
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  padding: 160px 32px 120px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+  width: 1100px; height: 1100px;
+  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 55%);
+  pointer-events: none; opacity: 0.7;
+}
+.hero__container {
+  max-width: 1240px; margin: 0 auto; position: relative; z-index: 2;
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+  margin-bottom: 28px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-full);
+  background: var(--base-1);
+}
+.eyebrow .pulse {
+  width: 6px; height: 6px; background: var(--accent);
+  border-radius: var(--r-full);
+  animation: pulse 2s ease-in-out infinite;
+}
+.eyebrow .acc { color: var(--accent); }
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.3); }
+}
+
+.hero__title {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: clamp(64px, 11vw, 156px);
+  line-height: 0.92;
+  letter-spacing: var(--tracking-hero);
+  margin-bottom: 28px;
+}
+.hero__title .ink-2 { color: var(--ink-2); }
+
+.hero__lead {
+  font-family: var(--display); font-style: italic; font-weight: 500;
+  font-size: clamp(18px, 1.8vw, 22px);
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 620px;
+  margin-bottom: 16px;
+}
+.hero__small {
+  font-size: 14px; color: var(--ink-3);
+  max-width: 560px;
+}
+.hero__stats {
+  display: grid; grid-template-columns: repeat(3, max-content);
+  gap: var(--s-7);
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+.hero__stat__num {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 28px; font-weight: 700;
+  letter-spacing: var(--tracking-title);
+  line-height: 1;
+}
+.hero__stat__num.accent { color: var(--accent); }
+.hero__stat__label {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3); margin-top: 8px;
+}
+
+/* ============================================================
+   SECTION GENERIC
+   ============================================================ */
+section {
+  padding: 96px 32px;
+  position: relative;
+  z-index: 2;
+}
+.container { max-width: 1240px; margin: 0 auto; }
+
+.section-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 48px; flex-wrap: wrap;
+  padding-bottom: 32px;
+  margin-bottom: 48px;
+  border-bottom: 1px solid var(--line);
+}
+.section-num {
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--accent); margin-bottom: 12px;
+}
+.section-title {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: clamp(36px, 4.8vw, 64px);
+  line-height: 0.96;
+  letter-spacing: var(--tracking-display);
+  max-width: 800px;
+}
+.section-sub {
+  font-family: var(--display); font-style: italic; font-weight: 500;
+  font-size: 17px; line-height: 1.5;
+  color: var(--ink-2); max-width: 440px;
+}
+
+/* ============================================================
+   01 · COLOR — 3-variable architecture (Linear)
+   ============================================================ */
+.colors-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-3);
+}
+@media (max-width: 880px) { .colors-grid { grid-template-columns: repeat(2, 1fr); } }
+.swatch {
+  aspect-ratio: 1.6;
+  border-radius: var(--r-4);
+  padding: var(--s-4);
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative;
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.swatch__token {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  mix-blend-mode: difference; color: #fff;
+}
+.swatch__value {
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  mix-blend-mode: difference; color: #fff;
+}
+.swatch--light .swatch__token,
+.swatch--light .swatch__value {
+  mix-blend-mode: normal; color: var(--base);
+}
+
+/* Color usage notes */
+.color-rules {
+  margin-top: var(--s-7);
+  padding: var(--s-6);
+  background: var(--base-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-4);
+}
+.color-rules h3 {
+  font-family: var(--display); font-style: italic; font-weight: 600;
+  font-size: 22px; letter-spacing: var(--tracking-title);
+  margin-bottom: var(--s-4);
+}
+.color-rules ul { list-style: none; display: grid; gap: var(--s-3); }
+.color-rules li {
+  display: grid; grid-template-columns: 28px 1fr; gap: var(--s-3);
+  font-size: 14px; color: var(--ink-2);
+}
+.color-rules li b { color: var(--ink); font-weight: 500; }
+.color-rules li::before {
+  content: counter(rules);
+  counter-increment: rules;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--accent);
+  padding-top: 3px;
+}
+.color-rules ul { counter-reset: rules; }
+
+/* ============================================================
+   02 · TYPOGRAPHY
+   ============================================================ */
+.type-stack {
+  display: grid; gap: var(--s-7);
+}
+.type-row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: var(--s-6);
+  padding-bottom: var(--s-6);
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
+@media (max-width: 880px) {
+  .type-row { grid-template-columns: 1fr; gap: var(--s-3); }
+}
+.type-meta {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+.type-meta b { color: var(--accent); font-weight: 500; }
+.type-meta small {
+  display: block; margin-top: 4px; color: var(--ink-4);
+  font-size: 10px; text-transform: none; letter-spacing: 0;
+}
+.spec-hero {
+  font-family: var(--display); font-style: italic; font-weight: 900;
+  font-size: clamp(72px, 11vw, 140px); line-height: 0.92;
+  letter-spacing: var(--tracking-hero);
+}
+.spec-display {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: clamp(40px, 5vw, 64px); line-height: 1.05;
+  letter-spacing: var(--tracking-display);
+}
+.spec-title {
+  font-family: var(--sans); font-weight: 600;
+  font-size: 26px; line-height: 1.2;
+  letter-spacing: var(--tracking-title);
+}
+.spec-body {
+  font-size: 17px; line-height: 1.6; color: var(--ink-2);
+  max-width: 580px;
+}
+.spec-mono {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' on, 'zero' on;
+  font-size: 32px; font-weight: 500;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+.spec-caps {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+
+/* ============================================================
+   03 · SPACING
+   ============================================================ */
+.spacing-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--s-4);
+}
+@media (max-width: 880px) { .spacing-grid { grid-template-columns: repeat(2, 1fr); } }
+.spc {
+  background: var(--base-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-3);
+  padding: var(--s-4);
+  display: flex; flex-direction: column; gap: var(--s-3);
+}
+.spc__token {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--accent);
+}
+.spc__value {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 14px; color: var(--ink);
+}
+.spc__visual {
+  background: var(--accent);
+  height: 6px;
+  border-radius: var(--r-1);
+}
+
+/* ============================================================
+   04 · BUTTONS — all states visible
+   ============================================================ */
+.demo-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--s-6);
+  margin-top: var(--s-5);
+}
+.demo-card {
+  background: var(--base-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-4);
+  padding: var(--s-6);
+  box-shadow: var(--shadow-card);
+}
+.demo-card__label {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--accent);
+  margin-bottom: var(--s-4);
+}
+.demo-card__stack {
+  display: flex; flex-direction: column; gap: var(--s-3); align-items: flex-start;
+}
+
+/* Button system */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px;
+  font-family: var(--sans);
+  font-size: 14px; font-weight: 500;
+  letter-spacing: var(--tracking-body);
+  border: 1px solid transparent;
+  border-radius: var(--r-3);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+  white-space: nowrap;
+}
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-soft), 0 0 0 1px var(--accent);
+}
+
+/* Primary */
+.btn--primary {
+  background: var(--accent);
+  color: var(--base);
+  font-weight: 600;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.18);
+}
+.btn--primary:hover {
+  background: #D7FF3D;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px var(--accent-glow), inset 0 -1px 0 rgba(0,0,0,0.12);
+}
+.btn--primary:active {
+  transform: translateY(0);
+}
+
+/* Secondary */
+.btn--secondary {
+  background: var(--base-2);
+  color: var(--ink);
+  border-color: var(--line-2);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.btn--secondary:hover {
+  background: var(--base-3);
+  border-color: var(--line-3);
+}
+
+/* Ghost */
+.btn--ghost {
+  color: var(--ink-2);
+  padding: 10px 12px;
+}
+.btn--ghost:hover {
+  color: var(--ink);
+  background: var(--base-2);
+}
+
+/* Danger */
+.btn--danger {
+  background: var(--hot);
+  color: var(--ink);
+  font-weight: 600;
+  box-shadow: inset 0 -1px 0 rgba(0,0,0,0.18);
+}
+.btn--danger:hover {
+  background: #FF5443;
+  transform: translateY(-1px);
+}
+
+/* Sizes */
+.btn--sm { padding: 6px 12px; font-size: 13px; }
+.btn--lg { padding: 14px 24px; font-size: 15px; }
+
+/* Disabled */
+.btn--disabled,
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Loading */
+.btn--loading {
+  position: relative;
+  color: transparent;
+  pointer-events: none;
+}
+.btn--loading::after {
+  content: '';
+  position: absolute; left: 50%; top: 50%;
+  width: 14px; height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  color: var(--base);
+  animation: spin 0.7s linear infinite;
+}
+.btn--primary.btn--loading::after { color: var(--base); }
+.btn--secondary.btn--loading::after { color: var(--ink); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Pill */
+.btn--pill {
+  border-radius: var(--r-full);
+  padding: 8px 16px;
+}
+
+/* ============================================================
+   05 · BADGES & CHIPS
+   ============================================================ */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 9px;
+  font-family: var(--sans);
+  font-size: 11px; font-weight: 600;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  border-radius: var(--r-full);
+  background: var(--base-2);
+  border: 1px solid var(--line);
+  color: var(--ink-2);
+}
+.badge--accent {
+  background: var(--accent);
+  color: var(--base);
+  border-color: var(--accent);
+}
+.badge--gold {
+  background: var(--gold-soft);
+  color: var(--gold);
+  border-color: var(--gold-soft);
+}
+.badge--hot {
+  background: var(--hot-soft);
+  color: var(--hot);
+  border-color: var(--hot-soft);
+}
+.badge--hot::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--hot);
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Lega tier badges (editorial style — square, hairline) */
+.badge--tier {
+  font-family: var(--mono);
+  border-radius: var(--r-1);
+  background: transparent;
+  padding: 4px 8px;
+  letter-spacing: var(--tracking-caps);
+}
+.badge--tier.t-z { color: var(--ink-3); border-color: var(--line-2); }
+.badge--tier.t-c { color: #B07A3A; border-color: rgba(176,122,58,0.4); }
+.badge--tier.t-b { color: #A8A8A8; border-color: rgba(168,168,168,0.4); }
+.badge--tier.t-a { color: var(--gold); border-color: rgba(212,168,82,0.4); }
+.badge--tier.t-ucl { color: var(--accent); border-color: rgba(197,255,0,0.4); }
+
+/* ============================================================
+   06 · CARDS — layered construction (Stripe + Linear)
+   ============================================================ */
+.cards-stage {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+@media (max-width: 880px) { .cards-stage { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--base-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-4);
+  padding: var(--s-6);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(244,239,230,0.10), transparent);
+}
+.card:hover {
+  border-color: var(--line-3);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card-hover);
+}
+.card--accent {
+  border-color: rgba(197,255,0,0.20);
+  background: linear-gradient(180deg, rgba(197,255,0,0.04) 0%, var(--base-2) 100%);
+}
+.card--accent::before {
+  background: linear-gradient(90deg, transparent, rgba(197,255,0,0.30), transparent);
+}
+
+/* Mode card (Daily Player style) */
+.mode-card__num {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3); margin-bottom: var(--s-3);
+}
+.mode-card__icon {
+  width: 28px; height: 28px; color: var(--accent);
+  margin-bottom: var(--s-4);
+  opacity: 0.9;
+}
+.mode-card__title {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: 24px; letter-spacing: var(--tracking-title);
+  margin-bottom: 4px;
+}
+.mode-card__meta {
+  font-size: 13px; color: var(--ink-2);
+  margin-bottom: var(--s-4);
+  line-height: 1.5;
+}
+.mode-card__footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+
+/* Stat card (data-dense) */
+.stat-card__label {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3); margin-bottom: var(--s-3);
+}
+.stat-card__value {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 40px; font-weight: 700;
+  color: var(--ink);
+  line-height: 1; letter-spacing: -0.02em;
+}
+.stat-card__value.accent { color: var(--accent); }
+.stat-card__delta {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 12px; font-weight: 500;
+  color: var(--accent);
+  margin-top: var(--s-3);
+}
+.stat-card__sub {
+  font-size: 13px; color: var(--ink-3);
+  margin-top: var(--s-2);
+}
+
+/* ============================================================
+   07 · FORM
+   ============================================================ */
+.form-stage {
+  display: grid; gap: var(--s-4);
+  max-width: 460px;
+}
+.form-field {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.label {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-2);
+}
+.input {
+  background: var(--base-1);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-3);
+  padding: 12px 14px;
+  font-family: var(--sans); font-size: 15px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color var(--dur-fast) var(--ease-out),
+              background var(--dur-fast) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+  letter-spacing: var(--tracking-body);
+  width: 100%;
+}
+.input::placeholder { color: var(--ink-4); }
+.input:hover { border-color: var(--line-3); }
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  background: var(--base-2);
+}
+.input--error {
+  border-color: var(--hot);
+}
+.input--error:focus {
+  box-shadow: 0 0 0 3px var(--hot-soft);
+}
+.field-hint {
+  font-size: 12px; color: var(--ink-3);
+  display: flex; align-items: center; gap: 6px;
+}
+.field-hint--error { color: var(--hot); }
+
+/* Toggle */
+.toggle {
+  width: 36px; height: 20px;
+  background: var(--base-3);
+  border-radius: var(--r-full);
+  position: relative; cursor: pointer;
+  border: 1px solid var(--line-2);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 14px; height: 14px;
+  background: var(--ink);
+  border-radius: 50%;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.toggle--on {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.toggle--on::after {
+  transform: translateX(16px);
+  background: var(--base);
+}
+
+/* ============================================================
+   08 · TIMER RING (Duello)
+   ============================================================ */
+.timer-stage {
+  display: flex; gap: var(--s-7); align-items: center; flex-wrap: wrap;
+  margin-top: var(--s-5);
+}
+.timer-ring { width: 88px; height: 88px; position: relative; }
+.timer-ring svg { transform: rotate(-90deg); }
+.timer-ring__track { stroke: var(--line-3); fill: none; stroke-width: 6; }
+.timer-ring__fill {
+  stroke: var(--accent); fill: none; stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: 220;
+  transition: stroke var(--dur-fast) var(--ease-out);
+}
+.timer-ring__num {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-weight: 700;
+  font-size: 28px;
+  color: var(--ink);
+}
+.timer-ring--warn .timer-ring__fill { stroke: var(--gold); }
+.timer-ring--warn .timer-ring__num { color: var(--gold); }
+.timer-ring--danger .timer-ring__fill { stroke: var(--hot); }
+.timer-ring--danger .timer-ring__num { color: var(--hot); }
+
+/* ============================================================
+   09 · FEEDBACK · TOAST + DIVIDER
+   ============================================================ */
+.toast {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--base-2);
+  border: 1px solid var(--line-2);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--r-3);
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--ink);
+  box-shadow: var(--shadow-card-hover);
+  font-weight: 500;
+}
+.toast--error { border-left-color: var(--hot); }
+.toast--gold { border-left-color: var(--gold); }
+
+.divider {
+  display: flex; align-items: center; gap: var(--s-3);
+  margin: var(--s-7) 0;
+  color: var(--ink-3);
+}
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.divider__icon {
+  display: grid; place-items: center;
+  width: 18px; height: 18px;
+  border: 1px solid var(--line-2);
+  border-radius: 50%;
+  font-family: var(--mono); font-size: 9px;
+  color: var(--ink-3);
+}
+
+/* ============================================================
+   10 · PATTERNS
+   ============================================================ */
+.pattern-card {
+  background: var(--base-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-4);
+  padding: var(--s-6);
+  position: relative;
+  overflow: hidden;
+}
+.pattern-card__masthead {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-bottom: var(--s-3);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: var(--s-4);
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+.pattern-card__masthead b { color: var(--accent); font-weight: 500; }
+.pattern-card__title {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: 28px; letter-spacing: var(--tracking-title);
+  margin-bottom: var(--s-3);
+}
+.pattern-card__body {
+  font-size: 14px; line-height: 1.6;
+  color: var(--ink-2);
+}
+
+/* Pitch line decoration (one accent moment) */
+.pitch-line {
+  display: flex; align-items: center; gap: var(--s-3);
+  font-family: var(--mono); font-size: 11px;
+  color: var(--ink-3);
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+}
+.pitch-line__bar {
+  flex: 1; height: 1px; background: var(--line-2);
+  position: relative;
+}
+.pitch-line__bar::after {
+  content: '';
+  position: absolute; left: 30%; top: 50%; transform: translateY(-50%);
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+/* ============================================================
+   11 · ANTI-PATTERNS
+   ============================================================ */
+.anti-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--s-4);
+  margin-top: var(--s-5);
+}
+@media (max-width: 880px) { .anti-grid { grid-template-columns: 1fr; } }
+.anti {
+  padding: var(--s-5);
+  border-radius: var(--r-4);
+  border: 1px solid var(--line);
+  background: var(--base-1);
+}
+.anti__head {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  margin-bottom: var(--s-3);
+}
+.anti__head--no { color: var(--hot); }
+.anti__head--no::before { content: '✕'; }
+.anti__head--yes { color: var(--accent); }
+.anti__head--yes::before { content: '✓'; }
+.anti__title {
+  font-family: var(--display); font-style: italic; font-weight: 600;
+  font-size: 18px; line-height: 1.3;
+  margin-bottom: var(--s-2);
+}
+.anti__body { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+
+/* ============================================================
+   12 · LIVE — components together (showcase)
+   ============================================================ */
+.showcase {
+  background: var(--base-1);
+  border: 1px solid var(--line);
+  border-radius: var(--r-5);
+  padding: var(--s-7);
+  margin-top: var(--s-5);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-7);
+  align-items: center;
+}
+@media (max-width: 880px) { .showcase { grid-template-columns: 1fr; } }
+
+.showcase__copy h3 {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: 32px; letter-spacing: var(--tracking-title);
+  margin-bottom: var(--s-3);
+}
+.showcase__copy p {
+  font-size: 15px; line-height: 1.6;
+  color: var(--ink-2);
+  margin-bottom: var(--s-4);
+}
+
+/* The composed sample: mini Daily Player card */
+.sample {
+  background: var(--base-2);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-5);
+  padding: var(--s-6);
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+.sample::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-2), transparent);
+}
+.sample__head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-4);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+.sample__head b { color: var(--accent); font-weight: 500; }
+.sample__title {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: 28px; letter-spacing: var(--tracking-title);
+  margin-bottom: var(--s-4);
+}
+.sample__clues {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: var(--s-4);
+}
+.clue {
+  background: var(--base-3);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2);
+  padding: 8px 10px;
+}
+.clue__label {
+  font-family: var(--mono); font-size: 9px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+.clue__value {
+  font-family: var(--display); font-style: italic; font-weight: 500;
+  font-size: 13px; color: var(--ink);
+  margin-top: 2px;
+}
+.sample__stats {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--line);
+}
+.sample__stat {
+  font-family: var(--mono); font-variant-numeric: tabular-nums;
+  font-size: 13px; color: var(--ink-2);
+}
+.sample__stat b { color: var(--accent); font-weight: 600; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+footer {
+  padding: 64px 32px 48px;
+  border-top: 1px solid var(--line);
+  background: var(--base);
+}
+.footer-grid {
+  max-width: 1240px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  flex-wrap: wrap; gap: var(--s-5);
+}
+.footer-meta {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+.footer-meta b { color: var(--accent); font-weight: 500; }
+.footer-brand {
+  font-family: var(--display); font-style: italic; font-weight: 700;
+  font-size: 28px; letter-spacing: -0.02em;
+}
+.footer-brand .acc { color: var(--accent); }
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.mt-7 { margin-top: var(--s-7); }
+.ink-3 { color: var(--ink-3); }
+.accent { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<!-- ============ TOP NAV ============ -->
+<nav class="topnav">
+  <a href="#" class="topnav__brand">G<span class="dot"></span>al · Design System</a>
+  <div class="topnav__meta">
+    <span>Canonical reference</span>
+    <span class="topnav__ver">v1.0</span>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero__container">
+    <div class="eyebrow">
+      <span class="pulse"></span>
+      <span><span class="acc">v1.0</span> · canonical reference · maggio 2026</span>
+    </div>
+    <h1 class="hero__title">
+      Disciplina,<br>
+      <span class="ink-2">non decorazione.</span>
+    </h1>
+    <p class="hero__lead">Design system di Goal. Token, tipografia, componenti, pattern. Calibrato sui riferimenti premium 2026 — Linear, Stripe, Raycast, Apple Music, The Athletic.</p>
+    <p class="hero__small">Questo documento è la fonte canonica. Sostituisce ogni lookbook precedente. Ogni componente qui dentro è production-ready e testato per i due tifosi (Marco 26, Roberto 56).</p>
+    <div class="hero__stats">
+      <div>
+        <div class="hero__stat__num num accent">12</div>
+        <div class="hero__stat__label">Sezioni</div>
+      </div>
+      <div>
+        <div class="hero__stat__num num">31</div>
+        <div class="hero__stat__label">Reference studiate</div>
+      </div>
+      <div>
+        <div class="hero__stat__num num">14</div>
+        <div class="hero__stat__label">Anti-pattern banditi</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 01 · COLORE ============ -->
+<section id="color">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">01 · Colore</div>
+        <h2 class="section-title">Tre variabili.<br>Una palette intera.</h2>
+      </div>
+      <p class="section-sub">Architettura Linear: <span class="accent">base</span>, <span class="accent">accent</span>, <span class="accent">contrast</span>. Nessuna scala 50–900. Un solo accento dominante per momento. 95% neutro, 5% saturo.</p>
+    </div>
+
+    <div class="colors-grid">
+      <div class="swatch" style="background:#0E0E10">
+        <span class="swatch__token">--base</span>
+        <span class="swatch__value">#0E0E10</span>
+      </div>
+      <div class="swatch" style="background:#131316">
+        <span class="swatch__token">--base-1</span>
+        <span class="swatch__value">#131316</span>
+      </div>
+      <div class="swatch" style="background:#18181C">
+        <span class="swatch__token">--base-2</span>
+        <span class="swatch__value">#18181C</span>
+      </div>
+      <div class="swatch" style="background:#1F1F24">
+        <span class="swatch__token">--base-3</span>
+        <span class="swatch__value">#1F1F24</span>
+      </div>
+      <div class="swatch swatch--light" style="background:#F4EFE6">
+        <span class="swatch__token">--ink</span>
+        <span class="swatch__value">#F4EFE6</span>
+      </div>
+      <div class="swatch swatch--light" style="background:#B6B5AE">
+        <span class="swatch__token">--ink-2</span>
+        <span class="swatch__value">#B6B5AE</span>
+      </div>
+      <div class="swatch swatch--light" style="background:#C5FF00">
+        <span class="swatch__token">--accent</span>
+        <span class="swatch__value">#C5FF00</span>
+      </div>
+      <div class="swatch swatch--light" style="background:#D4A852">
+        <span class="swatch__token">--gold</span>
+        <span class="swatch__value">#D4A852</span>
+      </div>
+    </div>
+
+    <div class="color-rules">
+      <h3>Le regole · cinque, non negoziabili.</h3>
+      <ul>
+        <li><span></span><span><b>Un solo accent per schermata.</b> Lime per CTA primario o stato chiave; tutto il resto resta neutro warm gray.</span></li>
+        <li><span></span><span><b>Brightness ladder a tre step.</b> <code>base → base-2 → base-3</code> per gerarchia. Niente brightness arbitraria.</span></li>
+        <li><span></span><span><b>Text in due livelli.</b> <code>ink</code> (near-white warm) per primario, <code>ink-2</code> per secondario. Mai gray puro.</span></li>
+        <li><span></span><span><b>Gold solo per Lega e trofei.</b> Mai per CTA o stati generici — protegge il significato.</span></li>
+        <li><span></span><span><b>Hot esclusivo per stati critici.</b> Live, errore, retrocessione. Mai decorativo.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 · TIPOGRAFIA ============ -->
+<section id="type" style="background:linear-gradient(180deg,var(--base) 0%,var(--base-1) 100%);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">02 · Tipografia</div>
+        <h2 class="section-title">Fraunces italica.<br>Geist sobria.</h2>
+      </div>
+      <p class="section-sub">Display Fraunces italic con tracking negativo scaled (−0.045em a 140px → −0.005em a 14px). Body Geist con <code>font-feature-settings: 'ss01' 'cv01' 'cv11'</code>. Stat Geist Mono con <code>tabular-nums</code>.</p>
+    </div>
+
+    <div class="type-stack">
+      <div class="type-row">
+        <div class="type-meta">
+          <b>HERO · Fraunces 900</b>
+          <small>opsz 144 · tracking −0.045em</small>
+        </div>
+        <div class="spec-hero">Goal.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">
+          <b>DISPLAY · Fraunces 700</b>
+          <small>opsz 96 · tracking −0.035em</small>
+        </div>
+        <div class="spec-display">Il Mister approva.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">
+          <b>TITLE · Geist 600</b>
+          <small>tracking −0.022em</small>
+        </div>
+        <div class="spec-title">Lega Settimanale</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">
+          <b>BODY · Geist 400</b>
+          <small>line-height 1.6 · max-width 580px</small>
+        </div>
+        <div class="spec-body">Sei in Serie A da lunedì. Trenta utenti, una settimana. Vinci i daily, indovina le griglie, batti gli amici. Tutto contribuisce a una sola classifica — e a una sola promozione.</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">
+          <b>NUMERIC · Geist Mono 500</b>
+          <small>tabular-nums · zero stylistic</small>
+        </div>
+        <div class="spec-mono num">€34,2M · +€2,1M · 27 giorni</div>
+      </div>
+      <div class="type-row">
+        <div class="type-meta">
+          <b>CAPS · Geist Mono 500</b>
+          <small>tracking 0.12em · 11px</small>
+        </div>
+        <div class="spec-caps">Edizione · 19.05.2026 · #143</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · SPACING ============ -->
+<section id="spacing">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">03 · Spacing</div>
+        <h2 class="section-title">Scala 4/8.<br>Niente spazi a caso.</h2>
+      </div>
+      <p class="section-sub">Solo questi token. Ogni misura nella UI deve mappare a uno di questi. Se non mappa, va corretta.</p>
+    </div>
+
+    <div class="spacing-grid">
+      <div class="spc"><span class="spc__token">s-1</span><span class="spc__value num">4px</span><div class="spc__visual" style="width:4px"></div></div>
+      <div class="spc"><span class="spc__token">s-2</span><span class="spc__value num">8px</span><div class="spc__visual" style="width:8px"></div></div>
+      <div class="spc"><span class="spc__token">s-3</span><span class="spc__value num">12px</span><div class="spc__visual" style="width:12px"></div></div>
+      <div class="spc"><span class="spc__token">s-4</span><span class="spc__value num">16px</span><div class="spc__visual" style="width:16px"></div></div>
+      <div class="spc"><span class="spc__token">s-5</span><span class="spc__value num">24px</span><div class="spc__visual" style="width:24px"></div></div>
+      <div class="spc"><span class="spc__token">s-6</span><span class="spc__value num">32px</span><div class="spc__visual" style="width:32px"></div></div>
+      <div class="spc"><span class="spc__token">s-7</span><span class="spc__value num">48px</span><div class="spc__visual" style="width:48px"></div></div>
+      <div class="spc"><span class="spc__token">s-8</span><span class="spc__value num">64px</span><div class="spc__visual" style="width:64px"></div></div>
+      <div class="spc"><span class="spc__token">s-9</span><span class="spc__value num">96px</span><div class="spc__visual" style="width:96px"></div></div>
+      <div class="spc"><span class="spc__token">s-10</span><span class="spc__value num">128px</span><div class="spc__visual" style="width:100%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 · BUTTONS ============ -->
+<section id="buttons" style="background:linear-gradient(180deg,var(--base) 0%,var(--base-1) 100%);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">04 · Buttons</div>
+        <h2 class="section-title">Quattro varianti.<br>Tutti gli stati.</h2>
+      </div>
+      <p class="section-sub">Tight-radius 8px (Stripe). Tre proprietà che cambiano su hover. Focus ring lime visibile. Loading inline. Nessun gradient generico.</p>
+    </div>
+
+    <div class="demo-row">
+      <div class="demo-card">
+        <div class="demo-card__label">Primary · default + states</div>
+        <div class="demo-card__stack">
+          <button class="btn btn--primary">Gioca ora</button>
+          <button class="btn btn--primary" style="background:#D7FF3D;transform:translateY(-1px);box-shadow:0 8px 20px var(--accent-glow)">Hover</button>
+          <button class="btn btn--primary btn--loading">Carico</button>
+          <button class="btn btn--primary btn--disabled">Disabilitato</button>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-card__label">Secondary · ghost · sizes</div>
+        <div class="demo-card__stack">
+          <button class="btn btn--secondary">Più tardi</button>
+          <button class="btn btn--ghost">Salta</button>
+          <button class="btn btn--secondary btn--sm">Compatto</button>
+          <button class="btn btn--secondary btn--lg">Grande</button>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-card__label">Danger · pill · with icon</div>
+        <div class="demo-card__stack">
+          <button class="btn btn--danger">Esci dalla partita</button>
+          <button class="btn btn--secondary btn--pill">Pill style</button>
+          <button class="btn btn--primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Avanti
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 · BADGES ============ -->
+<section id="badges">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">05 · Badge & Chip</div>
+        <h2 class="section-title">Stati.<br>Mai decorazione.</h2>
+      </div>
+      <p class="section-sub">Ogni badge significa qualcosa. Live pulsa, lega ha tier color-coded, accent indica "nuovo".</p>
+    </div>
+
+    <div class="demo-row">
+      <div class="demo-card">
+        <div class="demo-card__label">Status</div>
+        <div class="demo-card__stack">
+          <span class="badge badge--accent">Nuovo</span>
+          <span class="badge badge--hot">Live</span>
+          <span class="badge badge--gold">Premium</span>
+          <span class="badge">Default</span>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-card__label">Lega tier · hairline</div>
+        <div class="demo-card__stack">
+          <span class="badge badge--tier t-z">Serie Z</span>
+          <span class="badge badge--tier t-c">Serie C2</span>
+          <span class="badge badge--tier t-b">Serie B</span>
+          <span class="badge badge--tier t-a">Serie A</span>
+          <span class="badge badge--tier t-ucl">Champions</span>
+        </div>
+      </div>
+      <div class="demo-card">
+        <div class="demo-card__label">Inline + with icon</div>
+        <div class="demo-card__stack">
+          <span class="badge badge--accent">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Filotto 28
+          </span>
+          <span class="badge">+€2,4M oggi</span>
+          <span class="badge badge--gold">★ Champions night</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 · CARDS ============ -->
+<section id="cards" style="background:linear-gradient(180deg,var(--base) 0%,var(--base-1) 100%);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">06 · Cards</div>
+        <h2 class="section-title">Costruzione a strati.</h2>
+      </div>
+      <p class="section-sub">Outer hairline 1px (rgba 6%) + inset highlight (rgba 4%) + drop shadow soft. Niente glassmorphism, niente gradient di sfondo.</p>
+    </div>
+
+    <div class="cards-stage">
+      <div class="card card--accent">
+        <div class="mode-card__num">01 / Daily</div>
+        <svg class="mode-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <circle cx="10" cy="10" r="7"/><path d="m15.5 15.5 5 5"/>
+        </svg>
+        <h3 class="mode-card__title">Daily Player</h3>
+        <p class="mode-card__meta">8 indizi, 1 risposta. Stesso puzzle per tutti, ogni giorno.</p>
+        <div class="mode-card__footer">
+          <span>1 al giorno</span>
+          <span class="accent">→</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stat-card__label">Caratura</div>
+        <div class="stat-card__value num accent">€34,2M</div>
+        <div class="stat-card__delta num">↑ +€2,4M questa settimana</div>
+        <div class="stat-card__sub">Sopra il 73% della community</div>
+      </div>
+
+      <div class="card">
+        <div class="stat-card__label">Filotto</div>
+        <div class="stat-card__value num">28<span style="color:var(--ink-3);font-size:0.5em;font-weight:500;margin-left:6px">giorni</span></div>
+        <div class="stat-card__delta num" style="color:var(--gold)">★ 2 giorni a 30</div>
+        <div class="stat-card__sub">Top 12% community attive</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 · FORM ============ -->
+<section id="form">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">07 · Form</div>
+        <h2 class="section-title">Input, focus, errore.</h2>
+      </div>
+      <p class="section-sub">Focus ring lime sempre visibile. Hint message editoriale. Toggle a forma piena con dot interno.</p>
+    </div>
+
+    <div class="demo-row">
+      <div class="demo-card">
+        <div class="demo-card__label">Text input · stati</div>
+        <div class="form-stage">
+          <div class="form-field">
+            <label class="label">Email</label>
+            <input class="input" placeholder="marco@email.it" type="email">
+            <div class="field-hint">Magic link entro 60 secondi.</div>
+          </div>
+          <div class="form-field">
+            <label class="label">Nome calciatore</label>
+            <input class="input" value="Marco Rossi" style="border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);background:var(--base-2)">
+            <div class="field-hint" style="color:var(--accent)">Focus state — input attivo.</div>
+          </div>
+          <div class="form-field">
+            <label class="label">Errore</label>
+            <input class="input input--error" value="not-an-email">
+            <div class="field-hint field-hint--error">Indirizzo non valido.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-card__label">Toggle</div>
+        <div style="display:flex;flex-direction:column;gap:var(--s-4)">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-weight:500;font-size:14px">Notifiche push</div>
+              <div style="font-size:12px;color:var(--ink-3);margin-top:2px">Promemoria daily al tuo orario</div>
+            </div>
+            <div class="toggle toggle--on"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-weight:500;font-size:14px">Vibrazione</div>
+              <div style="font-size:12px;color:var(--ink-3);margin-top:2px">Feedback haptic in-game</div>
+            </div>
+            <div class="toggle toggle--on"></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-weight:500;font-size:14px">Email settimanale</div>
+              <div style="font-size:12px;color:var(--ink-3);margin-top:2px">Recap performance</div>
+            </div>
+            <div class="toggle"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 · TIMER & FEEDBACK ============ -->
+<section id="timer" style="background:linear-gradient(180deg,var(--base) 0%,var(--base-1) 100%);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">08 · Timer & Feedback</div>
+        <h2 class="section-title">Tensione misurata.</h2>
+      </div>
+      <p class="section-sub">Timer ring con 3 fasi cromatiche: lime (sicuro) → gold (warn 3s) → hot (danger 1s). Toast con border-left semantico.</p>
+    </div>
+
+    <div class="demo-card">
+      <div class="demo-card__label">Timer ring · 3 stati</div>
+      <div class="timer-stage">
+        <div class="timer-ring">
+          <svg viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="38" class="timer-ring__track"/>
+            <circle cx="44" cy="44" r="38" class="timer-ring__fill" style="stroke-dasharray:240;stroke-dashoffset:80"/>
+          </svg>
+          <div class="timer-ring__num num">8</div>
+        </div>
+        <div class="timer-ring timer-ring--warn">
+          <svg viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="38" class="timer-ring__track"/>
+            <circle cx="44" cy="44" r="38" class="timer-ring__fill" style="stroke-dasharray:240;stroke-dashoffset:170"/>
+          </svg>
+          <div class="timer-ring__num num">3</div>
+        </div>
+        <div class="timer-ring timer-ring--danger">
+          <svg viewBox="0 0 88 88">
+            <circle cx="44" cy="44" r="38" class="timer-ring__track"/>
+            <circle cx="44" cy="44" r="38" class="timer-ring__fill" style="stroke-dasharray:240;stroke-dashoffset:225"/>
+          </svg>
+          <div class="timer-ring__num num">1</div>
+        </div>
+        <div style="margin-left:auto;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--ink-3);display:flex;flex-direction:column;gap:8px">
+          <span><span class="accent">●</span> Lime · &gt;3s (sicuro)</span>
+          <span style="color:var(--gold)">● Gold · 3s warn</span>
+          <span style="color:var(--hot)">● Hot · 1s danger + pulse</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-card mt-7">
+      <div class="demo-card__label">Toast · stati</div>
+      <div class="demo-card__stack" style="flex-direction:column">
+        <div class="toast">Vinto. Caratura <span class="num accent">+€8M</span>.</div>
+        <div class="toast toast--gold">Promosso in Serie A. Lunedì si riparte da lì.</div>
+        <div class="toast toast--error">Internet ballerina. Un attimo.</div>
+      </div>
+    </div>
+
+    <div class="demo-card mt-7">
+      <div class="demo-card__label">Divider editoriale</div>
+      <div class="divider">
+        <div class="divider__icon">◯</div>
+      </div>
+      <div style="text-align:center;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:var(--tracking-caps);color:var(--ink-3)">Il divider con cerchio di centrocampo come firma sottile</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 09 · PATTERNS ============ -->
+<section id="patterns">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">09 · Patterns</div>
+        <h2 class="section-title">Editorial moments.</h2>
+      </div>
+      <p class="section-sub">Tre pattern firma che Goal usa ovunque per uscire dall'AI slop: masthead numerato, pitch line decorativa, hairline divider.</p>
+    </div>
+
+    <div class="cards-stage">
+      <div class="pattern-card">
+        <div class="pattern-card__masthead">
+          <span>Edizione · <b>19.05.2026</b></span>
+          <span>#143</span>
+        </div>
+        <div class="pattern-card__title">Masthead numerato</div>
+        <p class="pattern-card__body">Ogni momento del prodotto ha una data e un numero progressivo. Stile rivista sportiva storica. Edizioni come "Edizione · 19.05.2026 · #143" sopra ogni Daily.</p>
+      </div>
+
+      <div class="pattern-card">
+        <div class="pitch-line">
+          <span>00:00</span>
+          <div class="pitch-line__bar"></div>
+          <span>FT</span>
+        </div>
+        <div class="pattern-card__title" style="margin-top:var(--s-4)">Pitch line</div>
+        <p class="pattern-card__body">Decoratore minimal: linea hairline 1px con un singolo dot accent al 30% (mai centrato — asimmetria controllata). Sostituisce ogni <code>&lt;hr&gt;</code> nel prodotto.</p>
+      </div>
+
+      <div class="pattern-card">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;padding-bottom:var(--s-3);border-bottom:1px solid var(--line);margin-bottom:var(--s-4)">
+          <span style="font-family:var(--display);font-style:italic;font-weight:700;font-size:22px;letter-spacing:var(--tracking-title)">Filotto</span>
+          <span class="num accent" style="font-size:24px;font-weight:700">28</span>
+        </div>
+        <div style="display:flex;gap:3px;flex-wrap:wrap">
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent)"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent)"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent)"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent)"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent)"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent)"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent)"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent);opacity:0.85"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent);opacity:0.75"></span>
+          <span style="width:14px;height:5px;border-radius:99px;background:var(--accent);opacity:0.65"></span>
+        </div>
+        <div class="pattern-card__title" style="margin-top:var(--s-4);font-size:24px">Gamification astratta</div>
+        <p class="pattern-card__body">Numero + barra. Mai cartoon, mai mascotte saltellanti. La gamification di Goal è dati che parlano, non illustrazioni che ballano.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 · ANTI-PATTERNS ============ -->
+<section id="anti" style="background:linear-gradient(180deg,var(--base) 0%,var(--base-1) 100%);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">10 · Anti-patterns</div>
+        <h2 class="section-title">Cose vietate.</h2>
+      </div>
+      <p class="section-sub">Lista esplicita di tratti AI-slop che Goal blocca a livello di sistema. Se vedi uno di questi nel prodotto, è un bug di design.</p>
+    </div>
+
+    <div class="anti-grid">
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Purple-to-blue gradients</div>
+        <p class="anti__body">Il marker numero uno dell'AI slop SaaS 2023. Su Goal: zero gradient di marca. Solo accent flat su neutro.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Glassmorphism card</div>
+        <p class="anti__body">Backdrop-blur su card con bordi semi-trasparenti = generico. Usiamo hairline 1px e basta.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Drop shadow heavy</div>
+        <p class="anti__body"><code>box-shadow: 0 10px 40px rgba(0,0,0,0.5)</code>. È morta nel 2024. Solo hairline + inset highlight.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Border-radius 999px ovunque</div>
+        <p class="anti__body">Pill default per ogni button = TailwindUI generic. Tight-radius 8px Stripe-style, pill solo per chip/badge.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Inter o Arial</div>
+        <p class="anti__body">Inter è il default AI. Fraunces italic (display) + Geist (body) per Goal. Mai mischiare.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Card grid uniformi</div>
+        <p class="anti__body">Tre card identiche affiancate = AI slop. Asimmetria controllata, gerarchia editoriale.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Lorem ipsum</div>
+        <p class="anti__body">Sempre dati reali. Baggio, Pirlo, Totti. €34,2M. 28 giorni di filotto. Niente "Username" o "Description text".</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Spacing arbitrario</div>
+        <p class="anti__body">25px? 35px? No. Solo token 4/8/12/16/24/32/48/64. Ogni misura mappa o si corregge.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Emoji decorative</div>
+        <p class="anti__body">🎉✨🔥💪 = morte. Solo nelle griglie share Wordle-style. Mai inline nel prodotto.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">Animations chiassose</div>
+        <p class="anti__body">Confetti, particles, bouncy spring eccessivi. Sub-200ms transitions con ease-out custom.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">"Scopri", "Sblocca", "Vivi"</div>
+        <p class="anti__body">Marketing copy generico vietato. Vedi tone of voice — italiano sobrio, mai aspirazionale corporate.</p>
+      </div>
+      <div class="anti">
+        <div class="anti__head anti__head--no">Mai</div>
+        <div class="anti__title">CSS framework defaults</div>
+        <p class="anti__body">shadcn/ui defaults, TailwindUI templates, Bootstrap base. Goal scrive il suo CSS — è il prodotto, non un MVP.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11 · LIVE SHOWCASE ============ -->
+<section id="showcase">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">11 · Composizione</div>
+        <h2 class="section-title">Tutto insieme.</h2>
+      </div>
+      <p class="section-sub">Una micro-card Daily Player che combina ogni pattern visto sopra. Questo è il livello di craft di ogni schermata reale.</p>
+    </div>
+
+    <div class="showcase">
+      <div class="showcase__copy">
+        <h3>Una card.<br>Sette decisioni.</h3>
+        <p>Masthead numerato. Titolo Fraunces italic display. Clue chip con label mono caps + value Fraunces italic. Hairline divider tra sezioni. Statistiche tabular nums.</p>
+        <p>Quattro varianti tipografiche, due livelli di superficie, una sola accentuazione lime. <strong style="color:var(--ink)">Questo è lo standard.</strong></p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:var(--s-4)">
+          <span class="badge">Fraunces italic</span>
+          <span class="badge">Geist 500/600</span>
+          <span class="badge">Geist Mono tabular</span>
+          <span class="badge badge--accent">1 accent</span>
+          <span class="badge">3 superfici</span>
+        </div>
+      </div>
+
+      <div class="sample">
+        <div class="sample__head">
+          <span>Daily Player · <b>19.05.2026</b></span>
+          <span>#143</span>
+        </div>
+        <div class="sample__title">Chi è?</div>
+        <div class="sample__clues">
+          <div class="clue"><div class="clue__label">Lega</div><div class="clue__value">Serie A</div></div>
+          <div class="clue"><div class="clue__label">Età</div><div class="clue__value">28</div></div>
+          <div class="clue"><div class="clue__label">Ruolo</div><div class="clue__value">Trequartista</div></div>
+          <div class="clue"><div class="clue__label">Trofei</div><div class="clue__value">3 Scudetti</div></div>
+        </div>
+        <div class="sample__stats">
+          <span class="sample__stat num">Tentativi <b>4/8</b></span>
+          <span class="sample__stat num">12.847 oggi</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12 · CROSS-GEN RULE ============ -->
+<section id="cross-gen" style="background:linear-gradient(180deg,var(--base) 0%,var(--base-1) 100%);border-top:1px solid var(--line)">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="section-num">12 · Cross-gen rule</div>
+        <h2 class="section-title">Test dei due tifosi.</h2>
+      </div>
+      <p class="section-sub">Ogni schermata di Goal deve funzionare sia per Marco (26, milanista, designer) sia per Roberto (56, interista, geometra). Test pratico, non principio astratto.</p>
+    </div>
+
+    <div class="cards-stage">
+      <div class="pattern-card">
+        <div class="pattern-card__masthead"><span>Marco · <b>26</b></span><span>Milano</span></div>
+        <div class="pattern-card__title">Riconosce ironia.</div>
+        <p class="pattern-card__body">Capisce le citazioni a Calciatori Brutti. Vuole tipografia premium, design system riconoscibile. Sa cosa è Linear. Se vede shadcn defaults capisce e disprezza.</p>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-card__masthead"><span>Roberto · <b>56</b></span><span>Bergamo</span></div>
+        <div class="pattern-card__title">Vuole serietà.</div>
+        <p class="pattern-card__body">Non sopporta cringe gen-Z. Vuole rispetto per la storia (Baggio, Maradona, Sacchi). Numeri tabular leggibili. Mai bambinesco. Se vede emoji decorative o "scopri" disinstalla.</p>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-card__masthead"><span>Pass</span><span><b>Entrambi</b></span></div>
+        <div class="pattern-card__title">Editorial Stadium.</div>
+        <p class="pattern-card__body">Tipografia Fraunces+Geist piace a Marco. Tabular nums e dati piacciono a Roberto. Mister composto piace a entrambi. Lime acida vibra senza essere infantile.</p>
+      </div>
+    </div>
+
+    <div class="color-rules mt-7">
+      <h3>Le 5 regole cross-gen, applicate sempre.</h3>
+      <ul>
+        <li><span></span><span><b>Il Mister ironico, mai bambinesco né corporate.</b> Trapattoni/Sacchi vibe — composto, autorevole, scintilla di ironia.</span></li>
+        <li><span></span><span><b>Una sola accent per schermata.</b> 95% neutro warm gray, 5% lime saturo. Mai più di un punto saliente.</span></li>
+        <li><span></span><span><b>Gamification astratta, mai cartoon.</b> Anelli, barre, numeri tabular. Nessuna figurina che balla.</span></li>
+        <li><span></span><span><b>Il rito conta più del feature.</b> Ogni schermata si aggancia a un rito calcistico reale (pagella, probabili, schedina, dopopartita).</span></li>
+        <li><span></span><span><b>Italiano sobrio sempre.</b> Mai "scopri", mai "vivi l'emozione", mai "ragaaa". Tone of voice rigoroso.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">G<span class="acc">o</span>al · Design System</div>
+    <div class="footer-meta">
+      <div style="margin-bottom:4px">Canonical reference · <b>v1.0</b></div>
+      <div>Sostituisce ogni lookbook precedente · Maggio 2026</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

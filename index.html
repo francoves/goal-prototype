@@ -106,6 +106,11 @@ body{background:#1A1F26;color:#fff;font:500 16px 'Onest',sans-serif;-webkit-font
 .mister-bubble__txt{font:600 12px 'Onest';color:var(--ink-2);line-height:1.4;flex:1}
 .mister-bubble__txt b{color:var(--lime);font-weight:800}
 
+/* ============ CAMPO MOTIF (firma visiva) ============ */
+.campo-bg{position:absolute;inset:0;color:var(--ink);opacity:0.04;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.campo-bg svg{width:140%;height:auto;max-height:none}
+.campo-center-bg{position:absolute;color:var(--ink);opacity:0.08;pointer-events:none}
+
 /* ============ SPLASH ============ */
 #splash{align-items:center;justify-content:center;background:radial-gradient(circle at center,rgba(197,255,0,0.15) 0%,var(--bg) 60%);cursor:pointer}
 .splash-logo{width:96px;height:96px;background:linear-gradient(135deg,var(--lime),var(--lime-d));border-radius:28px;display:grid;place-items:center;color:var(--bg);font:900 56px 'Onest';box-shadow:0 16px 40px rgba(197,255,0,0.5),inset 0 2px 0 rgba(255,255,255,0.4);animation:pulse 2s ease-in-out infinite}
@@ -727,6 +732,34 @@ body{background:#1A1F26;color:#fff;font:500 16px 'Onest',sans-serif;-webkit-font
       <path d="M63 220 L85 220 L81 270 L65 270 Z" fill="#3A3A40"/>
     </symbol>
 
+    <!-- CAMPO · full pitch motif (firma visiva nascosta) -->
+    <symbol id="campo" viewBox="0 0 600 400">
+      <rect x="20" y="20" width="560" height="360" fill="none" stroke="currentColor" stroke-width="2"/>
+      <line x1="300" y1="20" x2="300" y2="380" stroke="currentColor" stroke-width="2"/>
+      <circle cx="300" cy="200" r="60" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="300" cy="200" r="3" fill="currentColor"/>
+      <rect x="20" y="110" width="100" height="180" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="20" y="155" width="40" height="90" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="100" cy="200" r="3" fill="currentColor"/>
+      <path d="M 120 175 A 35 35 0 0 1 120 225" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="480" y="110" width="100" height="180" fill="none" stroke="currentColor" stroke-width="2"/>
+      <rect x="540" y="155" width="40" height="90" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="500" cy="200" r="3" fill="currentColor"/>
+      <path d="M 480 175 A 35 35 0 0 0 480 225" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M 20 32 A 12 12 0 0 1 32 20" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M 568 20 A 12 12 0 0 1 580 32" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M 20 368 A 12 12 0 0 0 32 380" fill="none" stroke="currentColor" stroke-width="2"/>
+      <path d="M 568 380 A 12 12 0 0 0 580 368" fill="none" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+
+    <!-- CAMPO CENTER · cerchio di centrocampo (decorativo) -->
+    <symbol id="campo-center" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="80" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="100" cy="100" r="3" fill="currentColor"/>
+      <line x1="10" y1="100" x2="20" y2="100" stroke="currentColor" stroke-width="2"/>
+      <line x1="180" y1="100" x2="190" y2="100" stroke="currentColor" stroke-width="2"/>
+    </symbol>
+
     <!-- HEAD ONLY (mini avatar) -->
     <symbol id="m-head" viewBox="0 0 80 80">
       <circle cx="40" cy="40" r="40" fill="#1C1C22"/>
@@ -787,9 +820,10 @@ body{background:#1A1F26;color:#fff;font:500 16px 'Onest',sans-serif;-webkit-font
 
       <!-- ============ SPLASH ============ -->
       <div class="screen active" id="splash" onclick="goto('welcome')">
-        <div class="splash-logo">G</div>
-        <h1 class="splash-title">Goal</h1>
-        <div class="splash-tag">Football · Italia · Daily</div>
+        <div class="campo-bg"><svg><use href="#campo"/></svg></div>
+        <div class="splash-logo" style="position:relative;z-index:2">G</div>
+        <h1 class="splash-title" style="position:relative;z-index:2">Goal</h1>
+        <div class="splash-tag" style="position:relative;z-index:2">Football · Italia · Daily</div>
       </div>
 
       <!-- ============ WELCOME ============ -->
@@ -909,7 +943,8 @@ body{background:#1A1F26;color:#fff;font:500 16px 'Onest',sans-serif;-webkit-font
 
       <!-- ============ HUB ============ -->
       <div class="screen" id="hub">
-        <div class="body" style="display:flex;flex-direction:column;gap:0">
+        <div class="campo-bg" style="opacity:0.025"><svg><use href="#campo"/></svg></div>
+        <div class="body" style="display:flex;flex-direction:column;gap:0;position:relative;z-index:1">
           <div class="hub-head">
             <div class="hub-avatar" onclick="goto('profile')">
               <div class="hub-pic">MR</div>
@@ -1019,6 +1054,7 @@ body{background:#1A1F26;color:#fff;font:500 16px 'Onest',sans-serif;-webkit-font
         <div class="body body--nofoot" style="display:flex;flex-direction:column;gap:0;position:relative;z-index:3">
           <div class="won-mast"><span>Indovinato · <b>5 su 8</b></span><span>Top 18%</span></div>
           <div class="won-photo-wrap">
+            <svg class="campo-center-bg" style="width:280px;height:280px;top:-70px;left:50%;transform:translateX(-50%);opacity:0.1"><use href="#campo-center"/></svg>
             <div class="won-photo">
               <span class="won-stamp">Legendary</span>
               <div class="won-flag"><img src="https://flagcdn.com/w80/it.png" alt="Italia"></div>
@@ -1310,6 +1346,7 @@ body{background:#1A1F26;color:#fff;font:500 16px 'Onest',sans-serif;-webkit-font
 
       <!-- ============ LEGA PROMOTION ============ -->
       <div class="screen" id="lega-promotion">
+        <div class="campo-bg" style="opacity:0.05;color:#FFD93D"><svg><use href="#campo"/></svg></div>
         <div class="prom-rays"></div>
         <div class="prom-conf">
           <span style="left:10%;background:#C5FF00;animation-delay:0s"></span>
